@@ -1,1 +1,6 @@
 exportPattern("^[[:alpha:]]+")
+
+importFrom(BSgenome,getBSgenome)
+importFrom(rtracklayer,import)
+importFrom(TFBSTools,getMatrixSet)
+importFrom(R.utils,gunzip)

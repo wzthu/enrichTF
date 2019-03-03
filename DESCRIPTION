@@ -9,3 +9,12 @@ Description: More about what it does (maybe more than one line)
 License: What license is it under?
 Encoding: UTF-8
 LazyData: true
+Depends:
+    pipeFrame
+Imports:
+    BSgenome,
+    rtracklayer,
+    motifmatchr,
+    TFBSTools,
+    GenomicRanges,
+    R.utils
