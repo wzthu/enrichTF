@@ -21,7 +21,6 @@ Imports:
 Collate: 
     EnrichStep.R 
     ConnectTargetGene.R
-    TFsEnrichInRegions.R
     FindMotifsInRegions.R
     GenBackground.R
     onLoad.R
