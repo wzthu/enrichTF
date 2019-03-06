@@ -2,11 +2,11 @@ Package: enrichTF
 Type: Package
 Title: What the Package Does (Title Case)
 Version: 0.1.0
-Author: Who wrote it
+Author: Zheng Wei, Zhana Duren, Shining Ma
 Maintainer: The package maintainer <yourself@somewhere.net>
 Description: More about what it does (maybe more than one line)
     Use four spaces when indenting paragraphs within the Description.
-License: What license is it under?
+License: GPL-3 | file
 Encoding: UTF-8
 LazyData: true
 Depends:
@@ -18,3 +18,12 @@ Imports:
     TFBSTools,
     GenomicRanges,
     R.utils
+Collate: 
+    EnrichStep.R 
+    ConnectTargetGene.R
+    TFsEnrichInRegions.R
+    FindMotifsInRegions.R
+    GenBackground.R
+    onLoad.R
+    corefunc.R
+    untils.R

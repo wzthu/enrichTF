@@ -1,112 +1,129 @@
-setClass(Class = "GenBackground",
+setClass(Class = "RegionConnectTargetGene",
          contains = "EnrichStep"
 )
 
 setMethod(
     f = "init",
-    signature = "GenBackground",
+    signature = "RegionConnectTargetGene",
     definition = function(.Object,prevSteps = list(),...){
         allparam <- list(...)
+        print(allparam)
         inputForegroundBed <- allparam[["inputForegroundBed"]]
-        genome <- allparam[["genome"]]
+        inputBackgroundBed <- allparam[["inputBackgroundBed"]]
         outputForegroundBed <- allparam[["outputForegroundBed"]]
         outputBackgroundBed <- allparam[["outputBackgroundBed"]]
-        outputRegionBed <- allparam[["outputRegionBed"]]
-        rangeLen <- allparam[["rangeLen"]]
-        sampleNumb <- allparam[["sampleNumb"]]
+        regularGeneCorrBed <- allparam[["regularGeneCorrBed"]]
+        enhancerRegularGeneCorrBed <- allparam[["enhancerRegularGeneCorrBed"]]
         if(length(prevSteps)>0){
             prevStep <- prevSteps[[1]]
-            foregroundBed <- getParam(prevStep,"bedOutput")
-            .Object@inputList[["inputForegroundBed"]] <- foregroundBed
+            .Object@inputList[["inputForegroundBed"]] <- getParam(prevStep,"outputForegroundBed")
+            .Object@inputList[["inputBackgroundBed"]] <- getParam(prevStep,"outputBackgroundBed")
         }
 
-        if(!is.null(inputForegroundBed)){
-            .Object@inputList[["inputForegroundBed"]] <- inputForegroundBed
-        }
 
         if(is.null(outputForegroundBed)){
-            .Object@outputList[["outputForegroundBed"]] <- getAutoPath(.Object,originPath = .Object@inputList[["inputForegroundBed"]],regexProcName = "bed",suffix = "foreground.bed")
+            .Object@outputList[["outputForegroundBed"]] <- getAutoPath(.Object,originPath = .Object@inputList[["inputForegroundBed"]],regexProcName = "foreground.bed",suffix = "gene.foreground.bed")
         }else{
             .Object@outputList[["outputForegroundBed"]] <- outputForegroundBed
         }
 
+
         if(is.null(outputBackgroundBed)){
-            .Object@outputList[["outputBackgroundBed"]] <- getAutoPath(.Object,originPath = .Object@inputList[["inputForegroundBed"]],regexProcName = "bed",suffix = "background.bed")
+            .Object@outputList[["outputBackgroundBed"]] <- getAutoPath(.Object,originPath = .Object@inputList[["inputBackgroundBed"]],regexProcName = "background.bed",suffix = "gene.background.bed")
         }else{
             .Object@outputList[["outputBackgroundBed"]] <- outputBackgroundBed
         }
 
-        if(is.null(outputRegionBed)){
-            .Object@outputList[["outputRegionBed"]] <- getAutoPath(.Object,originPath = .Object@inputList[["inputForegroundBed"]],regexProcName = "bed",suffix = "allregion.bed")
+        if(is.null(regularGeneCorrBed)){
+            .Object@outputList[["regularGeneCorrBed"]] <- getRefFiles("RE_gene_corr")
         }else{
-            .Object@outputList[["outputRegionBed"]] <- outputRegionBed
+            .Object@outputList[["regularGeneCorrBed"]] <- regularGeneCorrBed
         }
-        if(is.null(genome)){
-            .Object@paramList[["bsgenome"]] <- BSgenome::getBSgenome(getGenome())
+
+        if(is.null(enhancerRegularGeneCorrBed)){
+            .Object@outputList[["enhancerRegularGeneCorrBed"]] <- getRefFiles("Enhancer_RE_gene_corr")
         }else{
-            .Object@paramList[["bsgenome"]] <- BSgenome::getBSgenome(genome = genome)
+            .Object@outputList[["enhancerRegularGeneCorrBed"]] <- enhancerRegularGeneCorrBed
         }
-        .Object@paramList[["rangeLen"]] <- rangeLen
-        message("rangeLen")
-        .Object@paramList[["sampleNumb"]] <- sampleNumb
         .Object
     }
 )
 
 
-randomSampleOnGenome<-function(rangeLen, sampleNumber,bsgenome){
-    chrlens <-seqlengths(bsgenome)
-    selchr <- grep("_|M",names(chrlens),invert=TRUE)
-    chrlens <- chrlens[selchr]
-    startchrlens <- chrlens - rangeLen
-    totallen <- sum(startchrlens)
-    spnb <- floor(runif(sampleNumber) * totallen) + 1
-    acclen <- startchrlens
-    for(i in 2:length(acclen)){
-        acclen[i] <- acclen[i-1] + acclen[i]
-    }
-    acclen <- c(0,acclen)
-    gr <- GRanges()
-    for(i in 1:(length(acclen)-1)){
-        sel <- spnb[(spnb>acclen[i]) & (spnb<=acclen[i+1])]
-        sel <- sel - acclen[i]
-        gr <- c(gr,GRanges(seqnames = names(acclen)[i+1], ranges = IRanges(start = sel, width = 1000)))
-    }
-    return(sort(gr,ignore.strand=TRUE))
-}
-
 setMethod(
     f = "processing",
-    signature = "GenBackground",
+    signature = "RegionConnectTargetGene",
     definition = function(.Object,...){
         inputForegroundBed <- getParam(.Object,"inputForegroundBed")
-        bsgenome <- getParam(.Object,"bsgenome")
+        inputBackgroundBed <- getParam(.Object,"inputBackgroundBed")
         outputForegroundBed <- getParam(.Object,"outputForegroundBed")
         outputBackgroundBed <- getParam(.Object,"outputBackgroundBed")
-        outputRegionBed <- getParam(.Object,"outputRegionBed")
-        rangeLen <- getParam(.Object,"rangeLen")
-        sampleNumb <- getParam(.Object,"sampleNumb")
+        regularGeneCorrBed <- getParam(.Object,"regularGeneCorrBed")
+        enhancerRegularGeneCorrBed <- getParam(.Object,"enhancerRegularGeneCorrBed")
 
-        foregroundgr <- import(con = inputForegroundBed,format = "bed")
-        midpoint <- (start(foregroundgr) + end(foregroundgr))/2
-        start(foregroundgr) <- floor(midpoint - rangeLen/2)
-        end(foregroundgr) <- floor(midpoint + rangeLen/2)
-        foregroundgr <- sort(foregroundgr,ignore.strand=TRUE)
-        export.bed(object = foregroundgr, con = outputForegroundBed)
-        backgroundgr <- randomSampleOnGenome(rangeLen, sampleNumb, bsgenome)
-        export.bed(object = backgroundgr, con = outputBackgroundBed)
-        regiongr <- c(foregroundgr,backgroundgr)
-        export.bed(object = regiongr, con = outputRegionBed)
+        print(.Object@inputList)
+        print(.Object@outputList)
+        print(.Object@paramList)
+
+        inputForegroundgr <- import(con=inputForegroundBed)
+        inputBackgroundgr <- import(con=inputBackgroundBed)
+
+        rg <- import(con=regularGeneCorrBed,colnames=c("name","score","blockCount"))
+        erg <- import(con=regularGeneCorrBed,colnames=c("name","score","blockCount"))
+
+        pairs <- findOverlapPairs(inputForegroundgr,rg)
+        first(pairs)$name  <- second(pairs)$name
+        first(pairs)$score  <- second(pairs)$score
+        first(pairs)$blockCount  <- second(pairs)$blockCount
+
+        outputForegroundgr <- first(pairs)
+
+        pairs <- findOverlapPairs(inputForegroundgr,erg)
+        first(pairs)$name  <- second(pairs)$name
+        first(pairs)$score  <- second(pairs)$score
+        first(pairs)$blockCount  <- second(pairs)$blockCount
+
+        outputForegroundgr <- c(outputForegroundgr,first(pairs))
+
+        pairs <- findOverlapPairs(inputBackgroundgr,rg)
+        first(pairs)$name  <- second(pairs)$name
+        first(pairs)$score  <- second(pairs)$score
+        first(pairs)$blockCount  <- second(pairs)$blockCount
+
+        outputBackgroundgr <- first(pairs)
+
+        pairs <- findOverlapPairs(inputBackgroundgr,erg)
+        first(pairs)$name  <- second(pairs)$name
+        first(pairs)$score  <- second(pairs)$score
+        first(pairs)$blockCount  <- second(pairs)$blockCount
+
+        outputBackgroundgr <- c(outputBackgroundgr,first(pairs))
+
+        write.table(as.data.frame(outputForegroundgr)[,c("seqnames","start","end","name","score",
+                                                         "strand","strand","strand","strand","blockCount")],
+                    outputForegroundBed,sep="\t",quote = FALSE,row.names = FALSE,col.names = FALSE)
+        write.table(as.data.frame(outputBackgroundgr)[,c("seqnames","start","end","name","score",
+                                                         "strand","strand","strand","strand","blockCount")],
+                    outputBackgroundBed,sep="\t",quote = FALSE,row.names = FALSE,col.names = FALSE)
+#        export.bed(outputForegroundgr,outputForegroundBed)
+#        export.bed(outputBackgroundgr,outputBackgroundBed)
+
+
+#        .Object@propList[["motifs_in_region"]] <- result
+
         .Object
     }
 )
 
 setMethod(
     f = "checkRequireParam",
-    signature = "GenBackground",
+    signature = "RegionConnectTargetGene",
     definition = function(.Object,...){
         if(is.null(.Object@inputList[["inputForegroundBed"]])){
             stop("inputForegroundBed is required.")
+        }
+        if(is.null(.Object@inputList[["inputBackgroundBed"]])){
+            stop("inputBackgroundBed is required.")
         }
 
     }
@@ -116,16 +133,17 @@ setMethod(
 
 setMethod(
     f = "checkAllPath",
-    signature = "GenBackground",
+    signature = "RegionConnectTargetGene",
     definition = function(.Object,...){
-        checkFileExist(.Object@inputList[["inputForegroundBed"]]);
+        checkFileExist(.Object@inputList[["inputForegroundBed"]])
+        checkFileExist(.Object@inputList[["inputBackgroundBed"]])
 
     }
 )
 
 setMethod(
     f = "getReportValImp",
-    signature = "GenBackground",
+    signature = "RegionConnectTargetGene",
     definition = function(.Object,item,...){
         txt <- readLines(.Object@paramlist[["reportOutput"]])
         if(item == "total"){
@@ -145,7 +163,7 @@ setMethod(
 
 setMethod(
     f = "getReportItemsImp",
-    signature = "GenBackground",
+    signature = "RegionConnectTargetGene",
     definition = function(.Object, ...){
         return(c("total","maprate","detail"))
     }
@@ -241,52 +259,49 @@ setMethod(
 
 
 
-setGeneric("enrichGenBackground",function(prevStep,
-                                          inputForegroundBed = NULL,
-                                          genome = NULL,
-                                          outputForegroundBed = NULL,
-                                          outputBackgroundBed = NULL,
-                                          outputRegionBed = NULL,
-                                          rangeLen = 1000,
-                                          sampleNumb = 10000,
-                                          ...) standardGeneric("enrichGenBackground"))
+setGeneric("enrichRegionConnectTargetGene",function(prevStep,
+                                                    inputForegroundBed = NULL,
+                                                    inputBackgroundBed = NULL,
+                                                    outputForegroundBed = NULL,
+                                                    outputBackgroundBed = NULL,
+                                                    regularGeneCorrBed = NULL,
+                                                    enhancerRegularGeneCorrBed = NULL,
+                                                    ...) standardGeneric("enrichRegionConnectTargetGene"))
 
 
 
-#' @rdname GenBackground
-#' @aliases enrichGenBackground
+#' @rdname MotifsInRegions
+#' @aliases enrichMotifsInRegions
 #' @export
 setMethod(
-    f = "enrichGenBackground",
+    f = "enrichRegionConnectTargetGene",
     signature = "Step",
     definition = function(prevStep,
                           inputForegroundBed = NULL,
-                          genome = NULL,
+                          inputBackgroundBed = NULL,
                           outputForegroundBed = NULL,
                           outputBackgroundBed = NULL,
-                          outputRegionBed = NULL,
-                          rangeLen = 1000,
-                          sampleNumb = 10000,
+                          regularGeneCorrBed = NULL,
+                          enhancerRegularGeneCorrBed = NULL,
                           ...){
-        allpara <- c(list(Class = "GenBackground", prevSteps = list(prevStep)),as.list(environment()),list(...))
-
+        allpara <- c(list(Class = "RegionConnectTargetGene", prevSteps = list(prevStep)),as.list(environment()),list(...))
+        print(allpara)
         step <- do.call(new,allpara)
         invisible(step)
     }
 )
-#' @rdname GenBackground
-#' @aliases genBackground
+#' @rdname MotifsInRegions
+#' @aliases motifsInRegions
 #' @export
-genBackground <- function(inputForegroundBed,
-                          genome = NULL,
-                          outputForegroundBed = NULL,
-                          outputBackgroundBed = NULL,
-                          outputRegionBed = NULL,
-                          rangeLen = 1000,
-                          sampleNumb = 10000,
-                          ...){
-    allpara <- c(list(Class = "GenBackground", prevSteps = list()),as.list(environment()),list(...))
-
+regionConnectTargetGene <- function(inputForegroundBed,
+                                    inputBackgroundBed,
+                                    outputForegroundBed = NULL,
+                                    outputBackgroundBed = NULL,
+                                    regularGeneCorrBed = NULL,
+                                    enhancerRegularGeneCorrBed = NULL,
+                                    ...){
+    allpara <- c(list(Class = "RegionConnectTargetGene", prevSteps = list()),as.list(environment()),list(...))
+    print(allpara)
     step <- do.call(new,allpara)
     invisible(step)
 }

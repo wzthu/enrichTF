@@ -1,6 +1,7 @@
 #test
 enrichTF-pipeline/
 test/
+test.R
 
 .DS_Store
 

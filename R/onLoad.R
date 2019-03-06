@@ -3,4 +3,12 @@
                   defaultJobName = paste0(pkgname,"-pipeline"),
                   defaultCheckAndInstallFunc = checkAndInstall
     )
+
+    addEdges(edges = c("GenBackground","FindMotifsInRegions",
+                       "GenBackground","RegionConnectTargetGene",
+                       "FindMotifsInRegions","TFsEnrichInRegions"),
+             argOrder = 1)
+    addEdges(edges = c("RegionConnectTargetGene","TFsEnrichInRegions"),
+             argOrder = 2)
+
 }
