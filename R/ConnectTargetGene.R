@@ -169,93 +169,47 @@ setMethod(
     }
 )
 
-#' @name Bowtie2Mapping
-#' @importFrom Rbowtie2 bowtie2
-#' @title Use bowtie2 aligner to map reads to reference genome
+
+
+#' @name RegionConnectTargetGene
+#' @importFrom TFBSTools getMatrixSet
+#' @importFrom TFBSTools PFMatrixList
+#' @importFrom TFBSTools PFMatrix
+#' @title Connect Region and Target Gene
 #' @description
-#' Use bowtie2 aligner to map reads to reference genome
-#' @param atacProc \code{\link{ATACProc-class}} object scalar.
-#' It has to be the return value of upstream process:
-#' \code{\link{atacRemoveAdapter}}
-#' \code{\link{removeAdapter}}
-#' @param reportOutput \code{Character} scalar.
-#' The prefix of report files path.
-#' @param bt2Idx \code{Character} scalar.
-#' bowtie2 index files
-#' prefix: 'dir/basename'
-#' (minus trailing '.*.bt2' of 'dir/basename.*.bt2').
-#' @param samOutput \code{Character} scalar.
-#' A path to a SAM file
-#' used for the alignment output.
-#' @param fastqInput1 \code{Character} vector. For single-end sequencing,
-#' it contains sequence file paths.
-#' For paired-end sequencing, it can be file paths with #1 mates
-#' paired with file paths in fastqInput2.
-#' And it can also be interleaved file paths when argument
-#' interleaved=\code{TRUE}
-#' @param fastqInput2 \code{Character} vector. It contains file paths with
-#' #2 mates paired with file paths in fastqInput1.
-#' For single-end sequencing files and interleaved paired-end
-#' sequencing files(argument interleaved=\code{TRUE}),
-#' it must be \code{NULL}.
-#' @param paramList Additional arguments to be passed on to the binaries.
-#' See below for details.
-#' @param interleave \code{Logical}. Set \code{TRUE} when files are
-#' interleaved paired-end sequencing data.
-#' @param threads \code{Integer} scalar.
-#' The threads will be created in this process. default: 1
+#' Connect foreground and background regions to targetGene
+#' @param prevStep \code{\link{Step-class}} object scalar.
+#' It has to be the return value of upstream process from \code{\link{genBackground}} and \code{\link{enrichGenBackground}}
+#' @param inputForegroundBed \code{Character} scalar.
+#' Foreground BED file directory.
+#' @param inputBackgroundBed  \code{Character} scalar.
+#' Background BED file directory.
+#' @param outputForegroundBed \code{Character} scalar.
+#' Gene connected foreground region BED file directory.
+#' Default: NULL (generate base on inputForegroundBed)
+#' @param outputBackgroundBed \code{Character} scalar.
+#' Gene connected background region BED file directory
+#' Default: NULL (generate base on inputForegroundBed)
+#' @param regularGeneCorrBed\code{Character} scalar.
+#' Gene region BED file directory
+#' Default: NULL ((call function like \code{setGenome("hg19")} first after library this package))
+#' @param enhancerRegularGeneCorrBed \code{Character} scalar.
+#' Enhacer Gene region BED file directory
+#' Default: NULL ((call function like \code{setGenome("hg19")} first after library this package))
 #' @param ... Additional arguments, currently unused.
-#' @details The parameter related to input and output file path
-#' will be automatically
-#' obtained from \code{\link{ATACProc-class}} object(\code{atacProc}) or
-#' generated based on known parameters
-#' if their values are default(e.g. \code{NULL}).
-#' Otherwise, the generated values will be overwrited.
-#' If you want to use this function independently,
-#' you can use \code{bowtie2Mapping} instead.
-#’ All additional arguments in paramList are interpreted as
-#' additional parameters to be passed on to
-#' bowtie2. You can put all aditional
-#' arguments in one \code{Character}(e.g. "--threads 8 --no-mixed")
-#' with white space splited just like command line,
-#' or put them as \code{Character} vector
-#' (e.g. c("--threads","8","--no-mixed")). Note that some
-#' arguments("-x","--interleaved","-U","-1","-2","-S","threads") to the
-#' bowtie2 are invalid if they are already handled as explicit
-#' function arguments. See the output of
-#' \code{bowtie2_usage()} for details about available parameters.
-#' @return An invisible \code{\link{ATACProc-class}} object scalar for downstream analysis.
+#' @details
+#' Connect foreground and background regions to targetGene
+#' @return An invisible \code{\link{EnrichTF-class}} object (\code{\link{Step-class}} based) scalar for downstream analysis.
 #' @author Zheng Wei
 #' @seealso
-#' \code{\link{atacRemoveAdapter}}
-#' \code{\link{removeAdapter}}
-#' \code{\link{bowtie2}}
-#' \code{\link{bowtie2_build}}
-#' \code{\link{bowtie2_usage}}
-#' \code{\link{atacSam2Bam}}
-#' \code{\link{atacSamToBed}}
-#' \code{\link{atacLibComplexQC}}
+#' \code{\link{genBackground}}
+#' \code{\link{findMotifsInRegions}}
+#' \code{\link{tfsEnrichInRegions}}
 #' @examples
-#' td <- tempdir()
-#' options(atacConf=setConfigure("tmpdir",td))
-#'
-#' ## Building a bowtie2 index
-#' library("Rbowtie2")
-#' refs <- dir(system.file(package="esATAC", "extdata", "bt2","refs"),
-#' full=TRUE)
-#' bowtie2_build(references=refs, bt2Index=file.path(td, "lambda_virus"),
-#' "--threads 4 --quiet",overwrite=TRUE)
-#' ## Alignments
-#' reads_1 <- system.file(package="esATAC", "extdata", "bt2", "reads",
-#' "reads_1.fastq")
-#' reads_2 <- system.file(package="esATAC", "extdata", "bt2", "reads",
-#' "reads_2.fastq")
-#' if(file.exists(file.path(td, "lambda_virus.1.bt2"))){
-#'     (bowtie2Mapping(NULL,bt2Idx = file.path(td, "lambda_virus"),
-#'        samOutput = file.path(td, "result.sam"),
-#'        fastqInput1=reads_1,fastqInput2=reads_2,threads=3))
-#'     head(readLines(file.path(td, "result.sam")))
-#' }
+#' setGenome("hg19")
+#' foregroundBedPath <- system.file(package = "enrichTF", "extdata","testForeGround.bed")
+#' gen <- genBackground(inputForegroundBed = foregroundBedPath)
+#' enrichFindMotifsInRegions(gen,motifRc="integrate")
 
 
 
@@ -270,8 +224,8 @@ setGeneric("enrichRegionConnectTargetGene",function(prevStep,
 
 
 
-#' @rdname MotifsInRegions
-#' @aliases enrichMotifsInRegions
+#' @rdname RegionConnectTargetGene
+#' @aliases enrichRegionConnectTargetGene
 #' @export
 setMethod(
     f = "enrichRegionConnectTargetGene",
@@ -290,8 +244,8 @@ setMethod(
         invisible(step)
     }
 )
-#' @rdname MotifsInRegions
-#' @aliases motifsInRegions
+#' @rdname RegionConnectTargetGene
+#' @aliases regionConnectTargetGene
 #' @export
 regionConnectTargetGene <- function(inputForegroundBed,
                                     inputBackgroundBed,
