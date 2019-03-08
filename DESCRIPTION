@@ -1,11 +1,10 @@
 Package: enrichTF
 Type: Package
-Title: What the Package Does (Title Case)
+Title: Regular Elements Analasis
 Version: 0.1.0
 Author: Zheng Wei, Zhana Duren, Shining Ma
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
+Maintainer: Zheng Wei <wzwz@stanford.edu>
+Description: enrichTF is a package 
 License: GPL-3 | file
 Encoding: UTF-8
 LazyData: true
