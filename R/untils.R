@@ -58,6 +58,26 @@ convertPWMFileToPWMobj <- function(resultDirPaths){
     save(pwm,file = resultDirPaths)
 }
 
+
+dowloadMotifTFTableFile <- function(resultDirPaths){
+    genome <-getGenome()
+    download.file(url = "https://wzthu.github.io/enrich/refdata/MotifTFTable.RData",
+                  destfile = resultDirPaths,method = getOption("download.file.method"))
+
+}
+dowloadMotifWeightsFile <- function(resultDirPaths){
+    genome <-getGenome()
+    download.file(url = "https://wzthu.github.io/enrich/refdata/MotifWeights.RData",
+                  destfile = resultDirPaths,method = getOption("download.file.method"))
+
+}
+dowloadTFgeneRelMtxFile <- function(resultDirPaths){
+    genome <-getGenome()
+    download.file(url = "https://wzthu.github.io/enrich/refdata/TFgeneRelMtx.RData",
+                  destfile = resultDirPaths,method = getOption("download.file.method"))
+
+}
+
 checkAndInstall <- function(check = TRUE, ...){
     runWithFinishCheck(func = checkAndInstallBSgenome,refName = "bsgenome", resultVal = getBSgenome(getGenome()), execForNonRsFile = check)
     runWithFinishCheck(func = checkAndInstallGenomeFa,refName = "fasta", resultDirPaths = paste0(getGenome(),".fa"))
@@ -65,6 +85,9 @@ checkAndInstall <- function(check = TRUE, ...){
     runWithFinishCheck(func = convertPWMFileToPWMobj, "motifPWMOBJ", resultDirPaths = "motifPWMOBJ.RData")
     runWithFinishCheck(func = dowloadREgeneFile, "RE_gene_corr", resultDirPaths = "RE_gene_corr.bed")
     runWithFinishCheck(func = dowloadEnhancerREgeneFile, "Enhancer_RE_gene_corr", resultDirPaths = "Enhancer_RE_gene_corr.bed")
+    runWithFinishCheck(func = dowloadMotifTFTableFile, "MotifTFTable", resultDirPaths = "MotifTFTable.RData")
+    runWithFinishCheck(func = dowloadMotifWeightsFile, "MotifWeights", resultDirPaths = "MotifWeights.RData")
+    runWithFinishCheck(func = dowloadTFgeneRelMtxFile, "TFgeneRelMtx", resultDirPaths = "TFgeneRelMtx.RData")
 }
 
 
