@@ -153,94 +153,47 @@ setMethod(
     }
 )
 
-#' @name Bowtie2Mapping
-#' @importFrom Rbowtie2 bowtie2
-#' @title Use bowtie2 aligner to map reads to reference genome
+
+#' @name GenBackground
+#' @importFrom rtracklayer import
+#' @importFrom rtracklayer import.bed
+#' @title Generate background regions and reset foreground regions sizes
 #' @description
-#' Use bowtie2 aligner to map reads to reference genome
-#' @param atacProc \code{\link{ATACProc-class}} object scalar.
-#' It has to be the return value of upstream process:
-#' \code{\link{atacRemoveAdapter}}
-#' \code{\link{removeAdapter}}
-#' @param reportOutput \code{Character} scalar.
-#' The prefix of report files path.
-#' @param bt2Idx \code{Character} scalar.
-#' bowtie2 index files
-#' prefix: 'dir/basename'
-#' (minus trailing '.*.bt2' of 'dir/basename.*.bt2').
-#' @param samOutput \code{Character} scalar.
-#' A path to a SAM file
-#' used for the alignment output.
-#' @param fastqInput1 \code{Character} vector. For single-end sequencing,
-#' it contains sequence file paths.
-#' For paired-end sequencing, it can be file paths with #1 mates
-#' paired with file paths in fastqInput2.
-#' And it can also be interleaved file paths when argument
-#' interleaved=\code{TRUE}
-#' @param fastqInput2 \code{Character} vector. It contains file paths with
-#' #2 mates paired with file paths in fastqInput1.
-#' For single-end sequencing files and interleaved paired-end
-#' sequencing files(argument interleaved=\code{TRUE}),
-#' it must be \code{NULL}.
-#' @param paramList Additional arguments to be passed on to the binaries.
-#' See below for details.
-#' @param interleave \code{Logical}. Set \code{TRUE} when files are
-#' interleaved paired-end sequencing data.
-#' @param threads \code{Integer} scalar.
-#' The threads will be created in this process. default: 1
+#' Use uniform distribution to generate background regions on genome.
+#' The foreground regions' sizes will be unified into set length in argument
+#' @param prevStep \code{\link{Step-class}} object scalar.
+#' It has to be the return value of upstream process from other package like esATAC
+#' @param inputForegroundBed \code{Character} scalar.
+#' Foreground BED file directory.
+#' @param genome \code{Character} scalar.
+#' Bioconductor supported genome like "hg19", "mm10", etc.
+#' Default: NULL (call function like \code{setGenome("hg19")} first after library this package)
+#' @param outputForegroundBed \code{Character} scalar.
+#' Reshaped foreground region BED file directory.
+#' Default: NULL (generate base on inputForegroundBed)
+#' @param outputBackgroundBed \code{Character} scalar.
+#' Reshaped background region BED file directory
+#' Default: NULL (generate base on inputForegroundBed)
+#' @param outputRegionBed \code{Character} scalar.
+#' Merged foreground and background BED file.
+#' Default: NULL (generate base on inputForegroundBed)
+#' @param rangeLen \code{Character} scalar. The length of forground regions will be set. Default: 1000
+#' @param sampleNumb \code{numeric} scalar. The number of background regions will be sampled. Default: 10000
 #' @param ... Additional arguments, currently unused.
-#' @details The parameter related to input and output file path
-#' will be automatically
-#' obtained from \code{\link{ATACProc-class}} object(\code{atacProc}) or
-#' generated based on known parameters
-#' if their values are default(e.g. \code{NULL}).
-#' Otherwise, the generated values will be overwrited.
-#' If you want to use this function independently,
-#' you can use \code{bowtie2Mapping} instead.
-#’ All additional arguments in paramList are interpreted as
-#' additional parameters to be passed on to
-#' bowtie2. You can put all aditional
-#' arguments in one \code{Character}(e.g. "--threads 8 --no-mixed")
-#' with white space splited just like command line,
-#' or put them as \code{Character} vector
-#' (e.g. c("--threads","8","--no-mixed")). Note that some
-#' arguments("-x","--interleaved","-U","-1","-2","-S","threads") to the
-#' bowtie2 are invalid if they are already handled as explicit
-#' function arguments. See the output of
-#' \code{bowtie2_usage()} for details about available parameters.
-#' @return An invisible \code{\link{ATACProc-class}} object scalar for downstream analysis.
+#' @details
+#' Use uniform distribution to generate background regions on genome.
+#' The foreground regions' sizes will be unified into set length in argument
+#' @return An invisible \code{\link{EnrichTF-class}} object (\code{\link{Step-class}} based) scalar for downstream analysis.
 #' @author Zheng Wei
 #' @seealso
-#' \code{\link{atacRemoveAdapter}}
-#' \code{\link{removeAdapter}}
-#' \code{\link{bowtie2}}
-#' \code{\link{bowtie2_build}}
-#' \code{\link{bowtie2_usage}}
-#' \code{\link{atacSam2Bam}}
-#' \code{\link{atacSamToBed}}
-#' \code{\link{atacLibComplexQC}}
-#' @examples
-#' td <- tempdir()
-#' options(atacConf=setConfigure("tmpdir",td))
-#'
-#' ## Building a bowtie2 index
-#' library("Rbowtie2")
-#' refs <- dir(system.file(package="esATAC", "extdata", "bt2","refs"),
-#' full=TRUE)
-#' bowtie2_build(references=refs, bt2Index=file.path(td, "lambda_virus"),
-#' "--threads 4 --quiet",overwrite=TRUE)
-#' ## Alignments
-#' reads_1 <- system.file(package="esATAC", "extdata", "bt2", "reads",
-#' "reads_1.fastq")
-#' reads_2 <- system.file(package="esATAC", "extdata", "bt2", "reads",
-#' "reads_2.fastq")
-#' if(file.exists(file.path(td, "lambda_virus.1.bt2"))){
-#'     (bowtie2Mapping(NULL,bt2Idx = file.path(td, "lambda_virus"),
-#'        samOutput = file.path(td, "result.sam"),
-#'        fastqInput1=reads_1,fastqInput2=reads_2,threads=3))
-#'     head(readLines(file.path(td, "result.sam")))
-#' }
+#' \code{\link{regionConnectTargetGene}}
+#' \code{\link{findMotifsInRegions}}
+#' \code{\link{tfsEnrichInRegions}}
 
+#' @examples
+#'
+#' foregroundBedPath <- system.file(package = "enrichTF", "extdata","testForeGround.bed")
+#' gen <- genBackground(inputForegroundBed = foregroundBedPath,genome = "hg19")
 
 
 setGeneric("enrichGenBackground",function(prevStep,
@@ -271,7 +224,6 @@ setMethod(
                           sampleNumb = 10000,
                           ...){
         allpara <- c(list(Class = "GenBackground", prevSteps = list(prevStep)),as.list(environment()),list(...))
-
         step <- do.call(new,allpara)
         invisible(step)
     }
@@ -288,7 +240,6 @@ genBackground <- function(inputForegroundBed,
                           sampleNumb = 10000,
                           ...){
     allpara <- c(list(Class = "GenBackground", prevSteps = list()),as.list(environment()),list(...))
-
     step <- do.call(new,allpara)
     invisible(step)
 }

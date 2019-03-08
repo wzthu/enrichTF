@@ -2,6 +2,8 @@
 enrichTF-pipeline/
 test/
 test.R
+refdir/
+ttt.bed
 
 .DS_Store
 
