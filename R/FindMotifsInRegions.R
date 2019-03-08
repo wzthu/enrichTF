@@ -68,7 +68,7 @@ setMethod(
         for(i in 1:length(motif_ix)){
             motif_region_pair <- findOverlapPairs(motif_ix[[i]],regions,ignore.strand = TRUE)
             second(motif_region_pair)$score <- first(motif_region_pair)$score
-            second(motif_region_pair)$name <-paste(pwmObj[[i]]@tags$motifName,pwmObj[[i]]@tags$motifSrc,pwmObj[[i]]@tags$motifPlf,sep = '/')
+            second(motif_region_pair)$motifName <-paste(pwmObj[[i]]@tags$motifName,pwmObj[[i]]@tags$motifSrc,pwmObj[[i]]@tags$motifPlf,sep = '/')
             if(i == 1){
                 result <- second(motif_region_pair)
             }else{
@@ -79,7 +79,10 @@ setMethod(
 
         .Object@propList[["motifs_in_region"]] <- result
 
-        export.bed(result,con = outputRegionMotifBed)
+        write.table(as.data.frame(result)[,c("seqnames","start","end","name","score","motifName")],
+                    file = outputRegionMotifBed, sep="\t",quote = FALSE,row.names = FALSE,col.names = FALSE)
+
+   #     export.bed(result,con = outputRegionMotifBed)
 
         .Object
     }

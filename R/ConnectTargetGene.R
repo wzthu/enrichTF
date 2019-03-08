@@ -72,38 +72,38 @@ setMethod(
         erg <- import(con=regularGeneCorrBed,colnames=c("name","score","blockCount"))
 
         pairs <- findOverlapPairs(inputForegroundgr,rg)
-        first(pairs)$name  <- second(pairs)$name
+        first(pairs)$geneName  <- second(pairs)$name
         first(pairs)$score  <- second(pairs)$score
         first(pairs)$blockCount  <- second(pairs)$blockCount
 
         outputForegroundgr <- first(pairs)
 
         pairs <- findOverlapPairs(inputForegroundgr,erg)
-        first(pairs)$name  <- second(pairs)$name
+        first(pairs)$geneName  <- second(pairs)$name
         first(pairs)$score  <- second(pairs)$score
         first(pairs)$blockCount  <- second(pairs)$blockCount
 
         outputForegroundgr <- c(outputForegroundgr,first(pairs))
 
         pairs <- findOverlapPairs(inputBackgroundgr,rg)
-        first(pairs)$name  <- second(pairs)$name
+        first(pairs)$geneName  <- second(pairs)$name
         first(pairs)$score  <- second(pairs)$score
         first(pairs)$blockCount  <- second(pairs)$blockCount
 
         outputBackgroundgr <- first(pairs)
 
         pairs <- findOverlapPairs(inputBackgroundgr,erg)
-        first(pairs)$name  <- second(pairs)$name
+        first(pairs)$geneName  <- second(pairs)$name
         first(pairs)$score  <- second(pairs)$score
         first(pairs)$blockCount  <- second(pairs)$blockCount
 
         outputBackgroundgr <- c(outputBackgroundgr,first(pairs))
 
         write.table(as.data.frame(outputForegroundgr)[,c("seqnames","start","end","name","score",
-                                                         "strand","strand","strand","strand","blockCount")],
+                                                         "geneName","blockCount")],
                     outputForegroundBed,sep="\t",quote = FALSE,row.names = FALSE,col.names = FALSE)
         write.table(as.data.frame(outputBackgroundgr)[,c("seqnames","start","end","name","score",
-                                                         "strand","strand","strand","strand","blockCount")],
+                                                         "geneName","blockCount")],
                     outputBackgroundBed,sep="\t",quote = FALSE,row.names = FALSE,col.names = FALSE)
 #        export.bed(outputForegroundgr,outputForegroundBed)
 #        export.bed(outputBackgroundgr,outputBackgroundBed)

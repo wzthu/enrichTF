@@ -6,9 +6,13 @@
 
     addEdges(edges = c("GenBackground","FindMotifsInRegions",
                        "GenBackground","RegionConnectTargetGene",
-                       "FindMotifsInRegions","TFsEnrichInRegions"),
+                       "GenBackground","TFsEnrichInRegions"),
              argOrder = 1)
-    addEdges(edges = c("RegionConnectTargetGene","TFsEnrichInRegions"),
+    addEdges(edges = c( "FindMotifsInRegions","TFsEnrichInRegions"),
              argOrder = 2)
+    addEdges(edges = c("RegionConnectTargetGene","TFsEnrichInRegions"),
+             argOrder = 3)
+
+
 
 }
