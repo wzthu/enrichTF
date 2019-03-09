@@ -80,9 +80,6 @@ setMethod(
         inputTFgeneRelMtx <- getParam(.Object,"inputTFgeneRelMtx")
         inputMotifTFTable <- getParam(.Object,"inputMotifTFTable")
 
-        print(.Object@inputList)
-        print(.Object@outputList)
-        print(.Object@paramList)
 
         if(endsWith(inputMotifWeights,".RData")){
             load(inputMotifWeights)
@@ -152,18 +149,10 @@ setMethod(
             if(length(motifsOfTF)==0){
                 next
             }
-            print(i)
-
-
-            print(motifsOfTF)
 
             pvalueOfFisher<- sapply(1:length(motifsOfTF), function(motifsOfTFi) {
-                print(motifsOfTFi)
-
-
-
                 motif <- motifsOfTF[motifsOfTFi]
-                print(motif)
+
                 regionsName <- regionMotifBed[regionMotifBed$motifName == motif, c("name")]
                 foregroundGeneFalledInMotifReiong<-match(foregroundGeneBed$name , regionsName)
                 backgroundGeneFalledInMotifReiong<-match(BackgroundGeneBed$name , regionsName)
@@ -372,7 +361,6 @@ setMethod(
         allpara <- c(list(Class = "TFsEnrichInRegions", prevSteps = list(GenBackgroundStep,
                                                                          FindMotifsInRegionsStep,
                                                                          RegionConnectTargetGeneStep)),as.list(environment()),list(...))
-        print(allpara)
         step <- do.call(new,allpara)
         invisible(step)
     }
@@ -390,7 +378,6 @@ tfsEnrichInRegions <- function(inputRegionBed,
                                inputMotifTFTable = NULL,
                                ...){
     allpara <- c(list(Class = "TFsEnrichInRegions", prevSteps = list()),as.list(environment()),list(...))
-    print(allpara)
     step <- do.call(new,allpara)
     invisible(step)
 }

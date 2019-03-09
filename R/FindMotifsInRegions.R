@@ -7,7 +7,6 @@ setMethod(
     signature = "FindMotifsInRegions",
     definition = function(.Object,prevSteps = list(),...){
         allparam <- list(...)
-        print(allparam)
         inputRegionBed <- allparam[["inputRegionBed"]]
         motifRc <- allparam[["motifRc"]]
         inputPwmFile <- allparam[["inputPwmFile"]]
@@ -59,9 +58,6 @@ setMethod(
         genome <- getParam(.Object,"genome")
         outputRegionMotifBed <- getParam(.Object,"outputRegionMotifBed")
         regions <- import(con = inputRegionBed,format = "bed")
-        print(.Object@inputList)
-        print(.Object@outputList)
-        print(.Object@paramList)
         motif_ix <-motifmatchr::matchMotifs(pwms = pwmObj, subject = regions, genome = genome, out="positions")
         result <- c()
         .Object@propList[["motif_ix"]] <-motif_ix
@@ -206,7 +202,6 @@ setMethod(
                           genome = NULL,
                           ...){
         allpara <- c(list(Class = "FindMotifsInRegions", prevSteps = list(prevStep)),as.list(environment()),list(...))
-        print(allpara)
         step <- do.call(new,allpara)
         invisible(step)
     }
@@ -221,7 +216,6 @@ findMotifsInRegions <- function(inputRegionBed,
                                 genome = NULL,
                                 ...){
     allpara <- c(list(Class = "FindMotifsInRegions", prevSteps = list()),as.list(environment()),list(...))
-    print(allpara)
     step <- do.call(new,allpara)
     invisible(step)
 }

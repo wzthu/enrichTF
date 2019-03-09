@@ -239,7 +239,6 @@ setMethod(
                           enhancerRegularGeneCorrBed = NULL,
                           ...){
         allpara <- c(list(Class = "RegionConnectTargetGene", prevSteps = list(prevStep)),as.list(environment()),list(...))
-        print(allpara)
         step <- do.call(new,allpara)
         invisible(step)
     }
@@ -255,7 +254,6 @@ regionConnectTargetGene <- function(inputForegroundBed,
                                     enhancerRegularGeneCorrBed = NULL,
                                     ...){
     allpara <- c(list(Class = "RegionConnectTargetGene", prevSteps = list()),as.list(environment()),list(...))
-    print(allpara)
     step <- do.call(new,allpara)
     invisible(step)
 }
