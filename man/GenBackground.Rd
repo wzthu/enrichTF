@@ -15,11 +15,11 @@ enrichGenBackground(prevStep, inputForegroundBed = NULL, genome = NULL,
 \S4method{enrichGenBackground}{Step}(prevStep, inputForegroundBed = NULL,
   genome = NULL, outputForegroundBed = NULL,
   outputBackgroundBed = NULL, outputRegionBed = NULL,
-  rangeLen = 1000, sampleNumb = 10000, ...)
+  rangeLen = 1000, sampleNumb = NULL, ...)
 
 genBackground(inputForegroundBed, genome = NULL,
   outputForegroundBed = NULL, outputBackgroundBed = NULL,
-  outputRegionBed = NULL, rangeLen = 1000, sampleNumb = 10000, ...)
+  outputRegionBed = NULL, rangeLen = 1000, sampleNumb = NULL, ...)
 }
 \arguments{
 \item{prevStep}{\code{\link{Step-class}} object scalar.
