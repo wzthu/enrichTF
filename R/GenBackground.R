@@ -47,7 +47,6 @@ setMethod(
             .Object@paramList[["bsgenome"]] <- BSgenome::getBSgenome(genome = genome)
         }
         .Object@paramList[["rangeLen"]] <- rangeLen
-        message("rangeLen")
         if(is.null(sampleNumb)){
             .Object@paramList[["sampleNumb"]] <- 0
         }else{

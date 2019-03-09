@@ -7,7 +7,6 @@ setMethod(
     signature = "RegionConnectTargetGene",
     definition = function(.Object,prevSteps = list(),...){
         allparam <- list(...)
-        print(allparam)
         inputForegroundBed <- allparam[["inputForegroundBed"]]
         inputBackgroundBed <- allparam[["inputBackgroundBed"]]
         outputForegroundBed <- allparam[["outputForegroundBed"]]
@@ -60,10 +59,6 @@ setMethod(
         outputBackgroundBed <- getParam(.Object,"outputBackgroundBed")
         regularGeneCorrBed <- getParam(.Object,"regularGeneCorrBed")
         enhancerRegularGeneCorrBed <- getParam(.Object,"enhancerRegularGeneCorrBed")
-
-        print(.Object@inputList)
-        print(.Object@outputList)
-        print(.Object@paramList)
 
         inputForegroundgr <- import(con=inputForegroundBed)
         inputBackgroundgr <- import(con=inputBackgroundBed)
@@ -209,7 +204,7 @@ setMethod(
 #' setGenome("hg19")
 #' foregroundBedPath <- system.file(package = "enrichTF", "extdata","testForeGround.bed")
 #' gen <- genBackground(inputForegroundBed = foregroundBedPath)
-#' enrichFindMotifsInRegions(gen,motifRc="integrate")
+#' conTG <- enrichRegionConnectTargetGene(gen)
 
 
 

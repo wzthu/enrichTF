@@ -7,7 +7,6 @@ setMethod(
     signature = "TFsEnrichInRegions",
     definition = function(.Object,prevSteps = list(),...){
         allparam <- list(...)
-        print(allparam)
         inputRegionBed <- allparam[["inputRegionBed"]]
         inputForegroundGeneBed <- allparam[["inputForegroundGeneBed"]]
         inputBackgroundGendBed <- allparam[["inputBackgroundGendBed"]]
