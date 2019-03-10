@@ -34,7 +34,7 @@ setMethod(
             .Object@inputList[["pwmObj"]] <- JASPAR2018::JASPAR2018
 
         }else if(motifRc == "pwmfile"){
-            .Object@inputList[["pwmObj"]] <- inputPwmFile
+            .Object@inputList[["pwmObj"]] <- getMotifInfo1(inputPwmFile)
         }
 
 
@@ -48,6 +48,9 @@ setMethod(
     }
 )
 
+#' @importFrom parallel parLapply
+#' @importFrom parallel stopCluster
+#' @importFrom parallel makeCluster
 
 setMethod(
     f = "processing",
@@ -58,13 +61,16 @@ setMethod(
         genome <- getParam(.Object,"genome")
         outputRegionMotifBed <- getParam(.Object,"outputRegionMotifBed")
         regions <- import(con = inputRegionBed,format = "bed")
-        motif_ix <-motifmatchr::matchMotifs(pwms = pwmObj, subject = regions, genome = genome, out="positions")
+        cl <- makeCluster(getThreads())
+        motif_ix <-parallel::parLapply(pwmObj,motifmatchr::matchMotifs,subject = regions, genome = genome, out="positions",cl = cl)
+        stopCluster(cl)
+        #motifmatchr::matchMotifs(pwms = pwmObj, subject = regions, genome = genome, out="positions")
         result <- c()
         .Object@propList[["motif_ix"]] <-motif_ix
         for(i in 1:length(motif_ix)){
-            motif_region_pair <- findOverlapPairs(motif_ix[[i]],regions,ignore.strand = TRUE)
+            motif_region_pair <- findOverlapPairs(motif_ix[[i]][[1]],regions,ignore.strand = TRUE)
             second(motif_region_pair)$score <- first(motif_region_pair)$score
-            second(motif_region_pair)$motifName <-paste(pwmObj[[i]]@tags$motifName,pwmObj[[i]]@tags$motifSrc,pwmObj[[i]]@tags$motifPlf,sep = '/')
+            second(motif_region_pair)$motifName <-pwmObj[[i]]@name
             if(i == 1){
                 result <- second(motif_region_pair)
             }else{
@@ -182,8 +188,8 @@ setGeneric("enrichFindMotifsInRegions",function(prevStep,
                                           inputRegionBed = NULL,
                                           outputRegionMotifBed = NULL,
                                           motifRc = c("integrate","jaspar","pwmfile"),
-                                          inputPwmFile = NULL,
-                                          genome = NULL,
+                                          inputPwmFile = getRefFiles("motifpwm"),
+                                          genome = getGenome(),
                                           ...) standardGeneric("enrichFindMotifsInRegions"))
 
 
@@ -198,8 +204,8 @@ setMethod(
                           inputRegionBed = NULL,
                           outputRegionMotifBed = NULL,
                           motifRc = c("integrate","jaspar","pwmfile"),
-                          inputPwmFile = NULL,
-                          genome = NULL,
+                          inputPwmFile = getRefFiles("motifpwm"),
+                          genome = getGenome(),
                           ...){
         allpara <- c(list(Class = "FindMotifsInRegions", prevSteps = list(prevStep)),as.list(environment()),list(...))
         step <- do.call(new,allpara)
@@ -212,8 +218,8 @@ setMethod(
 findMotifsInRegions <- function(inputRegionBed,
                                 outputRegionMotifBed,
                                 motifRc = c("integrate","jaspar","pwmfile"),
-                                inputPwmFile = NULL,
-                                genome = NULL,
+                                inputPwmFile = getRefFiles("motifpwm"),
+                                genome = getGenome(),
                                 ...){
     allpara <- c(list(Class = "FindMotifsInRegions", prevSteps = list()),as.list(environment()),list(...))
     step <- do.call(new,allpara)

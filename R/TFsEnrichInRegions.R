@@ -9,7 +9,7 @@ setMethod(
         allparam <- list(...)
         inputRegionBed <- allparam[["inputRegionBed"]]
         inputForegroundGeneBed <- allparam[["inputForegroundGeneBed"]]
-        inputBackgroundGendBed <- allparam[["inputBackgroundGendBed"]]
+        inputBackgroundGeneBed <- allparam[["inputBackgroundGeneBed"]]
         inputRegionMotifBed <- allparam[["inputRegionMotifBed"]]
         outputTFsEnrichTxt <- allparam[["outputTFsEnrichTxt"]]
         inputMotifWeights <- allparam[["inputMotifWeights"]]
@@ -22,7 +22,7 @@ setMethod(
             .Object@inputList[["inputRegionBed"]] <- getParam(GenBackgroundStep,"outputRegionBed")
             .Object@inputList[["inputRegionMotifBed"]] <- getParam(FindMotifsInRegionsStep,"outputRegionMotifBed")
             .Object@inputList[["inputForegroundGeneBed"]] <- getParam(RegionConnectTargetGeneStep,"outputForegroundBed")
-            .Object@inputList[["inputBackgroundGendBed"]] <- getParam(RegionConnectTargetGeneStep,"outputBackgroundBed")
+            .Object@inputList[["inputBackgroundGeneBed"]] <- getParam(RegionConnectTargetGeneStep,"outputBackgroundBed")
         }
 
 
@@ -41,8 +41,8 @@ setMethod(
         if(!is.null(inputForegroundGeneBed)){
             .Object@inputList[["inputForegroundGeneBed"]] <- inputForegroundGeneBed
         }
-        if(!is.null(inputBackgroundGendBed)){
-            .Object@inputList[["inputBackgroundGendBed"]] <- inputBackgroundGendBed
+        if(!is.null(inputBackgroundGeneBed)){
+            .Object@inputList[["inputBackgroundGeneBed"]] <- inputBackgroundGeneBed
         }
 
         if(is.null(inputMotifWeights)){
@@ -72,12 +72,13 @@ setMethod(
 
         inputRegionBed <- getParam(.Object,"inputRegionBed")
         inputForegroundGeneBed <- getParam(.Object,"inputForegroundGeneBed")
-        inputBackgroundGendBed <- getParam(.Object,"inputBackgroundGendBed")
+        inputBackgroundGeneBed <- getParam(.Object,"inputBackgroundGendBed")
         inputRegionMotifBed <- getParam(.Object,"inputRegionMotifBed")
         outputTFsEnrichTxt <- getParam(.Object,"outputTFsEnrichTxt")
         inputMotifWeights <- getParam(.Object,"inputMotifWeights")
         inputTFgeneRelMtx <- getParam(.Object,"inputTFgeneRelMtx")
         inputMotifTFTable <- getParam(.Object,"inputMotifTFTable")
+
 
 
         if(endsWith(inputMotifWeights,".RData")){
@@ -117,8 +118,8 @@ setMethod(
         foregroundGeneBed  <- read.table(inputForegroundGeneBed,sep = "\t")
         colnames(foregroundGeneBed) <- c("seqnames","start","end","name","score",
                                          "geneName","blockCount")
-        backgroundGendBed <- read.table(inputBackgroundGendBed,sep = "\t")
-        colnames(backgroundGendBed)  <- c("seqnames","start","end","name","score",
+        backgroundGeneBed <- read.table(inputBackgroundGeneBed,sep = "\t")
+        colnames(backgroundGeneBed)  <- c("seqnames","start","end","name","score",
                                           "geneName","blockCount")
         regionMotifBed <- read.table(inputRegionMotifBed,sep = "\t")
         colnames(regionMotifBed) <- c("seqnames","start","end","name","score","motifName")
@@ -128,71 +129,97 @@ setMethod(
         inputMotifWeights <- cbind(inputMotifWeights,motifWeight1)
         regionMotifWeight <- inputMotifWeights[motifidx[!is.na(motifidx)],]
 
-#        foregroundRegionGene <- merge(x=foregroundGeneBed,y=genes, by.x = "geneName" ,  by.y = "genName")
-#        backgroundRegionGene <- merge(x=backgroundGendBed,y=genes, by.x = "geneName" ,  by.y = "genName")
+        #        foregroundRegionGene <- merge(x=foregroundGeneBed,y=genes, by.x = "geneName" ,  by.y = "genName")
+        #        backgroundRegionGene <- merge(x=backgroundGeneBed,y=genes, by.x = "geneName" ,  by.y = "genName")
 
-#        rbind(foregroundRegionGene,backgroundRegionGene)
+        #        rbind(foregroundRegionGene,backgroundRegionGene)
 
         pValue <- matrix(1,nrow = length(tfName),ncol = 4)
 
-        for(i in 1:length(tfName)){
 
+        cl <- makeCluster(getThreads())
 
-
+        #for(i in 1:length(tfName)){
+        allpValue<-parLapply(X = 1:length(tfName), fun = function(i,
+                                                                  geneName,
+                                                                  tfName,
+                                                                  pValue,
+                                                                  inputTFgeneRelMtx,
+                                                                  foregroundGeneBed,
+                                                                  backgroundGeneBed,
+                                                                  inputMotifTFTable,
+                                                                  regionMotifBed){
+            print(i)
+            print(Sys.time())
             pValue[i,2] <- t.test(x = inputTFgeneRelMtx[i,foregroundGeneBed$geneName],
-                                 y = inputTFgeneRelMtx[i,backgroundGendBed$geneName],
-                                 alternative = "greater")$p.value
+                                  y = inputTFgeneRelMtx[i,backgroundGeneBed$geneName],
+                                  alternative = "greater")$p.value
 
             motifsOfTF <- inputMotifTFTable[inputMotifTFTable$tfName == tfName[i],1]
 
             if(length(motifsOfTF)==0){
-                next
+                return(pValue[i,]) #next
             }
-
+            print(Sys.time())
             pvalueOfFisher<- sapply(1:length(motifsOfTF), function(motifsOfTFi) {
-                motif <- motifsOfTF[motifsOfTFi]
+                motif <- as.character(motifsOfTF[motifsOfTFi])
 
                 regionsName <- regionMotifBed[regionMotifBed$motifName == motif, c("name")]
                 foregroundGeneFalledInMotifReiong<-match(foregroundGeneBed$name , regionsName)
-                backgroundGeneFalledInMotifReiong<-match(BackgroundGeneBed$name , regionsName)
+                backgroundGeneFalledInMotifReiong<-match(backgroundGeneBed$name , regionsName)
 
 
                 fisherMtx <- matrix(0,nrow = 2,ncol = 2)
                 fisherMtx[1,1] <- sum(!is.na(foregroundGeneFalledInMotifReiong))
                 fisherMtx[1,2] <- sum(is.na(foregroundGeneFalledInMotifReiong))
-                fisherMtx[2,1] <- sum(!is.na(foregroundGeneFalledInMotifReiong))
-                fisherMtx[2,2] <- sum(is.na(foregroundGeneFalledInMotifReiong))
+                fisherMtx[2,1] <- sum(!is.na(backgroundGeneFalledInMotifReiong))
+                fisherMtx[2,2] <- sum(is.na(backgroundGeneFalledInMotifReiong))
 
                 fisher.test(fisherMtx)$p.value
             })
+            print(Sys.time())
             pValue[i,1] <- min(pvalueOfFisher)
-            motif <- motifsOfTF[which.min(pvalueOfFisher)]
+            motif <- as.character(motifsOfTF[which.min(pvalueOfFisher)])
             regionsName <- regionMotifBed[regionMotifBed$motifName == motif, c("name")]
             foregroundGeneFalledInMotifReiong<-match(foregroundGeneBed$name , regionsName)
-            backgroundGeneFalledInMotifReiong<-match(BackgroundGeneBed$name , regionsName)
-
+            backgroundGeneFalledInMotifReiong<-match(backgroundGeneBed$name , regionsName)
+            print(Sys.time())
             pvalueOfFisher1 <- sapply(-9:9, function(cut_off){
                 cut_off <- cut_off /10
                 genesName <- geneName[inputTFgeneRelMtx[i,] > cut_off]
                 foregroundGeneAboveCutOff<-match(foregroundGeneBed$geneName , regionsName)
-                backgroundGeneAboveCutOff<-match(BackgroundGeneBed$geneName , regionsName)
+                backgroundGeneAboveCutOff<-match(backgroundGeneBed$geneName , regionsName)
 
                 forePos <- is.na(foregroundGeneFalledInMotifReiong) & is.na(foregroundGeneAboveCutOff)
-                backPos <- is.na(foregroundGeneFalledInMotifReiong) & is.na(backgroundGeneAboveCutOff)
+                backPos <- is.na(backgroundGeneFalledInMotifReiong) & is.na(backgroundGeneAboveCutOff)
 
                 fisherMtx <- matrix(0,nrow = 2,ncol = 2)
                 fisherMtx[1,1] <- sum(!forePos)
                 fisherMtx[1,2] <- sum(forePos)
-                fisherMtx[2,1] <- sum(!backPosg)
+                fisherMtx[2,1] <- sum(!backPos)
                 fisherMtx[2,2] <- sum(backPos)
 
                 fisher.test(fisherMtx)$p.value
             })
-            pValue[i,3] <- min(pvalueOfFisher)
 
-
+            pValue[i,3] <- min(pvalueOfFisher1)
+            print(Sys.time())
+            return(pValue[i,])
 
         }
+        ,geneName
+        ,tfName
+        ,pValue
+        ,inputTFgeneRelMtx =inputTFgeneRelMtx,
+        foregroundGeneBed = foregroundGeneBed,
+        backgroundGeneBed =backgroundGeneBed,
+        inputMotifTFTable =inputMotifTFTable,
+        regionMotifBed = regionMotifBed,
+        cl = cl)
+
+        pValue <- matrix(unlist(allpValue),nrow = length(tfName),ncol = 4,byrow = TRUE)
+
+        stopCluster(cl)
 
         pValue[is.na(pValue)] <- 1
         pValue[pValue>1] <- 1
@@ -205,8 +232,6 @@ setMethod(
         pValue <- pValue[order(score,decreasing = TRUE),]
 
         write.table(pValue,file = outputTFsEnrichTxt,quote = FALSE, row.names = FALSE,sep = "\t")
-
-
 
         .Object
     }
@@ -222,8 +247,8 @@ setMethod(
         if(is.null(.Object@inputList[["inputForegroundGeneBed"]])){
             stop("inputForegroundGeneBed is required.")
         }
-        if(is.null(.Object@inputList[["inputBackgroundGendBed"]])){
-            stop("inputBackgroundGendBed is required.")
+        if(is.null(.Object@inputList[["inputBackgroundGeneBed"]])){
+            stop("inputBackgroundGeneBed is required.")
         }
         if(is.null(.Object@inputList[["inputRegionMotifBed"]])){
             stop("inputRegionMotifBed is required.")
@@ -240,7 +265,7 @@ setMethod(
     definition = function(.Object,...){
         checkFileExist(.Object@inputList[["inputRegionBed"]])
         checkFileExist(.Object@inputList[["inputForegroundGeneBed"]])
-        checkFileExist(.Object@inputList[["inputBackgroundGendBed"]])
+        checkFileExist(.Object@inputList[["inputBackgroundGeneBed"]])
         checkFileExist(.Object@inputList[["inputRegionMotifBed"]])
 
     }
@@ -290,7 +315,7 @@ setMethod(
 #' Regions BED file including foreground and background
 #' @param inputForegroundGeneBed \code{Character} scalar.
 #' Regions BED file including foreground and background
-#' @param inputBackgroundGendBed \code{Character} scalar.
+#' @param inputBackgroundGeneBed \code{Character} scalar.
 #' Regions BED file with motif candidates.
 #' @param inputRegionMotifBed \code{Character} scalar.
 #' Regions BED file with motif candidates.
@@ -329,7 +354,7 @@ setGeneric("enrichTFsEnrichInRegions",function(GenBackgroundStep,
                                                RegionConnectTargetGeneStep,
                                                inputRegionBed = NULL,
                                                inputForegroundGeneBed = NULL,
-                                               inputBackgroundGendBed = NULL,
+                                               inputBackgroundGeneBed = NULL,
                                                inputRegionMotifBed = NULL,
                                                outputTFsEnrichTxt = NULL,
                                                inputMotifWeights = NULL,
@@ -350,7 +375,7 @@ setMethod(
                           RegionConnectTargetGeneStep,
                           inputRegionBed = NULL,
                           inputForegroundGeneBed = NULL,
-                          inputBackgroundGendBed = NULL,
+                          inputBackgroundGeneBed = NULL,
                           inputRegionMotifBed = NULL,
                           outputTFsEnrichTxt = NULL,
                           inputMotifWeights = NULL,
@@ -369,7 +394,7 @@ setMethod(
 #' @export
 tfsEnrichInRegions <- function(inputRegionBed,
                                inputForegroundGeneBed,
-                               inputBackgroundGendBed,
+                               inputBackgroundGeneBed,
                                inputRegionMotifBed,
                                outputTFsEnrichTxt = NULL,
                                inputMotifWeights = NULL,

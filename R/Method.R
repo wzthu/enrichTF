@@ -21,8 +21,9 @@
 #' foregroundBedPath <- system.file(package = "enrichTF", "extdata","testForeGround.bed")
 #' PECA_TF_enrich(inputForegroundBed = foregroundBedPath, genome = "hg19")
 
-PECA_TF_enrich <- function(inputForegroundBed, genome, ...){
+PECA_TF_enrich <- function(inputForegroundBed, genome, threads = 2, ...){
     setGenome(genome)
+    setThreads(threads)
     gen <- genBackground(inputForegroundBed = inputForegroundBed,...)
     conTG <- enrichRegionConnectTargetGene(gen,...)
     findMotif <- enrichFindMotifsInRegions(gen,motifRc="integrate",...)
