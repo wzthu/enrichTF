@@ -79,7 +79,7 @@ getMotifInfo1 <- function(motiffile = NULL){
     for(line in lines){
         if(substring(line, 1, 1) == ">"){
             if(!is.null(motifName)){
-                pwm <- matrix(data = p, nrow = 4, dimnames = list(c("A","C","G","T")))
+                pwm <- log2(matrix(data = p, nrow = 4, dimnames = list(c("A","C","G","T"))) * 4)
                 p_matrix <- TFBSTools::PWMatrix(profileMatrix = pwm,
                                                 name = motifName,
                                                 tags = list(seq=exseq,
@@ -99,7 +99,7 @@ getMotifInfo1 <- function(motiffile = NULL){
             p <- c(p,val)
         }
     }
-    pwm <- matrix(data = as.numeric(p), nrow = 4, dimnames = list(c("A","C","G","T")))
+    pwm <- log2(matrix(data = as.numeric(p), nrow = 4, dimnames = list(c("A","C","G","T")))*4)
     p_matrix <- TFBSTools::PWMatrix(profileMatrix = pwm,
                                     name = motifName,
                                     tags = list(seq=exseq,
