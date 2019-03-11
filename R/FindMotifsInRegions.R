@@ -142,30 +142,31 @@ setMethod(
 
 #' @name MotifsInRegions
 #' @importFrom motifmatchr matchMotifs
-#' @title Find motifs in all provided regions
+#' @title Find motifs in all input sequence regions
 #' @description
-#' Use prepared motifs pwm to scan regions and give motif candidates in regions.
+#' Scan for motif occurrences using the prepared PWMs and obtain the promising candidate motifs in these regions.
 #' @param prevStep \code{\link{Step-class}} object scalar.
-#' It has to be the return value of upstream process from \code{\link{genBackground}} and \code{\link{enrichGenBackground}}
+#' It needs to be the return value of upstream process from \code{\link{genBackground}} or \code{\link{enrichGenBackground}}
 #' @param inputRegionBed \code{Character} scalar.
-#' Regions BED file including foreground and background
+#' BED file for regions including foreground and background sequences.
 #' @param outputRegionMotifBed \code{Character} scalar.
-#' Regions BED file with motif candidates.
-#' Default: NULL (generate base on inputForegroundBed)
+#' BED file for regions with motif candidates.
+#' Default: NULL (generated base on inputForegroundBed)
 #' @param motifRc \code{Character} scalar.
-#' Motif Resources can be one of "integrate"
-#' (integrated by us and can be download from internet automatically
-#' if call function like \code{setGenome("hg19")} first after library this package),
-#' "jaspar" package JASPAR2018,
-#' and "pwmfile" (user defined PWM file. when this is set, inputPwmFile is required)
+#' Motif Resources can be one of "integrate" 
+#' (integrated by us and can be download from internet automatically 
+#' if call the function \code{setGenome("hg19")}), 
+#' "jaspar" package JASPAR2018, 
+#' or "pwmfile" (User defined PWM file. inputPwmFile is required).
 #' @param inputPwmFile \code{Character} scalar.
-#' when "pwmfile" is set for motifRc, users use this argument to provid PWM file directory
+#' when "pwmfile" is set for motifRc, use this argument to provide PWM file directory.
 #' @param genome \code{Character} scalar.
-#' Bioconductor supported genome like "hg19", "mm10", etc.
-#' Default: NULL (call function like \code{setGenome("hg19")} first after library this package)
+#' Bioconductor supported genome, such as "hg19", "mm10", etc. 
+#' Default: NULL (e.g. after \code{library (enrichTF)}, you can call function \code{setGenome("hg19")})
 #' @param ... Additional arguments, currently unused.
 #' @details
-#' Connect foreground and background regions to targetGene
+#' Scan for motif occurrences using the prepared PWMs and 
+#' obtain the promising candidate motifs in these regions.
 #' @return An invisible \code{\link{EnrichTF-class}} object (\code{\link{Step-class}} based) scalar for downstream analysis.
 #' @author Zheng Wei
 #' @seealso
