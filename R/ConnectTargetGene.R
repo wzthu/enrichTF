@@ -7,7 +7,6 @@ setMethod(
     signature = "RegionConnectTargetGene",
     definition = function(.Object,prevSteps = list(),...){
         allparam <- list(...)
-        print(allparam)
         inputForegroundBed <- allparam[["inputForegroundBed"]]
         inputBackgroundBed <- allparam[["inputBackgroundBed"]]
         outputForegroundBed <- allparam[["outputForegroundBed"]]
@@ -61,10 +60,6 @@ setMethod(
         regularGeneCorrBed <- getParam(.Object,"regularGeneCorrBed")
         enhancerRegularGeneCorrBed <- getParam(.Object,"enhancerRegularGeneCorrBed")
 
-        print(.Object@inputList)
-        print(.Object@outputList)
-        print(.Object@paramList)
-
         inputForegroundgr <- import(con=inputForegroundBed)
         inputBackgroundgr <- import(con=inputBackgroundBed)
 
@@ -99,11 +94,11 @@ setMethod(
 
         outputBackgroundgr <- c(outputBackgroundgr,first(pairs))
 
-        write.table(as.data.frame(outputForegroundgr)[,c("seqnames","start","end","name","score",
-                                                         "geneName","blockCount")],
+        write.table(as.data.frame(outputForegroundgr[mcols(outputForegroundgr)$score>0.3])
+                    [,c("seqnames","start","end","name","score","geneName","blockCount")],
                     outputForegroundBed,sep="\t",quote = FALSE,row.names = FALSE,col.names = FALSE)
-        write.table(as.data.frame(outputBackgroundgr)[,c("seqnames","start","end","name","score",
-                                                         "geneName","blockCount")],
+        write.table(as.data.frame(outputBackgroundgr[mcols(outputBackgroundgr)$score>0.3])
+                    [,c("seqnames","start","end","name","score","geneName","blockCount")],
                     outputBackgroundBed,sep="\t",quote = FALSE,row.names = FALSE,col.names = FALSE)
 #        export.bed(outputForegroundgr,outputForegroundBed)
 #        export.bed(outputBackgroundgr,outputBackgroundBed)
@@ -209,7 +204,7 @@ setMethod(
 #' setGenome("hg19")
 #' foregroundBedPath <- system.file(package = "enrichTF", "extdata","testForeGround.bed")
 #' gen <- genBackground(inputForegroundBed = foregroundBedPath)
-#' enrichFindMotifsInRegions(gen,motifRc="integrate")
+#' conTG <- enrichRegionConnectTargetGene(gen)
 
 
 
@@ -239,7 +234,6 @@ setMethod(
                           enhancerRegularGeneCorrBed = NULL,
                           ...){
         allpara <- c(list(Class = "RegionConnectTargetGene", prevSteps = list(prevStep)),as.list(environment()),list(...))
-        print(allpara)
         step <- do.call(new,allpara)
         invisible(step)
     }
@@ -255,7 +249,6 @@ regionConnectTargetGene <- function(inputForegroundBed,
                                     enhancerRegularGeneCorrBed = NULL,
                                     ...){
     allpara <- c(list(Class = "RegionConnectTargetGene", prevSteps = list()),as.list(environment()),list(...))
-    print(allpara)
     step <- do.call(new,allpara)
     invisible(step)
 }

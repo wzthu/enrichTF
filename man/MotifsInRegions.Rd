@@ -11,16 +11,17 @@
 \usage{
 enrichFindMotifsInRegions(prevStep, inputRegionBed = NULL,
   outputRegionMotifBed = NULL, motifRc = c("integrate", "jaspar",
-  "pwmfile"), inputPwmFile = NULL, genome = NULL, ...)
+  "pwmfile"), inputPwmFile = getRefFiles("motifpwm"),
+  genome = getGenome(), ...)
 
 \S4method{enrichFindMotifsInRegions}{Step}(prevStep,
   inputRegionBed = NULL, outputRegionMotifBed = NULL,
-  motifRc = c("integrate", "jaspar", "pwmfile"), inputPwmFile = NULL,
-  genome = NULL, ...)
+  motifRc = c("integrate", "jaspar", "pwmfile"),
+  inputPwmFile = getRefFiles("motifpwm"), genome = getGenome(), ...)
 
 findMotifsInRegions(inputRegionBed, outputRegionMotifBed,
-  motifRc = c("integrate", "jaspar", "pwmfile"), inputPwmFile = NULL,
-  genome = NULL, ...)
+  motifRc = c("integrate", "jaspar", "pwmfile"),
+  inputPwmFile = getRefFiles("motifpwm"), genome = getGenome(), ...)
 }
 \arguments{
 \item{prevStep}{\code{\link{Step-class}} object scalar.

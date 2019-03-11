@@ -4,14 +4,15 @@
                   defaultCheckAndInstallFunc = checkAndInstall
     )
 
-    addEdges(edges = c("GenBackground","FindMotifsInRegions",
-                       "GenBackground","RegionConnectTargetGene",
-                       "GenBackground","TFsEnrichInRegions"),
-             argOrder = 1)
+
     addEdges(edges = c( "FindMotifsInRegions","TFsEnrichInRegions"),
              argOrder = 2)
     addEdges(edges = c("RegionConnectTargetGene","TFsEnrichInRegions"),
              argOrder = 3)
+    addEdges(edges = c("GenBackground","FindMotifsInRegions",
+                       "GenBackground","RegionConnectTargetGene",
+                       "GenBackground","TFsEnrichInRegions"),
+             argOrder = 1)
 
 
 

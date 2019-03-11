@@ -63,7 +63,7 @@ Connect foreground and background regions to targetGene
 setGenome("hg19")
 foregroundBedPath <- system.file(package = "enrichTF", "extdata","testForeGround.bed")
 gen <- genBackground(inputForegroundBed = foregroundBedPath)
-enrichFindMotifsInRegions(gen,motifRc="integrate")
+conTG <- enrichRegionConnectTargetGene(gen)
 }
 \seealso{
 \code{\link{genBackground}}

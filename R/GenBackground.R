@@ -47,8 +47,12 @@ setMethod(
             .Object@paramList[["bsgenome"]] <- BSgenome::getBSgenome(genome = genome)
         }
         .Object@paramList[["rangeLen"]] <- rangeLen
-        message("rangeLen")
-        .Object@paramList[["sampleNumb"]] <- sampleNumb
+        if(is.null(sampleNumb)){
+            .Object@paramList[["sampleNumb"]] <- 0
+        }else{
+            .Object@paramList[["sampleNumb"]] <- sampleNumb
+        }
+
         .Object
     }
 )
@@ -94,6 +98,9 @@ setMethod(
         foregroundgr <- sort(foregroundgr,ignore.strand=TRUE)
         mcols(foregroundgr)$name <-  1:length(foregroundgr)
         export.bed(object = foregroundgr, con = outputForegroundBed)
+        if(sampleNumb == 0){
+            sampleNumb = length(foregroundgr)
+        }
         backgroundgr <- randomSampleOnGenome(rangeLen, sampleNumb, bsgenome)
         mcols(backgroundgr)$name <- (length(foregroundgr) + 1) : (length(foregroundgr) + length(backgroundgr))
         export.bed(object = backgroundgr, con = outputBackgroundBed)
@@ -222,7 +229,7 @@ setMethod(
                           outputBackgroundBed = NULL,
                           outputRegionBed = NULL,
                           rangeLen = 1000,
-                          sampleNumb = 10000,
+                          sampleNumb = NULL,
                           ...){
         allpara <- c(list(Class = "GenBackground", prevSteps = list(prevStep)),as.list(environment()),list(...))
         step <- do.call(new,allpara)
@@ -238,7 +245,7 @@ genBackground <- function(inputForegroundBed,
                           outputBackgroundBed = NULL,
                           outputRegionBed = NULL,
                           rangeLen = 1000,
-                          sampleNumb = 10000,
+                          sampleNumb = NULL,
                           ...){
     allpara <- c(list(Class = "GenBackground", prevSteps = list()),as.list(environment()),list(...))
     step <- do.call(new,allpara)
