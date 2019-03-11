@@ -62,7 +62,7 @@ setMethod(
         outputRegionMotifBed <- getParam(.Object,"outputRegionMotifBed")
         regions <- import(con = inputRegionBed,format = "bed")
         cl <- makeCluster(getThreads())
-        motif_ix <-parallel::parLapply(pwmObj,motifmatchr::matchMotifs,subject = regions, genome = genome, out="positions",cl = cl)
+        motif_ix <-parallel::parLapply(pwmObj,motifmatchr::matchMotifs,subject = regions, genome = genome, out="positions",p.cutoff = 5e-04, cl = cl)
         stopCluster(cl)
         #motifmatchr::matchMotifs(pwms = pwmObj, subject = regions, genome = genome, out="positions")
         result <- c()
@@ -72,9 +72,9 @@ setMethod(
             second(motif_region_pair)$score <- first(motif_region_pair)$score
             second(motif_region_pair)$motifName <-pwmObj[[i]]@name
             if(i == 1){
-                result <- second(motif_region_pair)
+                result <- second(motif_region_pair)[second(motif_region_pair)$score >= pwmObj[[i]]@tags$threshold]
             }else{
-                result <- c(result,second(motif_region_pair))
+                result <- c(result,second(motif_region_pair)[second(motif_region_pair)$score >= pwmObj[[i]]@tags$threshold])
             }
 
         }
