@@ -70,9 +70,10 @@ setMethod(
     signature = "TFsEnrichInRegions",
     definition = function(.Object,...){
 
+
         inputRegionBed <- getParam(.Object,"inputRegionBed")
         inputForegroundGeneBed <- getParam(.Object,"inputForegroundGeneBed")
-        inputBackgroundGeneBed <- getParam(.Object,"inputBackgroundGendBed")
+        inputBackgroundGeneBed <- getParam(.Object,"inputBackgroundGeneBed")
         inputRegionMotifBed <- getParam(.Object,"inputRegionMotifBed")
         outputTFsEnrichTxt <- getParam(.Object,"outputTFsEnrichTxt")
         inputMotifWeights <- getParam(.Object,"inputMotifWeights")
@@ -187,8 +188,8 @@ setMethod(
             pvalueOfFisher1 <- sapply(-9:9, function(cut_off){
                 cut_off <- cut_off /10
                 genesName <- geneName[inputTFgeneRelMtx[i,] > cut_off]
-                foregroundGeneAboveCutOff<-match(foregroundGeneBed$geneName , regionsName)
-                backgroundGeneAboveCutOff<-match(backgroundGeneBed$geneName , regionsName)
+                foregroundGeneAboveCutOff<-match(foregroundGeneBed$geneName , genesName)
+                backgroundGeneAboveCutOff<-match(backgroundGeneBed$geneName , genesName)
 
                 forePos <- is.na(foregroundGeneFalledInMotifReiong) & is.na(foregroundGeneAboveCutOff)
                 backPos <- is.na(backgroundGeneFalledInMotifReiong) & is.na(backgroundGeneAboveCutOff)
