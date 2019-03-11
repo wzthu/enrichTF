@@ -94,11 +94,11 @@ setMethod(
 
         outputBackgroundgr <- c(outputBackgroundgr,first(pairs))
 
-        write.table(as.data.frame(outputForegroundgr)[,c("seqnames","start","end","name","score",
-                                                         "geneName","blockCount")],
+        write.table(as.data.frame(outputForegroundgr[mcols(outputForegroundgr)$score>0.3])
+                    [,c("seqnames","start","end","name","score","geneName","blockCount")],
                     outputForegroundBed,sep="\t",quote = FALSE,row.names = FALSE,col.names = FALSE)
-        write.table(as.data.frame(outputBackgroundgr)[,c("seqnames","start","end","name","score",
-                                                         "geneName","blockCount")],
+        write.table(as.data.frame(outputBackgroundgr[mcols(outputBackgroundgr)$score>0.3])
+                    [,c("seqnames","start","end","name","score","geneName","blockCount")],
                     outputBackgroundBed,sep="\t",quote = FALSE,row.names = FALSE,col.names = FALSE)
 #        export.bed(outputForegroundgr,outputForegroundBed)
 #        export.bed(outputBackgroundgr,outputBackgroundBed)
