@@ -4,7 +4,7 @@
 \alias{PECA_TF_enrich}
 \title{TF enrich with PECA2 mothod}
 \usage{
-PECA_TF_enrich(inputForegroundBed, genome, ...)
+PECA_TF_enrich(inputForegroundBed, genome, threads = 2, ...)
 }
 \arguments{
 \item{inputForegroundBed}{\code{Character} scalar.
