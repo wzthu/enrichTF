@@ -66,15 +66,19 @@ setMethod(
         outputRegionMotifBed <- getParam(.Object,"outputRegionMotifBed")
         regions <- import(con = inputRegionBed,format = "bed")
         cl <- makeCluster(getThreads())
-        motif_ix <-parallel::parLapply(pwmObj,motifmatchr::matchMotifs,subject = regions, genome = genome, out="positions",p.cutoff = 1e-05, cl = cl)
+        motif_ix <-parallel::parLapply(pwmObj,motifmatchr::matchMotifs,subject = regions, genome = genome, out="positions",p.cutoff = 1e-04, cl = cl)
         stopCluster(cl)
         #motifmatchr::matchMotifs(pwms = pwmObj, subject = regions, genome = genome, out="positions")
         result <- c()
         .Object@propList[["motif_ix"]] <-motif_ix
         for(i in 1:length(motif_ix)){
             motif_region_pair <- findOverlapPairs(motif_ix[[i]][[1]],regions,ignore.strand = TRUE)
-            second(motif_region_pair)$score <- first(motif_region_pair)$score
-            second(motif_region_pair)$motifName <-pwmObj[[i]]@name
+            if(length(second(motif_region_pair))>0){
+                second(motif_region_pair)$score <- first(motif_region_pair)$score
+                second(motif_region_pair)$motifName <-pwmObj[[i]]@name
+            }else{
+                next
+            }
             if(i == 1){
                 result <- second(motif_region_pair)[second(motif_region_pair)$score >= pwmObj[[i]]@tags$threshold]
             }else{
