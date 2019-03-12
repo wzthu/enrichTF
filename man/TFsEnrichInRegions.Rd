@@ -10,7 +10,7 @@
 \usage{
 enrichTFsEnrichInRegions(GenBackgroundStep, FindMotifsInRegionsStep,
   RegionConnectTargetGeneStep, inputRegionBed = NULL,
-  inputForegroundGeneBed = NULL, inputBackgroundGendBed = NULL,
+  inputForegroundGeneBed = NULL, inputBackgroundGeneBed = NULL,
   inputRegionMotifBed = NULL, outputTFsEnrichTxt = NULL,
   inputMotifWeights = NULL, inputTFgeneRelMtx = NULL,
   inputMotifTFTable = NULL, ...)
@@ -18,12 +18,12 @@ enrichTFsEnrichInRegions(GenBackgroundStep, FindMotifsInRegionsStep,
 \S4method{enrichTFsEnrichInRegions}{Step}(GenBackgroundStep,
   FindMotifsInRegionsStep, RegionConnectTargetGeneStep,
   inputRegionBed = NULL, inputForegroundGeneBed = NULL,
-  inputBackgroundGendBed = NULL, inputRegionMotifBed = NULL,
+  inputBackgroundGeneBed = NULL, inputRegionMotifBed = NULL,
   outputTFsEnrichTxt = NULL, inputMotifWeights = NULL,
   inputTFgeneRelMtx = NULL, inputMotifTFTable = NULL, ...)
 
 tfsEnrichInRegions(inputRegionBed, inputForegroundGeneBed,
-  inputBackgroundGendBed, inputRegionMotifBed, outputTFsEnrichTxt = NULL,
+  inputBackgroundGeneBed, inputRegionMotifBed, outputTFsEnrichTxt = NULL,
   inputMotifWeights = NULL, inputTFgeneRelMtx = NULL,
   inputMotifTFTable = NULL, ...)
 }
@@ -43,7 +43,7 @@ Regions BED file including foreground and background}
 \item{inputForegroundGeneBed}{\code{Character} scalar.
 Regions BED file including foreground and background}
 
-\item{inputBackgroundGendBed}{\code{Character} scalar.
+\item{inputBackgroundGeneBed}{\code{Character} scalar.
 Regions BED file with motif candidates.}
 
 \item{inputRegionMotifBed}{\code{Character} scalar.
