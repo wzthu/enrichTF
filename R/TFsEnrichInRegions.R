@@ -25,6 +25,21 @@ setMethod(
             .Object@inputList[["inputBackgroundGeneBed"]] <- getParam(RegionConnectTargetGeneStep,"outputBackgroundBed")
         }
 
+        if(!is.null(inputRegionBed)){
+            .Object@inputList[["inputRegionBed"]] <- inputRegionBed
+        }
+        if(!is.null(inputRegionMotifBed)){
+            .Object@inputList[["inputRegionMotifBed"]] <- inputRegionMotifBed
+        }
+        if(!is.null(inputForegroundGeneBed)){
+            .Object@inputList[["inputForegroundGeneBed"]] <- inputForegroundGeneBed
+        }
+        if(!is.null(inputBackgroundGeneBed)){
+            .Object@inputList[["inputBackgroundGeneBed"]] <- inputBackgroundGeneBed
+        }
+
+
+
 
         if(is.null(outputTFsEnrichTxt)){
             .Object@outputList[["outputTFsEnrichTxt"]] <- getAutoPath(.Object,originPath = .Object@inputList[["inputRegionBed"]],regexProcName = "allregion.bed",suffix = "PECA_TF_enrich.txt")
@@ -119,9 +134,11 @@ setMethod(
         foregroundGeneBed  <- read.table(inputForegroundGeneBed,sep = "\t")
         colnames(foregroundGeneBed) <- c("seqnames","start","end","name","score",
                                          "geneName","blockCount")
+        foregroundGeneBed <- foregroundGeneBed[!duplicated(foregroundGeneBed[,c("name","geneName")]),]
         backgroundGeneBed <- read.table(inputBackgroundGeneBed,sep = "\t")
         colnames(backgroundGeneBed)  <- c("seqnames","start","end","name","score",
                                           "geneName","blockCount")
+        backgroundGeneBed <- backgroundGeneBed[!duplicated(backgroundGeneBed[,c("name","geneName")]),]
         regionMotifBed <- read.table(inputRegionMotifBed,sep = "\t")
         colnames(regionMotifBed) <- c("seqnames","start","end","name","score","motifName")
 
@@ -150,10 +167,8 @@ setMethod(
                                                                   backgroundGeneBed,
                                                                   inputMotifTFTable,
                                                                   regionMotifBed){
-            print(i)
-            print(Sys.time())
-            pValue[i,2] <- t.test(x = inputTFgeneRelMtx[i,foregroundGeneBed$geneName],
-                                  y = inputTFgeneRelMtx[i,backgroundGeneBed$geneName],
+            pValue[i,2] <- t.test(x = inputTFgeneRelMtx[i,match(backgroundGeneBed$geneName,geneName)],
+                                  y = inputTFgeneRelMtx[i,match(foregroundGeneBed$geneName,geneName)],
                                   alternative = "greater")$p.value
 
             motifsOfTF <- inputMotifTFTable[inputMotifTFTable$tfName == tfName[i],1]
@@ -178,13 +193,11 @@ setMethod(
 
                 fisher.test(fisherMtx)$p.value
             })
-            print(Sys.time())
             pValue[i,1] <- min(pvalueOfFisher)
             motif <- as.character(motifsOfTF[which.min(pvalueOfFisher)])
             regionsName <- regionMotifBed[regionMotifBed$motifName == motif, c("name")]
             foregroundGeneFalledInMotifReiong<-match(foregroundGeneBed$name , regionsName)
             backgroundGeneFalledInMotifReiong<-match(backgroundGeneBed$name , regionsName)
-            print(Sys.time())
             pvalueOfFisher1 <- sapply(-9:9, function(cut_off){
                 cut_off <- cut_off /10
                 genesName <- geneName[inputTFgeneRelMtx[i,] > cut_off]
@@ -204,7 +217,6 @@ setMethod(
             })
 
             pValue[i,3] <- min(pvalueOfFisher1)
-            print(Sys.time())
             return(pValue[i,])
 
         }

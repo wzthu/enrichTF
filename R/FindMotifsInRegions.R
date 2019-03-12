@@ -21,6 +21,10 @@ setMethod(
 
         .Object@paramList[["motifRc"]] <- motifRc
 
+        if(!is.null(inputRegionBed)){
+            .Object@inputList[["inputRegionBed"]] <- inputRegionBed
+        }
+
         if(is.null(outputRegionMotifBed)){
             .Object@outputList[["outputRegionMotifBed"]] <- getAutoPath(.Object,originPath = .Object@inputList[["inputRegionBed"]],regexProcName = "allregion.bed",suffix = "region.motif.bed")
         }else{
@@ -62,7 +66,7 @@ setMethod(
         outputRegionMotifBed <- getParam(.Object,"outputRegionMotifBed")
         regions <- import(con = inputRegionBed,format = "bed")
         cl <- makeCluster(getThreads())
-        motif_ix <-parallel::parLapply(pwmObj,motifmatchr::matchMotifs,subject = regions, genome = genome, out="positions",p.cutoff = 5e-04, cl = cl)
+        motif_ix <-parallel::parLapply(pwmObj,motifmatchr::matchMotifs,subject = regions, genome = genome, out="positions",p.cutoff = 1e-05, cl = cl)
         stopCluster(cl)
         #motifmatchr::matchMotifs(pwms = pwmObj, subject = regions, genome = genome, out="positions")
         result <- c()
@@ -216,7 +220,7 @@ setMethod(
 #' @aliases motifsInRegions
 #' @export
 findMotifsInRegions <- function(inputRegionBed,
-                                outputRegionMotifBed,
+                                outputRegionMotifBed = NULL,
                                 motifRc = c("integrate","jaspar","pwmfile"),
                                 inputPwmFile = getRefFiles("motifpwm"),
                                 genome = getGenome(),
