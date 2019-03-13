@@ -317,7 +317,7 @@ setMethod(
 #' @name TFsEnrichInRegions
 #' @title Test each TF is enriched in regions or not
 #' @description
-#'Test each TF is enriched in regions or not
+#' Test each TF is enriched in regions or not
 #' @param GenBackgroundStep \code{\link{Step-class}} object scalar.
 #' It has to be the return value of upstream process from \code{\link{genBackground}} and \code{\link{enrichGenBackground}}
 #' @param FindMotifsInRegionsStep \code{\link{Step-class}} object scalar.
@@ -325,23 +325,24 @@ setMethod(
 #' @param RegionConnectTargetGeneStep \code{\link{Step-class}} object scalar.
 #' It has to be the return value of upstream process from \code{\link{genBackground}} and \code{\link{enrichGenBackground}}
 #' @param inputRegionBed \code{Character} scalar.
-#' Regions BED file including foreground and background
+#' Directory of Regions BED file  including foreground and background
 #' @param inputForegroundGeneBed \code{Character} scalar.
-#' Regions BED file including foreground and background
+#' Directory of BED file  including foreground regions connected to related genes. The forth colum is xxxxxxxxxxxxxxx, The fifth colum is xxxxxxxxxxxxxxx
 #' @param inputBackgroundGeneBed \code{Character} scalar.
-#' Regions BED file with motif candidates.
+#' Directory BED file including foreground regions connected to related genes. The forth colum is xxxxxxxxxxxxxxx, The fifth colum is xxxxxxxxxxxxxxx
 #' @param inputRegionMotifBed \code{Character} scalar.
-#' Regions BED file with motif candidates.
+#' Directory BED file  including foreground regions matched motifs. The forth colum is xxxxxxxxxxxxxxx, The fifth colum is xxxxxxxxxxxxxxx
 #' @param outputTFsEnrichTxt \code{Character} scalar.
-#' Regions BED file with motif candidates.
+#' Directory of Text result file  with five columns. The first columns is transcription factor ,The second column is xxxx
 #' @param inputMotifWeights \code{Character} scalar.
-#' Regions BED file with motif candidates.
-#' Default: NULL (generate base on inputForegroundBed)
+#' Directory of Text file contain motif weight. The first column is motif name. The second column is the weight.
+#' Default: NULL (if \code{setGenome} is called.)
 #' @param inputTFgeneRelMtx \code{Character} scalar.
-#' Regions BED file with motif candidates.
-#' Default: NULL (generate base on inputForegroundBed)
+#' Directory of Text file contain a Transcription Factior(TF) and Gene relation weight matrix.
+#' Default: NULL (if \code{setGenome} is called.)
 #' @param inputMotifTFTable \code{Character} scalar.
-#' when "pwmfile" is set for motifRc, users use this argument to provid PWM file directory
+#' Directory of Text file contain  Transcription Factior(TF) (the first column) and motif name(the second column).
+#' Default: NULL (if \code{setGenome} is called.)
 #' @param ... Additional arguments, currently unused.
 #' @details
 #' Connect foreground and background regions to targetGene

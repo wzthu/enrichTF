@@ -38,30 +38,31 @@ It has to be the return value of upstream process from \code{\link{findMotifsInR
 It has to be the return value of upstream process from \code{\link{genBackground}} and \code{\link{enrichGenBackground}}}
 
 \item{inputRegionBed}{\code{Character} scalar.
-Regions BED file including foreground and background}
+Directory of Regions BED file  including foreground and background}
 
 \item{inputForegroundGeneBed}{\code{Character} scalar.
-Regions BED file including foreground and background}
+Directory of BED file  including foreground regions connected to related genes. The forth colum is xxxxxxxxxxxxxxx, The fifth colum is xxxxxxxxxxxxxxx}
 
 \item{inputBackgroundGeneBed}{\code{Character} scalar.
-Regions BED file with motif candidates.}
+Directory BED file including foreground regions connected to related genes. The forth colum is xxxxxxxxxxxxxxx, The fifth colum is xxxxxxxxxxxxxxx}
 
 \item{inputRegionMotifBed}{\code{Character} scalar.
-Regions BED file with motif candidates.}
+Directory BED file  including foreground regions matched motifs. The forth colum is xxxxxxxxxxxxxxx, The fifth colum is xxxxxxxxxxxxxxx}
 
 \item{outputTFsEnrichTxt}{\code{Character} scalar.
-Regions BED file with motif candidates.}
+Directory of Text result file  with five columns. The first columns is transcription factor ,The second column is xxxx}
 
 \item{inputMotifWeights}{\code{Character} scalar.
-Regions BED file with motif candidates.
-Default: NULL (generate base on inputForegroundBed)}
+Directory of Text file contain motif weight. The first column is motif name. The second column is the weight.
+Default: NULL (if \code{setGenome} is called.)}
 
 \item{inputTFgeneRelMtx}{\code{Character} scalar.
-Regions BED file with motif candidates.
-Default: NULL (generate base on inputForegroundBed)}
+Directory of Text file contain a Transcription Factior(TF) and Gene relation weight matrix.
+Default: NULL (if \code{setGenome} is called.)}
 
 \item{inputMotifTFTable}{\code{Character} scalar.
-when "pwmfile" is set for motifRc, users use this argument to provid PWM file directory}
+Directory of Text file contain  Transcription Factior(TF) (the first column) and motif name(the second column).
+Default: NULL (if \code{setGenome} is called.)}
 
 \item{...}{Additional arguments, currently unused.}
 }

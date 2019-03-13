@@ -66,7 +66,7 @@ setMethod(
         outputRegionMotifBed <- getParam(.Object,"outputRegionMotifBed")
         regions <- import(con = inputRegionBed,format = "bed")
         cl <- makeCluster(getThreads())
-        motif_ix <-parallel::parLapply(pwmObj,motifmatchr::matchMotifs,subject = regions, genome = genome, out="positions",p.cutoff = 1e-04, cl = cl)
+        motif_ix <-parallel::parLapply(pwmObj,motifmatchr::matchMotifs,subject = regions, genome = genome, out="positions",p.cutoff = 5e-04, cl = cl)
         stopCluster(cl)
         #motifmatchr::matchMotifs(pwms = pwmObj, subject = regions, genome = genome, out="positions")
         result <- c()
@@ -163,19 +163,19 @@ setMethod(
 #' BED file for regions with motif candidates.
 #' Default: NULL (generated base on inputForegroundBed)
 #' @param motifRc \code{Character} scalar.
-#' Motif Resources can be one of "integrate" 
-#' (integrated by us and can be download from internet automatically 
-#' if call the function \code{setGenome("hg19")}), 
-#' "jaspar" package JASPAR2018, 
+#' Motif Resources can be one of "integrate"
+#' (integrated by us and can be download from internet automatically
+#' if call the function \code{setGenome("hg19")}),
+#' "jaspar" package JASPAR2018,
 #' or "pwmfile" (User defined PWM file. inputPwmFile is required).
 #' @param inputPwmFile \code{Character} scalar.
 #' when "pwmfile" is set for motifRc, use this argument to provide PWM file directory.
 #' @param genome \code{Character} scalar.
-#' Bioconductor supported genome, such as "hg19", "mm10", etc. 
+#' Bioconductor supported genome, such as "hg19", "mm10", etc.
 #' Default: NULL (e.g. after \code{library (enrichTF)}, you can call function \code{setGenome("hg19")})
 #' @param ... Additional arguments, currently unused.
 #' @details
-#' Scan for motif occurrences using the prepared PWMs and 
+#' Scan for motif occurrences using the prepared PWMs and
 #' obtain the promising candidate motifs in these regions.
 #' @return An invisible \code{\link{EnrichTF-class}} object (\code{\link{Step-class}} based) scalar for downstream analysis.
 #' @author Zheng Wei
