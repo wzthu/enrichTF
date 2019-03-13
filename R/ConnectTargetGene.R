@@ -177,30 +177,30 @@ setMethod(
 #' @importFrom TFBSTools getMatrixSet
 #' @importFrom TFBSTools PFMatrixList
 #' @importFrom TFBSTools PFMatrix
-#' @title Connect Region and Target Gene
+#' @title Connect regions with their target genes
 #' @description
-#' Connect foreground and background regions to targetGene
+#' Connect foreground and background regions to their target genes, which is predicted from PECA model.
 #' @param prevStep \code{\link{Step-class}} object scalar.
-#' It has to be the return value of upstream process from \code{\link{genBackground}} and \code{\link{enrichGenBackground}}
+#' It needs to be the return value of upstream process from \code{\link{genBackground}} or \code{\link{enrichGenBackground}}
 #' @param inputForegroundBed \code{Character} scalar.
-#' Foreground BED file directory.
+#' The BED file directory of foreground regions.
 #' @param inputBackgroundBed  \code{Character} scalar.
-#' Background BED file directory.
+#' The BED file directory of background regions.
 #' @param outputForegroundBed \code{Character} scalar.
-#' Gene connected foreground region BED file directory.
-#' Default: NULL (generate base on inputForegroundBed)
+#' The BED file directory of target genes connecting with foreground regions, which are derived from PECA model.
+#' Default: NULL (generated base on inputForegroundBed)
 #' @param outputBackgroundBed \code{Character} scalar.
-#' Gene connected background region BED file directory
-#' Default: NULL (generate base on inputForegroundBed)
-#' @param regularGeneCorrBed\code{Character} scalar.
-#' Gene region BED file directory
-#' Default: NULL ((call function like \code{setGenome("hg19")} first after library this package))
+#' The BED file directory of target genes connecting with background regions, which are derived from PECA model.
+#' Default: NULL (generated base on inputBackgroundBed)
+#' @param regularGeneCorrBed \code{Character} scalar.
+#' The BED file directory of target genes which are predicted from PECA.
+#' Default: NULL (e.g. after \code{library (enrichTF)}, you can call function \code{setGenome("hg19")})
 #' @param enhancerRegularGeneCorrBed \code{Character} scalar.
-#' Enhacer Gene region BED file directory
-#' Default: NULL ((call function like \code{setGenome("hg19")} first after library this package))
+#' The BED file directory of enhancer-targets predicted from PECA.
+#' Default: NULL (e.g. after \code{library (enrichTF)}, you can call function \code{setGenome("hg19")})
 #' @param ... Additional arguments, currently unused.
 #' @details
-#' Connect foreground and background regions to targetGene
+#' Connect foreground and background regions to target genes, which are predicted from PECA.
 #' @return An invisible \code{\link{EnrichTF-class}} object (\code{\link{Step-class}} based) scalar for downstream analysis.
 #' @author Zheng Wei
 #' @seealso

@@ -6,7 +6,7 @@
 \alias{enrichGenBackground,Step-method}
 \alias{enrichGenBackground}
 \alias{genBackground}
-\title{Generate background regions and reset foreground regions sizes}
+\title{Generate background regions and reset the size of foreground regions}
 \usage{
 enrichGenBackground(prevStep, inputForegroundBed = NULL, genome = NULL,
   outputForegroundBed = NULL, outputBackgroundBed = NULL,
@@ -23,30 +23,31 @@ genBackground(inputForegroundBed, genome = NULL,
 }
 \arguments{
 \item{prevStep}{\code{\link{Step-class}} object scalar.
-It has to be the return value of upstream process from other package like esATAC}
+It needs to be the return value of upstream process from other packages, such as esATAC.}
 
 \item{inputForegroundBed}{\code{Character} scalar.
-Foreground BED file directory.}
+The directory of foreground BED file.}
 
 \item{genome}{\code{Character} scalar.
-Bioconductor supported genome like "hg19", "mm10", etc.
-Default: NULL (call function like \code{setGenome("hg19")} first after library this package)}
+Bioconductor supported genome such as "hg19", "mm10", etc. 
+Default: NULL (e.g. after library (enrichTF), you can call function \code{setGenome("hg19")})}
 
 \item{outputForegroundBed}{\code{Character} scalar.
-Reshaped foreground region BED file directory.
-Default: NULL (generate base on inputForegroundBed)}
+The BED file directory of reshaped foreground regions. 
+Default: NULL (generated base on inputForegroundBed)}
 
 \item{outputBackgroundBed}{\code{Character} scalar.
-Reshaped background region BED file directory
-Default: NULL (generate base on inputForegroundBed)}
+The BED file directory of reshaped background regions. 
+Default: NULL (generated base on inputForegroundBed)}
 
 \item{outputRegionBed}{\code{Character} scalar.
-Merged foreground and background BED file.
-Default: NULL (generate base on inputForegroundBed)}
+Foreground and background merged BED files. 
+Default: NULL (generated base on inputForegroundBed)}
 
-\item{rangeLen}{\code{Character} scalar. The length of forground regions will be set. Default: 1000}
+\item{rangeLen}{\code{Character} scalar. It sets the length of forground sequence regions. Default: 1000}
 
-\item{sampleNumb}{\code{numeric} scalar. The number of background regions will be sampled. Default: 10000}
+\item{sampleNumb}{\code{numeric} scalar. 
+It sets the number of background regions that will be sampled. Default: 10000}
 
 \item{...}{Additional arguments, currently unused.}
 }
@@ -54,12 +55,12 @@ Default: NULL (generate base on inputForegroundBed)}
 An invisible \code{\link{EnrichTF-class}} object (\code{\link{Step-class}} based) scalar for downstream analysis.
 }
 \description{
-Use uniform distribution to generate background regions on genome.
-The foreground regions' sizes will be unified into set length in argument
+Use uniform distribution to generate background sequence regions from genome. 
+The size of foreground regions will be unified into the length specified in argument.
 }
 \details{
-Use uniform distribution to generate background regions on genome.
-The foreground regions' sizes will be unified into set length in argument
+Use uniform distribution to generate background sequence regions from genome. 
+The size of foreground regions will be unified into the length specified in argument.
 }
 \examples{
 
