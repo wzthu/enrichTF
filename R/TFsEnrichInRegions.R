@@ -25,6 +25,21 @@ setMethod(
             .Object@inputList[["inputBackgroundGeneBed"]] <- getParam(RegionConnectTargetGeneStep,"outputBackgroundBed")
         }
 
+        if(!is.null(inputRegionBed)){
+            .Object@inputList[["inputRegionBed"]] <- inputRegionBed
+        }
+        if(!is.null(inputRegionMotifBed)){
+            .Object@inputList[["inputRegionMotifBed"]] <- inputRegionMotifBed
+        }
+        if(!is.null(inputForegroundGeneBed)){
+            .Object@inputList[["inputForegroundGeneBed"]] <- inputForegroundGeneBed
+        }
+        if(!is.null(inputBackgroundGeneBed)){
+            .Object@inputList[["inputBackgroundGeneBed"]] <- inputBackgroundGeneBed
+        }
+
+
+
 
         if(is.null(outputTFsEnrichTxt)){
             .Object@outputList[["outputTFsEnrichTxt"]] <- getAutoPath(.Object,originPath = .Object@inputList[["inputRegionBed"]],regexProcName = "allregion.bed",suffix = "PECA_TF_enrich.txt")
@@ -119,9 +134,11 @@ setMethod(
         foregroundGeneBed  <- read.table(inputForegroundGeneBed,sep = "\t")
         colnames(foregroundGeneBed) <- c("seqnames","start","end","name","score",
                                          "geneName","blockCount")
+        foregroundGeneBed <- foregroundGeneBed[!duplicated(foregroundGeneBed[,c("name","geneName")]),]
         backgroundGeneBed <- read.table(inputBackgroundGeneBed,sep = "\t")
         colnames(backgroundGeneBed)  <- c("seqnames","start","end","name","score",
                                           "geneName","blockCount")
+        backgroundGeneBed <- backgroundGeneBed[!duplicated(backgroundGeneBed[,c("name","geneName")]),]
         regionMotifBed <- read.table(inputRegionMotifBed,sep = "\t")
         colnames(regionMotifBed) <- c("seqnames","start","end","name","score","motifName")
 
@@ -150,10 +167,8 @@ setMethod(
                                                                   backgroundGeneBed,
                                                                   inputMotifTFTable,
                                                                   regionMotifBed){
-            print(i)
-            print(Sys.time())
-            pValue[i,2] <- t.test(x = inputTFgeneRelMtx[i,foregroundGeneBed$geneName],
-                                  y = inputTFgeneRelMtx[i,backgroundGeneBed$geneName],
+            pValue[i,2] <- t.test(x = inputTFgeneRelMtx[i,match(backgroundGeneBed$geneName,geneName)],
+                                  y = inputTFgeneRelMtx[i,match(foregroundGeneBed$geneName,geneName)],
                                   alternative = "greater")$p.value
 
             motifsOfTF <- inputMotifTFTable[inputMotifTFTable$tfName == tfName[i],1]
@@ -178,13 +193,11 @@ setMethod(
 
                 fisher.test(fisherMtx)$p.value
             })
-            print(Sys.time())
             pValue[i,1] <- min(pvalueOfFisher)
             motif <- as.character(motifsOfTF[which.min(pvalueOfFisher)])
             regionsName <- regionMotifBed[regionMotifBed$motifName == motif, c("name")]
             foregroundGeneFalledInMotifReiong<-match(foregroundGeneBed$name , regionsName)
             backgroundGeneFalledInMotifReiong<-match(backgroundGeneBed$name , regionsName)
-            print(Sys.time())
             pvalueOfFisher1 <- sapply(-9:9, function(cut_off){
                 cut_off <- cut_off /10
                 genesName <- geneName[inputTFgeneRelMtx[i,] > cut_off]
@@ -204,7 +217,6 @@ setMethod(
             })
 
             pValue[i,3] <- min(pvalueOfFisher1)
-            print(Sys.time())
             return(pValue[i,])
 
         }
@@ -305,7 +317,7 @@ setMethod(
 #' @name TFsEnrichInRegions
 #' @title Test each TF is enriched in regions or not
 #' @description
-#'Test each TF is enriched in regions or not
+#' Test each TF is enriched in regions or not
 #' @param GenBackgroundStep \code{\link{Step-class}} object scalar.
 #' It has to be the return value of upstream process from \code{\link{genBackground}} and \code{\link{enrichGenBackground}}
 #' @param FindMotifsInRegionsStep \code{\link{Step-class}} object scalar.
@@ -313,23 +325,24 @@ setMethod(
 #' @param RegionConnectTargetGeneStep \code{\link{Step-class}} object scalar.
 #' It has to be the return value of upstream process from \code{\link{genBackground}} and \code{\link{enrichGenBackground}}
 #' @param inputRegionBed \code{Character} scalar.
-#' Regions BED file including foreground and background
+#' Directory of Regions BED file  including foreground and background
 #' @param inputForegroundGeneBed \code{Character} scalar.
-#' Regions BED file including foreground and background
+#' Directory of BED file  including foreground regions connected to related genes. The forth colum is xxxxxxxxxxxxxxx, The fifth colum is xxxxxxxxxxxxxxx
 #' @param inputBackgroundGeneBed \code{Character} scalar.
-#' Regions BED file with motif candidates.
+#' Directory BED file including foreground regions connected to related genes. The forth colum is xxxxxxxxxxxxxxx, The fifth colum is xxxxxxxxxxxxxxx
 #' @param inputRegionMotifBed \code{Character} scalar.
-#' Regions BED file with motif candidates.
+#' Directory BED file  including foreground regions matched motifs. The forth colum is xxxxxxxxxxxxxxx, The fifth colum is xxxxxxxxxxxxxxx
 #' @param outputTFsEnrichTxt \code{Character} scalar.
-#' Regions BED file with motif candidates.
+#' Directory of Text result file  with five columns. The first columns is transcription factor ,The second column is xxxx
 #' @param inputMotifWeights \code{Character} scalar.
-#' Regions BED file with motif candidates.
-#' Default: NULL (generate base on inputForegroundBed)
+#' Directory of Text file contain motif weight. The first column is motif name. The second column is the weight.
+#' Default: NULL (if \code{setGenome} is called.)
 #' @param inputTFgeneRelMtx \code{Character} scalar.
-#' Regions BED file with motif candidates.
-#' Default: NULL (generate base on inputForegroundBed)
+#' Directory of Text file contain a Transcription Factior(TF) and Gene relation weight matrix.
+#' Default: NULL (if \code{setGenome} is called.)
 #' @param inputMotifTFTable \code{Character} scalar.
-#' when "pwmfile" is set for motifRc, users use this argument to provid PWM file directory
+#' Directory of Text file contain  Transcription Factior(TF) (the first column) and motif name(the second column).
+#' Default: NULL (if \code{setGenome} is called.)
 #' @param ... Additional arguments, currently unused.
 #' @details
 #' Connect foreground and background regions to targetGene

@@ -166,30 +166,30 @@ setMethod(
 #' @importFrom rtracklayer import.bed
 #' @title Generate background regions and reset the size of foreground regions
 #' @description
-#' Use uniform distribution to generate background sequence regions from genome. 
+#' Use uniform distribution to generate background sequence regions from genome.
 #' The size of foreground regions will be unified into the length specified in argument.
 #' @param prevStep \code{\link{Step-class}} object scalar.
 #' It needs to be the return value of upstream process from other packages, such as esATAC.
 #' @param inputForegroundBed \code{Character} scalar.
 #' The directory of foreground BED file.
 #' @param genome \code{Character} scalar.
-#' Bioconductor supported genome such as "hg19", "mm10", etc. 
+#' Bioconductor supported genome such as "hg19", "mm10", etc.
 #' Default: NULL (e.g. after library (enrichTF), you can call function \code{setGenome("hg19")})
 #' @param outputForegroundBed \code{Character} scalar.
-#' The BED file directory of reshaped foreground regions. 
+#' The BED file directory of reshaped foreground regions.
 #' Default: NULL (generated base on inputForegroundBed)
 #' @param outputBackgroundBed \code{Character} scalar.
-#' The BED file directory of reshaped background regions. 
+#' The BED file directory of reshaped background regions.
 #' Default: NULL (generated base on inputForegroundBed)
 #' @param outputRegionBed \code{Character} scalar.
-#' Foreground and background merged BED files. 
+#' Foreground and background merged BED files.
 #' Default: NULL (generated base on inputForegroundBed)
 #' @param rangeLen \code{Character} scalar. It sets the length of forground sequence regions. Default: 1000
-#' @param sampleNumb \code{numeric} scalar. 
+#' @param sampleNumb \code{numeric} scalar.
 #' It sets the number of background regions that will be sampled. Default: 10000
 #' @param ... Additional arguments, currently unused.
 #' @details
-#' Use uniform distribution to generate background sequence regions from genome. 
+#' Use uniform distribution to generate background sequence regions from genome.
 #' The size of foreground regions will be unified into the length specified in argument.
 #' @return An invisible \code{\link{EnrichTF-class}} object (\code{\link{Step-class}} based) scalar for downstream analysis.
 #' @author Zheng Wei
@@ -202,6 +202,7 @@ setMethod(
 #'
 #' foregroundBedPath <- system.file(package = "enrichTF", "extdata","testForeGround.bed")
 #' gen <- genBackground(inputForegroundBed = foregroundBedPath,genome = "hg19")
+#' conTG <- enrichRegionConnectTargetGene(gen)
 
 
 setGeneric("enrichGenBackground",function(prevStep,

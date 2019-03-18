@@ -29,24 +29,24 @@ It needs to be the return value of upstream process from other packages, such as
 The directory of foreground BED file.}
 
 \item{genome}{\code{Character} scalar.
-Bioconductor supported genome such as "hg19", "mm10", etc. 
+Bioconductor supported genome such as "hg19", "mm10", etc.
 Default: NULL (e.g. after library (enrichTF), you can call function \code{setGenome("hg19")})}
 
 \item{outputForegroundBed}{\code{Character} scalar.
-The BED file directory of reshaped foreground regions. 
+The BED file directory of reshaped foreground regions.
 Default: NULL (generated base on inputForegroundBed)}
 
 \item{outputBackgroundBed}{\code{Character} scalar.
-The BED file directory of reshaped background regions. 
+The BED file directory of reshaped background regions.
 Default: NULL (generated base on inputForegroundBed)}
 
 \item{outputRegionBed}{\code{Character} scalar.
-Foreground and background merged BED files. 
+Foreground and background merged BED files.
 Default: NULL (generated base on inputForegroundBed)}
 
 \item{rangeLen}{\code{Character} scalar. It sets the length of forground sequence regions. Default: 1000}
 
-\item{sampleNumb}{\code{numeric} scalar. 
+\item{sampleNumb}{\code{numeric} scalar.
 It sets the number of background regions that will be sampled. Default: 10000}
 
 \item{...}{Additional arguments, currently unused.}
@@ -55,17 +55,18 @@ It sets the number of background regions that will be sampled. Default: 10000}
 An invisible \code{\link{EnrichTF-class}} object (\code{\link{Step-class}} based) scalar for downstream analysis.
 }
 \description{
-Use uniform distribution to generate background sequence regions from genome. 
+Use uniform distribution to generate background sequence regions from genome.
 The size of foreground regions will be unified into the length specified in argument.
 }
 \details{
-Use uniform distribution to generate background sequence regions from genome. 
+Use uniform distribution to generate background sequence regions from genome.
 The size of foreground regions will be unified into the length specified in argument.
 }
 \examples{
 
 foregroundBedPath <- system.file(package = "enrichTF", "extdata","testForeGround.bed")
 gen <- genBackground(inputForegroundBed = foregroundBedPath,genome = "hg19")
+conTG <- enrichRegionConnectTargetGene(gen)
 }
 \seealso{
 \code{\link{regionConnectTargetGene}}

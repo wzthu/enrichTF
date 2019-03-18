@@ -19,7 +19,7 @@ enrichFindMotifsInRegions(prevStep, inputRegionBed = NULL,
   motifRc = c("integrate", "jaspar", "pwmfile"),
   inputPwmFile = getRefFiles("motifpwm"), genome = getGenome(), ...)
 
-findMotifsInRegions(inputRegionBed, outputRegionMotifBed,
+findMotifsInRegions(inputRegionBed, outputRegionMotifBed = NULL,
   motifRc = c("integrate", "jaspar", "pwmfile"),
   inputPwmFile = getRefFiles("motifpwm"), genome = getGenome(), ...)
 }
@@ -35,17 +35,17 @@ BED file for regions with motif candidates.
 Default: NULL (generated base on inputForegroundBed)}
 
 \item{motifRc}{\code{Character} scalar.
-Motif Resources can be one of "integrate" 
-(integrated by us and can be download from internet automatically 
-if call the function \code{setGenome("hg19")}), 
-"jaspar" package JASPAR2018, 
+Motif Resources can be one of "integrate"
+(integrated by us and can be download from internet automatically
+if call the function \code{setGenome("hg19")}),
+"jaspar" package JASPAR2018,
 or "pwmfile" (User defined PWM file. inputPwmFile is required).}
 
 \item{inputPwmFile}{\code{Character} scalar.
 when "pwmfile" is set for motifRc, use this argument to provide PWM file directory.}
 
 \item{genome}{\code{Character} scalar.
-Bioconductor supported genome, such as "hg19", "mm10", etc. 
+Bioconductor supported genome, such as "hg19", "mm10", etc.
 Default: NULL (e.g. after \code{library (enrichTF)}, you can call function \code{setGenome("hg19")})}
 
 \item{...}{Additional arguments, currently unused.}
@@ -57,7 +57,7 @@ An invisible \code{\link{EnrichTF-class}} object (\code{\link{Step-class}} based
 Scan for motif occurrences using the prepared PWMs and obtain the promising candidate motifs in these regions.
 }
 \details{
-Scan for motif occurrences using the prepared PWMs and 
+Scan for motif occurrences using the prepared PWMs and
 obtain the promising candidate motifs in these regions.
 }
 \examples{

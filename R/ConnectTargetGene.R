@@ -18,6 +18,13 @@ setMethod(
             .Object@inputList[["inputForegroundBed"]] <- getParam(prevStep,"outputForegroundBed")
             .Object@inputList[["inputBackgroundBed"]] <- getParam(prevStep,"outputBackgroundBed")
         }
+        if(!is.null(inputForegroundBed)){
+            .Object@inputList[["inputForegroundBed"]] <- inputForegroundBed
+        }
+        if(!is.null(inputBackgroundBed)){
+            .Object@inputList[["inputBackgroundBed"]] <- inputBackgroundBed
+        }
+
 
 
         if(is.null(outputForegroundBed)){
@@ -64,7 +71,7 @@ setMethod(
         inputBackgroundgr <- import(con=inputBackgroundBed)
 
         rg <- import(con=regularGeneCorrBed,colnames=c("name","score","blockCount"))
-        erg <- import(con=regularGeneCorrBed,colnames=c("name","score","blockCount"))
+        erg <- import(con=enhancerRegularGeneCorrBed,colnames=c("name","score","blockCount"))
 
         pairs <- findOverlapPairs(inputForegroundgr,rg)
         first(pairs)$geneName  <- second(pairs)$name

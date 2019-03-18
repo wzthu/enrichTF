@@ -21,6 +21,10 @@ setMethod(
 
         .Object@paramList[["motifRc"]] <- motifRc
 
+        if(!is.null(inputRegionBed)){
+            .Object@inputList[["inputRegionBed"]] <- inputRegionBed
+        }
+
         if(is.null(outputRegionMotifBed)){
             .Object@outputList[["outputRegionMotifBed"]] <- getAutoPath(.Object,originPath = .Object@inputList[["inputRegionBed"]],regexProcName = "allregion.bed",suffix = "region.motif.bed")
         }else{
@@ -69,8 +73,12 @@ setMethod(
         .Object@propList[["motif_ix"]] <-motif_ix
         for(i in 1:length(motif_ix)){
             motif_region_pair <- findOverlapPairs(motif_ix[[i]][[1]],regions,ignore.strand = TRUE)
-            second(motif_region_pair)$score <- first(motif_region_pair)$score
-            second(motif_region_pair)$motifName <-pwmObj[[i]]@name
+            if(length(second(motif_region_pair))>0){
+                second(motif_region_pair)$score <- first(motif_region_pair)$score
+                second(motif_region_pair)$motifName <-pwmObj[[i]]@name
+            }else{
+                next
+            }
             if(i == 1){
                 result <- second(motif_region_pair)[second(motif_region_pair)$score >= pwmObj[[i]]@tags$threshold]
             }else{
@@ -155,19 +163,19 @@ setMethod(
 #' BED file for regions with motif candidates.
 #' Default: NULL (generated base on inputForegroundBed)
 #' @param motifRc \code{Character} scalar.
-#' Motif Resources can be one of "integrate" 
-#' (integrated by us and can be download from internet automatically 
-#' if call the function \code{setGenome("hg19")}), 
-#' "jaspar" package JASPAR2018, 
+#' Motif Resources can be one of "integrate"
+#' (integrated by us and can be download from internet automatically
+#' if call the function \code{setGenome("hg19")}),
+#' "jaspar" package JASPAR2018,
 #' or "pwmfile" (User defined PWM file. inputPwmFile is required).
 #' @param inputPwmFile \code{Character} scalar.
 #' when "pwmfile" is set for motifRc, use this argument to provide PWM file directory.
 #' @param genome \code{Character} scalar.
-#' Bioconductor supported genome, such as "hg19", "mm10", etc. 
+#' Bioconductor supported genome, such as "hg19", "mm10", etc.
 #' Default: NULL (e.g. after \code{library (enrichTF)}, you can call function \code{setGenome("hg19")})
 #' @param ... Additional arguments, currently unused.
 #' @details
-#' Scan for motif occurrences using the prepared PWMs and 
+#' Scan for motif occurrences using the prepared PWMs and
 #' obtain the promising candidate motifs in these regions.
 #' @return An invisible \code{\link{EnrichTF-class}} object (\code{\link{Step-class}} based) scalar for downstream analysis.
 #' @author Zheng Wei
@@ -217,7 +225,7 @@ setMethod(
 #' @aliases motifsInRegions
 #' @export
 findMotifsInRegions <- function(inputRegionBed,
-                                outputRegionMotifBed,
+                                outputRegionMotifBed = NULL,
                                 motifRc = c("integrate","jaspar","pwmfile"),
                                 inputPwmFile = getRefFiles("motifpwm"),
                                 genome = getGenome(),
