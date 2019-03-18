@@ -4,62 +4,63 @@
 #' @importFrom pipeFrame checkAndInstallGenomeFa
 #' @importFrom pipeFrame getRefFiles
 #' @importFrom BSgenome getBSgenome
+#' @importFrom utils download.file
 
 
-dowloadMotifFile <- function(resultDirPaths){
+dowloadMotifFile <- function(refFilePath){
     download.file(url = "https://wzthu.github.io/enrich/refdata/all_motif_rmdup",
-                  destfile = resultDirPaths)
+                  destfile = refFilePath)
 
 }
 
-dowloadREgeneFile <- function(resultDirPaths){
+dowloadREgeneFile <- function(refFilePath){
     genome <-getGenome()
     download.file(url = sprintf("https://wzthu.github.io/enrich/refdata/%s/RE_gene_corr_hg19.bed",genome),
-                  destfile = resultDirPaths)
+                  destfile = refFilePath)
 
 }
 
 
-dowloadEnhancerREgeneFile <- function(resultDirPaths){
+dowloadEnhancerREgeneFile <- function(refFilePath){
     genome <-getGenome()
     download.file(url = sprintf("https://wzthu.github.io/enrich/refdata/%s/Enhancer_RE_gene_corr_hg19.bed",genome),
-                  destfile = resultDirPaths)
+                  destfile = refFilePath)
 
 }
 
-convertPWMFileToPWMobj <- function(resultDirPaths){
+convertPWMFileToPWMobj <- function(refFilePath){
     motiffile <-getRefFiles("motifpwm")
     pwm <- getMotifInfo1(motiffile)
-    save(pwm,file = resultDirPaths)
+    save(pwm,file = refFilePath)
 }
 
 
-dowloadMotifTFTableFile <- function(resultDirPaths){
+dowloadMotifTFTableFile <- function(refFilePath){
     download.file(url = "https://wzthu.github.io/enrich/refdata/MotifTFTable.RData",
-                  destfile = resultDirPaths)
+                  destfile = refFilePath)
 
 }
-dowloadMotifWeightsFile <- function(resultDirPaths){
+dowloadMotifWeightsFile <- function(refFilePath){
     download.file(url = "https://wzthu.github.io/enrich/refdata/MotifWeights.RData",
-                  destfile = resultDirPaths)
+                  destfile = refFilePath)
 
 }
-dowloadTFgeneRelMtxFile <- function(resultDirPaths){
+dowloadTFgeneRelMtxFile <- function(refFilePath){
     download.file(url = "https://wzthu.github.io/enrich/refdata/TFgeneRelMtx.RData",
-                  destfile = resultDirPaths)
+                  destfile = refFilePath)
 
 }
 
 checkAndInstall <- function(check = TRUE, ...){
-    runWithFinishCheck(func = checkAndInstallBSgenome,refName = "bsgenome", resultVal = getBSgenome(getGenome()), execForNonRsFile = check)
-#    runWithFinishCheck(func = checkAndInstallGenomeFa,refName = "fasta", resultDirPaths = paste0(getGenome(),".fa"))
-    runWithFinishCheck(func = dowloadMotifFile,refName = "motifpwm", resultDirPaths = "motifpwm")
-    runWithFinishCheck(func = convertPWMFileToPWMobj, "motifPWMOBJ", resultDirPaths = "motifPWMOBJ.RData")
-    runWithFinishCheck(func = dowloadREgeneFile, "RE_gene_corr", resultDirPaths = "RE_gene_corr.bed")
-    runWithFinishCheck(func = dowloadEnhancerREgeneFile, "Enhancer_RE_gene_corr", resultDirPaths = "Enhancer_RE_gene_corr.bed")
-    runWithFinishCheck(func = dowloadMotifTFTableFile, "MotifTFTable", resultDirPaths = "MotifTFTable.RData")
-    runWithFinishCheck(func = dowloadMotifWeightsFile, "MotifWeights", resultDirPaths = "MotifWeights.RData")
-    runWithFinishCheck(func = dowloadTFgeneRelMtxFile, "TFgeneRelMtx", resultDirPaths = "TFgeneRelMtx.RData")
+    runWithFinishCheck(func = checkAndInstallBSgenome,refName = "bsgenome")
+#    runWithFinishCheck(func = checkAndInstallGenomeFa,refName = "fasta", refFilePath = paste0(getGenome(),".fa"))
+    runWithFinishCheck(func = dowloadMotifFile,refName = "motifpwm", refFilePath = "motifpwm")
+    runWithFinishCheck(func = convertPWMFileToPWMobj, "motifPWMOBJ", refFilePath = "motifPWMOBJ.RData")
+    runWithFinishCheck(func = dowloadREgeneFile, "RE_gene_corr", refFilePath = "RE_gene_corr.bed")
+    runWithFinishCheck(func = dowloadEnhancerREgeneFile, "Enhancer_RE_gene_corr", refFilePath = "Enhancer_RE_gene_corr.bed")
+    runWithFinishCheck(func = dowloadMotifTFTableFile, "MotifTFTable", refFilePath = "MotifTFTable.RData")
+    runWithFinishCheck(func = dowloadMotifWeightsFile, "MotifWeights", refFilePath = "MotifWeights.RData")
+    runWithFinishCheck(func = dowloadTFgeneRelMtxFile, "TFgeneRelMtx", refFilePath = "TFgeneRelMtx.RData")
 }
 
 

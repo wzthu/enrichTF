@@ -51,7 +51,7 @@ Default: NULL (e.g. after \code{library (enrichTF)}, you can call function \code
 \item{...}{Additional arguments, currently unused.}
 }
 \value{
-An invisible \code{\link{EnrichTF-class}} object (\code{\link{Step-class}} based) scalar for downstream analysis.
+An invisible \code{\link{EnrichStep-class}} object (\code{\link{Step-class}} based) scalar for downstream analysis.
 }
 \description{
 Connect foreground and background regions to their target genes, which is predicted from PECA model.

@@ -42,7 +42,7 @@ setMethod(
 
 
         if(is.null(outputTFsEnrichTxt)){
-            .Object@outputList[["outputTFsEnrichTxt"]] <- getAutoPath(.Object,originPath = .Object@inputList[["inputRegionBed"]],regexProcName = "allregion.bed",suffix = "PECA_TF_enrich.txt")
+            .Object@outputList[["outputTFsEnrichTxt"]] <- getAutoPath(.Object,originPath = .Object@inputList[["inputRegionBed"]],regexSuffixName = "allregion.bed",suffix = "PECA_TF_enrich.txt")
         }else{
             .Object@outputList[["outputTFsEnrichTxt"]] <- outputTFsEnrichTxt
         }
@@ -98,23 +98,22 @@ setMethod(
 
 
         if(endsWith(inputMotifWeights,".RData")){
-            load(inputMotifWeights)
-            inputMotifWeights <- motifWeights
+
+            inputMotifWeights <- get(load(inputMotifWeights))
         }else{
             inputMotifWeights<- read.table(inputMotifWeights,sep = '\t', header = FALSE)
             colnames(inputMotifWeights) <- c("motifName","motifWeight")
         }
 
         if(endsWith(inputTFgeneRelMtx,".RData")){
-            load(inputTFgeneRelMtx)
-            inputTFgeneRelMtx <- tfGeneRelMtx
+
+            inputTFgeneRelMtx <- get(load(inputTFgeneRelMtx))
         }else{
             inputTFgeneRelMtx<- read.table(inputTFgeneRelMtx,sep = '\t', header = TRUE)
         }
 
         if(endsWith(inputMotifTFTable,".RData")){
-            load(inputMotifTFTable)
-            inputMotifTFTable <- motifTFTable
+            inputMotifTFTable <- get(load(inputMotifTFTable))
         }else{
             inputMotifTFTable<- read.table(inputMotifTFTable,sep = '\t', header = FALSE)
             colnames(inputMotifTFTable) <- c("motifName", "tfName")
@@ -346,7 +345,7 @@ setMethod(
 #' @param ... Additional arguments, currently unused.
 #' @details
 #' Connect foreground and background regions to targetGene
-#' @return An invisible \code{\link{EnrichTF-class}} object (\code{\link{Step-class}} based) scalar for downstream analysis.
+#' @return An invisible \code{\link{EnrichStep-class}} object (\code{\link{Step-class}} based) scalar for downstream analysis.
 #' @author Zheng Wei
 #' @seealso
 #' \code{\link{genBackground}}
@@ -379,7 +378,7 @@ setGeneric("enrichTFsEnrichInRegions",function(GenBackgroundStep,
 
 
 #' @rdname TFsEnrichInRegions
-#' @aliases enrichMotifsInRegions
+#' @aliases enrichTFsEnrichInRegions
 #' @export
 setMethod(
     f = "enrichTFsEnrichInRegions",

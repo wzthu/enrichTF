@@ -4,7 +4,7 @@
 \name{TFsEnrichInRegions}
 \alias{TFsEnrichInRegions}
 \alias{enrichTFsEnrichInRegions,Step-method}
-\alias{enrichMotifsInRegions}
+\alias{enrichTFsEnrichInRegions}
 \alias{tfsEnrichInRegions}
 \title{Test each TF is enriched in regions or not}
 \usage{
@@ -67,7 +67,7 @@ Default: NULL (if \code{setGenome} is called.)}
 \item{...}{Additional arguments, currently unused.}
 }
 \value{
-An invisible \code{\link{EnrichTF-class}} object (\code{\link{Step-class}} based) scalar for downstream analysis.
+An invisible \code{\link{EnrichStep-class}} object (\code{\link{Step-class}} based) scalar for downstream analysis.
 }
 \description{
 Test each TF is enriched in regions or not

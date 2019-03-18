@@ -13,6 +13,9 @@ Foreground BED file directory.}
 \item{genome}{\code{Character} scalar.
 Bioconductor supported genome like "hg19", "mm10", etc.}
 
+\item{threads}{\code{Numeric} scalar.
+The max number of threads that can be used by each step of the pipeline}
+
 \item{...}{Additional arguments to set arguments for each Steps.
 See below for details.}
 }

@@ -5,6 +5,8 @@
 #' Foreground BED file directory.
 #' @param genome \code{Character} scalar.
 #' Bioconductor supported genome like "hg19", "mm10", etc.
+#' @param threads \code{Numeric} scalar.
+#' The max number of threads that can be used by each step of the pipeline
 #' @param ... Additional arguments to set arguments for each Steps.
 #' See below for details.
 #' @details There four steps in this pipeline: GenBackground, RegionConnectTarget,
