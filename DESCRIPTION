@@ -23,7 +23,9 @@ Imports:
     IRanges,
     BiocGenerics,
     S4Vectors,
-    utils
+    utils,
+    parallel,
+    stats
 Suggests:
     knitr
 Collate: 
@@ -38,4 +40,6 @@ Collate:
     Method.R
 RoxygenNote: 6.1.1
 VignetteBuilder: knitr
-biocViews: Software, WorkflowStep
+biocViews: Software, GeneTarget, MotifAnnotation, GraphAndNetwork 
+URL: https://github.com/wzthu/enrichTF
+BugReports: https://github.com/wzthu/enrichTF/issues
