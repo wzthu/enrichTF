@@ -2,7 +2,7 @@
 % Please edit documentation in R/Method.R
 \name{PECA_TF_enrich}
 \alias{PECA_TF_enrich}
-\title{TF enrich with PECA2 mothod}
+\title{TF enrichment with PECA model}
 \usage{
 PECA_TF_enrich(inputForegroundBed, genome, threads = 2, ...)
 }
@@ -20,25 +20,26 @@ The max number of threads that can be used by each step of the pipeline}
 See below for details.}
 }
 \value{
-An invisible \code{list} contain all four steps \code{EnrichTF} objects
+An invisible \code{list} contains all four steps \code{EnrichTF} objects
 }
 \description{
-TF enrich with PECA2 mothod
+This is a pipeline for TF enrichment with PECA model.
 }
 \details{
-There four steps in this pipeline: GenBackground, RegionConnectTarget,
-FindMotifsInRegions and TFsEnrichInRegions. For instance, if you want to change
+This is a function for the pipeline. There are four steps in this pipeline: GenBackground, RegionConnectTarget,
+FindMotifsInRegions and TFsEnrichInRegions. Parameter setting is available for all these functions. For example, if you want to change
 the number of background regions (\code{sampleNumb}) into 1000,
-you can add argument \code{GenBackground.sampleNumb = 1000} to the function in this way:
-\code{PECA_TF_enrich(inputForegroundBed = "your/file.bed",genome="hg19",GenBackground.sampleNumb = 1000)}.
-The number of arguments is not limited so you can add other arguments with \code{StepName.argumentName} in the same way.
+you can add the argument \code{GenBackground.sampleNumb = 1000} into the function like this:
+\code{PECA_TF_enrich(inputForegroundBed = "your_file.bed",genome="hg19",GenBackground.sampleNumb = 1000)}.
+The number of arguments is not limited so you can add other arguments with the format (\code{StepName.argumentName}) in the same way.
 }
 \examples{
 foregroundBedPath <- system.file(package = "enrichTF", "extdata","testregion.bed")
 PECA_TF_enrich(inputForegroundBed = foregroundBedPath, genome = "testgenome")
 }
 \references{
-Duren Z.,.....PNAS
+Zhana Duren, et al., Modeling gene regulation from paired expression and chromatin accessibility data. 
+Proc Natl Acad Sci U S A. 2017 1;111(44):15675-80
 }
 \author{
 Zheng Wei
