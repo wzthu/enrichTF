@@ -1,3 +1,8 @@
+#' @importFrom S4Vectors mcols<-
+#' @importFrom S4Vectors mcols
+#' @importFrom stats fisher.test p.adjust t.test
+#' @importFrom S4Vectors second<- first<-
+#' @importFrom rtracklayer export.bed
 setClass(Class = "FindMotifsInRegions",
          contains = "EnrichStep"
 )
@@ -26,14 +31,14 @@ setMethod(
         }
 
         if(is.null(outputRegionMotifBed)){
-            .Object@outputList[["outputRegionMotifBed"]] <- getAutoPath(.Object,originPath = .Object@inputList[["inputRegionBed"]],regexProcName = "allregion.bed",suffix = "region.motif.bed")
+            .Object@outputList[["outputRegionMotifBed"]] <- getAutoPath(.Object,originPath = .Object@inputList[["inputRegionBed"]],regexSuffixName = "allregion.bed",suffix = "region.motif.bed")
         }else{
             .Object@outputList[["outputRegionMotifBed"]] <- outputRegionMotifBed
         }
 
         if(motifRc == "integrate"){
-            load(getRefFiles("motifPWMOBJ"))
-            .Object@inputList[["pwmObj"]] <- pwm
+
+            .Object@inputList[["pwmObj"]] <- get(load(getRefFiles("motifPWMOBJ")))
         }else if(motifRc == "jarspar"){
             .Object@inputList[["pwmObj"]] <- JASPAR2018::JASPAR2018
 
@@ -47,6 +52,9 @@ setMethod(
             .Object@paramList[["genome"]] <- getGenome()
         }else{
             .Object@paramList[["genome"]] <- genome
+        }
+        if(.Object@paramList[["genome"]] == "testgenome"){
+            .Object@paramList[["genome"]] <- "hg19"
         }
         .Object
     }
@@ -152,6 +160,7 @@ setMethod(
 
 #' @name MotifsInRegions
 #' @importFrom motifmatchr matchMotifs
+#' @importFrom JASPAR2018 JASPAR2018
 #' @title Find motifs in all input sequence regions
 #' @description
 #' Scan for motif occurrences using the prepared PWMs and obtain the promising candidate motifs in these regions.
@@ -177,15 +186,15 @@ setMethod(
 #' @details
 #' Scan for motif occurrences using the prepared PWMs and
 #' obtain the promising candidate motifs in these regions.
-#' @return An invisible \code{\link{EnrichTF-class}} object (\code{\link{Step-class}} based) scalar for downstream analysis.
+#' @return An invisible \code{\link{EnrichStep-class}} object (\code{\link{Step-class}} based) scalar for downstream analysis.
 #' @author Zheng Wei
 #' @seealso
 #' \code{\link{genBackground}}
 #' \code{\link{findMotifsInRegions}}
 #' \code{\link{tfsEnrichInRegions}}
 #' @examples
-#' setGenome("hg19")
-#' foregroundBedPath <- system.file(package = "enrichTF", "extdata","testForeGround.bed")
+#' setGenome("testgenome") #Use "hg19","hg38",etc. for your application
+#' foregroundBedPath <- system.file(package = "enrichTF", "extdata","testregion.bed")
 #' gen <- genBackground(inputForegroundBed = foregroundBedPath)
 #' findMotif <- enrichFindMotifsInRegions(gen,motifRc="integrate")
 
@@ -204,7 +213,7 @@ setGeneric("enrichFindMotifsInRegions",function(prevStep,
 
 
 #' @rdname MotifsInRegions
-#' @aliases enrichMotifsInRegions
+#' @aliases enrichFindMotifsInRegions
 #' @export
 setMethod(
     f = "enrichFindMotifsInRegions",

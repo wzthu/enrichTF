@@ -1,11 +1,11 @@
 Package: enrichTF
 Type: Package
 Title: Regular Elements Analasis
-Version: 0.1.0
+Version: 0.99.0
 Author: Zheng Wei, Zhana Duren, Shining Ma
 Maintainer: Zheng Wei <wzwz@stanford.edu>
-Description: enrichTF is a package 
-License: GPL-3 | file
+Description: enrichTF is a package. 
+License: GPL-3 | file LICENSE
 Encoding: UTF-8
 LazyData: true
 Depends:
@@ -15,8 +15,20 @@ Imports:
     rtracklayer,
     motifmatchr,
     TFBSTools,
+    R.utils,
+    methods,
+    JASPAR2018,
+    GenomeInfoDb,
     GenomicRanges,
-    R.utils
+    IRanges,
+    BiocGenerics,
+    S4Vectors,
+    utils,
+    parallel,
+    stats,
+    BiocManager
+Suggests:
+    knitr
 Collate: 
     EnrichStep.R 
     ConnectTargetGene.R
@@ -28,3 +40,7 @@ Collate:
     untils.R
     Method.R
 RoxygenNote: 6.1.1
+VignetteBuilder: knitr
+biocViews: Software, GeneTarget, MotifAnnotation, GraphAndNetwork 
+URL: https://github.com/wzthu/enrichTF
+BugReports: https://github.com/wzthu/enrichTF/issues

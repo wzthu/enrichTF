@@ -7,9 +7,12 @@ output:
         toc: true
         toc_float: true
         number_sections: true
+vignette: >
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteIndexEntry{An Introduction to enrichTF}
+  %\VignetteEncoding{UTF-8}
   
 ---
-
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```

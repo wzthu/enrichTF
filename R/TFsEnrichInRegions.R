@@ -42,7 +42,7 @@ setMethod(
 
 
         if(is.null(outputTFsEnrichTxt)){
-            .Object@outputList[["outputTFsEnrichTxt"]] <- getAutoPath(.Object,originPath = .Object@inputList[["inputRegionBed"]],regexProcName = "allregion.bed",suffix = "PECA_TF_enrich.txt")
+            .Object@outputList[["outputTFsEnrichTxt"]] <- getAutoPath(.Object,originPath = .Object@inputList[["inputRegionBed"]],regexSuffixName = "allregion.bed",suffix = "PECA_TF_enrich.txt")
         }else{
             .Object@outputList[["outputTFsEnrichTxt"]] <- outputTFsEnrichTxt
         }
@@ -94,27 +94,26 @@ setMethod(
         inputMotifWeights <- getParam(.Object,"inputMotifWeights")
         inputTFgeneRelMtx <- getParam(.Object,"inputTFgeneRelMtx")
         inputMotifTFTable <- getParam(.Object,"inputMotifTFTable")
-
+        #return(.Object)
 
 
         if(endsWith(inputMotifWeights,".RData")){
-            load(inputMotifWeights)
-            inputMotifWeights <- motifWeights
+
+            inputMotifWeights <- get(load(inputMotifWeights))
         }else{
             inputMotifWeights<- read.table(inputMotifWeights,sep = '\t', header = FALSE)
             colnames(inputMotifWeights) <- c("motifName","motifWeight")
         }
 
         if(endsWith(inputTFgeneRelMtx,".RData")){
-            load(inputTFgeneRelMtx)
-            inputTFgeneRelMtx <- tfGeneRelMtx
+
+            inputTFgeneRelMtx <- get(load(inputTFgeneRelMtx))
         }else{
             inputTFgeneRelMtx<- read.table(inputTFgeneRelMtx,sep = '\t', header = TRUE)
         }
 
         if(endsWith(inputMotifTFTable,".RData")){
-            load(inputMotifTFTable)
-            inputMotifTFTable <- motifTFTable
+            inputMotifTFTable <- get(load(inputMotifTFTable))
         }else{
             inputMotifTFTable<- read.table(inputMotifTFTable,sep = '\t', header = FALSE)
             colnames(inputMotifTFTable) <- c("motifName", "tfName")
@@ -167,6 +166,7 @@ setMethod(
                                                                   backgroundGeneBed,
                                                                   inputMotifTFTable,
                                                                   regionMotifBed){
+            tryCatch({
             pValue[i,2] <- t.test(x = inputTFgeneRelMtx[i,match(backgroundGeneBed$geneName,geneName)],
                                   y = inputTFgeneRelMtx[i,match(foregroundGeneBed$geneName,geneName)],
                                   alternative = "greater")$p.value
@@ -217,6 +217,9 @@ setMethod(
             })
 
             pValue[i,3] <- min(pvalueOfFisher1)
+            },error = function(e){
+                writeLog(.Object,as.character(e))
+            })
             return(pValue[i,])
 
         }
@@ -346,15 +349,15 @@ setMethod(
 #' @param ... Additional arguments, currently unused.
 #' @details
 #' Connect foreground and background regions to targetGene
-#' @return An invisible \code{\link{EnrichTF-class}} object (\code{\link{Step-class}} based) scalar for downstream analysis.
+#' @return An invisible \code{\link{EnrichStep-class}} object (\code{\link{Step-class}} based) scalar for downstream analysis.
 #' @author Zheng Wei
 #' @seealso
 #' \code{\link{genBackground}}
 #' \code{\link{findMotifsInRegions}}
 #' \code{\link{tfsEnrichInRegions}}
 #' @examples
-#' setGenome("hg19")
-#' foregroundBedPath <- system.file(package = "enrichTF", "extdata","testForeGround.bed")
+#' setGenome("testgenome") #Use "hg19","hg38",etc. for your application
+#' foregroundBedPath <- system.file(package = "enrichTF", "extdata","testregion.bed")
 #' gen <- genBackground(inputForegroundBed = foregroundBedPath)
 #' conTG <- enrichRegionConnectTargetGene(gen)
 #' findMotif <- enrichFindMotifsInRegions(gen,motifRc="integrate")
@@ -379,7 +382,7 @@ setGeneric("enrichTFsEnrichInRegions",function(GenBackgroundStep,
 
 
 #' @rdname TFsEnrichInRegions
-#' @aliases enrichMotifsInRegions
+#' @aliases enrichTFsEnrichInRegions
 #' @export
 setMethod(
     f = "enrichTFsEnrichInRegions",

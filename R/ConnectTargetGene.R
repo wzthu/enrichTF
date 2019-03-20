@@ -1,3 +1,9 @@
+#' @importFrom GenomeInfoDb seqlengths
+#' @importFrom GenomicRanges GRanges
+#' @importFrom IRanges IRanges findOverlapPairs
+#' @importFrom S4Vectors second first
+#' @importFrom utils write.table read.table
+#'
 setClass(Class = "RegionConnectTargetGene",
          contains = "EnrichStep"
 )
@@ -28,14 +34,14 @@ setMethod(
 
 
         if(is.null(outputForegroundBed)){
-            .Object@outputList[["outputForegroundBed"]] <- getAutoPath(.Object,originPath = .Object@inputList[["inputForegroundBed"]],regexProcName = "foreground.bed",suffix = "gene.foreground.bed")
+            .Object@outputList[["outputForegroundBed"]] <- getAutoPath(.Object,originPath = .Object@inputList[["inputForegroundBed"]],regexSuffixName = "foreground.bed",suffix = "gene.foreground.bed")
         }else{
             .Object@outputList[["outputForegroundBed"]] <- outputForegroundBed
         }
 
 
         if(is.null(outputBackgroundBed)){
-            .Object@outputList[["outputBackgroundBed"]] <- getAutoPath(.Object,originPath = .Object@inputList[["inputBackgroundBed"]],regexProcName = "background.bed",suffix = "gene.background.bed")
+            .Object@outputList[["outputBackgroundBed"]] <- getAutoPath(.Object,originPath = .Object@inputList[["inputBackgroundBed"]],regexSuffixName = "background.bed",suffix = "gene.background.bed")
         }else{
             .Object@outputList[["outputBackgroundBed"]] <- outputBackgroundBed
         }
@@ -201,15 +207,15 @@ setMethod(
 #' @param ... Additional arguments, currently unused.
 #' @details
 #' Connect foreground and background regions to target genes, which are predicted from PECA.
-#' @return An invisible \code{\link{EnrichTF-class}} object (\code{\link{Step-class}} based) scalar for downstream analysis.
+#' @return An invisible \code{\link{EnrichStep-class}} object (\code{\link{Step-class}} based) scalar for downstream analysis.
 #' @author Zheng Wei
 #' @seealso
 #' \code{\link{genBackground}}
 #' \code{\link{findMotifsInRegions}}
 #' \code{\link{tfsEnrichInRegions}}
 #' @examples
-#' setGenome("hg19")
-#' foregroundBedPath <- system.file(package = "enrichTF", "extdata","testForeGround.bed")
+#' setGenome("testgenome") #Use "hg19","hg38",etc. for your application
+#' foregroundBedPath <- system.file(package = "enrichTF", "extdata","testregion.bed")
 #' gen <- genBackground(inputForegroundBed = foregroundBedPath)
 #' conTG <- enrichRegionConnectTargetGene(gen)
 
