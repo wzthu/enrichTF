@@ -4,7 +4,7 @@
 \name{TFsEnrichInRegions}
 \alias{TFsEnrichInRegions}
 \alias{enrichTFsEnrichInRegions,Step-method}
-\alias{enrichMotifsInRegions}
+\alias{enrichTFsEnrichInRegions}
 \alias{tfsEnrichInRegions}
 \title{Test each TF is enriched in regions or not}
 \usage{
@@ -67,7 +67,7 @@ Default: NULL (if \code{setGenome} is called.)}
 \item{...}{Additional arguments, currently unused.}
 }
 \value{
-An invisible \code{\link{EnrichTF-class}} object (\code{\link{Step-class}} based) scalar for downstream analysis.
+An invisible \code{\link{EnrichStep-class}} object (\code{\link{Step-class}} based) scalar for downstream analysis.
 }
 \description{
 Test each TF is enriched in regions or not
@@ -76,8 +76,8 @@ Test each TF is enriched in regions or not
 Connect foreground and background regions to targetGene
 }
 \examples{
-setGenome("hg19")
-foregroundBedPath <- system.file(package = "enrichTF", "extdata","testForeGround.bed")
+setGenome("testgenome") #Use "hg19","hg38",etc. for your application
+foregroundBedPath <- system.file(package = "enrichTF", "extdata","testregion.bed")
 gen <- genBackground(inputForegroundBed = foregroundBedPath)
 conTG <- enrichRegionConnectTargetGene(gen)
 findMotif <- enrichFindMotifsInRegions(gen,motifRc="integrate")

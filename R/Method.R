@@ -4,8 +4,10 @@
 #' @param inputForegroundBed \code{Character} scalar.
 #' Foreground BED file directory.
 #' @param genome \code{Character} scalar.
-#' Bioconductor supported genome such as "hg19", "mm10", etc.
-#' @param ... Additional arguments to set parameters for each Steps.
+#' Bioconductor supported genome like "hg19", "mm10", etc.
+#' @param threads \code{Numeric} scalar.
+#' The max number of threads that can be used by each step of the pipeline
+#' @param ... Additional arguments to set arguments for each Steps.
 #' See below for details.
 #' @details This is a function for the pipeline. There are four steps in this pipeline: GenBackground, RegionConnectTarget,
 #' FindMotifsInRegions and TFsEnrichInRegions. Parameter setting is available for all these functions. For example, if you want to change
@@ -19,8 +21,8 @@
 #' Proc Natl Acad Sci U S A. 2017 1;111(44):15675-80
 #' @export PECA_TF_enrich
 #' @examples
-#' foregroundBedPath <- system.file(package = "enrichTF", "extdata","testForeGround.bed")
-#' PECA_TF_enrich(inputForegroundBed = foregroundBedPath, genome = "hg19")
+#' foregroundBedPath <- system.file(package = "enrichTF", "extdata","testregion.bed")
+#' PECA_TF_enrich(inputForegroundBed = foregroundBedPath, genome = "testgenome")
 
 PECA_TF_enrich <- function(inputForegroundBed, genome, threads = 2, ...){
     setGenome(genome)

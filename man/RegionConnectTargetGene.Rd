@@ -51,7 +51,7 @@ Default: NULL (e.g. after \code{library (enrichTF)}, you can call function \code
 \item{...}{Additional arguments, currently unused.}
 }
 \value{
-An invisible \code{\link{EnrichTF-class}} object (\code{\link{Step-class}} based) scalar for downstream analysis.
+An invisible \code{\link{EnrichStep-class}} object (\code{\link{Step-class}} based) scalar for downstream analysis.
 }
 \description{
 Connect foreground and background regions to their target genes, which is predicted from PECA model.
@@ -60,8 +60,8 @@ Connect foreground and background regions to their target genes, which is predic
 Connect foreground and background regions to target genes, which are predicted from PECA.
 }
 \examples{
-setGenome("hg19")
-foregroundBedPath <- system.file(package = "enrichTF", "extdata","testForeGround.bed")
+setGenome("testgenome") #Use "hg19","hg38",etc. for your application
+foregroundBedPath <- system.file(package = "enrichTF", "extdata","testregion.bed")
 gen <- genBackground(inputForegroundBed = foregroundBedPath)
 conTG <- enrichRegionConnectTargetGene(gen)
 }

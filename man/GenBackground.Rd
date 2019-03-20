@@ -10,16 +10,16 @@
 \usage{
 enrichGenBackground(prevStep, inputForegroundBed = NULL, genome = NULL,
   outputForegroundBed = NULL, outputBackgroundBed = NULL,
-  outputRegionBed = NULL, rangeLen = 1000, sampleNumb = 10000, ...)
+  outputRegionBed = NULL, regionLen = 1000, sampleNumb = 10000, ...)
 
 \S4method{enrichGenBackground}{Step}(prevStep, inputForegroundBed = NULL,
   genome = NULL, outputForegroundBed = NULL,
   outputBackgroundBed = NULL, outputRegionBed = NULL,
-  rangeLen = 1000, sampleNumb = NULL, ...)
+  regionLen = 1000, sampleNumb = NULL, ...)
 
 genBackground(inputForegroundBed, genome = NULL,
   outputForegroundBed = NULL, outputBackgroundBed = NULL,
-  outputRegionBed = NULL, rangeLen = 1000, sampleNumb = NULL, ...)
+  outputRegionBed = NULL, regionLen = 1000, sampleNumb = NULL, ...)
 }
 \arguments{
 \item{prevStep}{\code{\link{Step-class}} object scalar.
@@ -44,7 +44,7 @@ Default: NULL (generated base on inputForegroundBed)}
 Foreground and background merged BED files.
 Default: NULL (generated base on inputForegroundBed)}
 
-\item{rangeLen}{\code{Character} scalar. It sets the length of forground sequence regions. Default: 1000}
+\item{regionLen}{\code{Character} scalar. It sets the length of forground sequence regions. Default: 1000}
 
 \item{sampleNumb}{\code{numeric} scalar.
 It sets the number of background regions that will be sampled. Default: 10000}
@@ -52,7 +52,7 @@ It sets the number of background regions that will be sampled. Default: 10000}
 \item{...}{Additional arguments, currently unused.}
 }
 \value{
-An invisible \code{\link{EnrichTF-class}} object (\code{\link{Step-class}} based) scalar for downstream analysis.
+An invisible \code{\link{EnrichStep-class}} object (\code{\link{Step-class}} based) scalar for downstream analysis.
 }
 \description{
 Use uniform distribution to generate background sequence regions from genome.
@@ -63,9 +63,9 @@ Use uniform distribution to generate background sequence regions from genome.
 The size of foreground regions will be unified into the length specified in argument.
 }
 \examples{
-
-foregroundBedPath <- system.file(package = "enrichTF", "extdata","testForeGround.bed")
-gen <- genBackground(inputForegroundBed = foregroundBedPath,genome = "hg19")
+setGenome("testgenome") #Use "hg19","hg38",etc. for your application
+foregroundBedPath <- system.file(package = "enrichTF", "extdata","testregion.bed")
+gen <- genBackground(inputForegroundBed = foregroundBedPath)
 conTG <- enrichRegionConnectTargetGene(gen)
 }
 \seealso{

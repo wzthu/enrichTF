@@ -4,7 +4,7 @@
 \name{MotifsInRegions}
 \alias{MotifsInRegions}
 \alias{enrichFindMotifsInRegions,Step-method}
-\alias{enrichMotifsInRegions}
+\alias{enrichFindMotifsInRegions}
 \alias{findMotifsInRegions}
 \alias{motifsInRegions}
 \title{Find motifs in all input sequence regions}
@@ -51,7 +51,7 @@ Default: NULL (e.g. after \code{library (enrichTF)}, you can call function \code
 \item{...}{Additional arguments, currently unused.}
 }
 \value{
-An invisible \code{\link{EnrichTF-class}} object (\code{\link{Step-class}} based) scalar for downstream analysis.
+An invisible \code{\link{EnrichStep-class}} object (\code{\link{Step-class}} based) scalar for downstream analysis.
 }
 \description{
 Scan for motif occurrences using the prepared PWMs and obtain the promising candidate motifs in these regions.
@@ -61,8 +61,8 @@ Scan for motif occurrences using the prepared PWMs and
 obtain the promising candidate motifs in these regions.
 }
 \examples{
-setGenome("hg19")
-foregroundBedPath <- system.file(package = "enrichTF", "extdata","testForeGround.bed")
+setGenome("testgenome") #Use "hg19","hg38",etc. for your application
+foregroundBedPath <- system.file(package = "enrichTF", "extdata","testregion.bed")
 gen <- genBackground(inputForegroundBed = foregroundBedPath)
 findMotif <- enrichFindMotifsInRegions(gen,motifRc="integrate")
 }
