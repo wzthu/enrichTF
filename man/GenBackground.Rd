@@ -63,9 +63,9 @@ Use uniform distribution to generate background sequence regions from genome.
 The size of foreground regions will be unified into the length specified in argument.
 }
 \examples{
-setGenome("hg19")
-foregroundBedPath <- system.file(package = "enrichTF", "extdata","testForeGround.bed")
-gen <- genBackground(inputForegroundBed = foregroundBedPath,genome = "hg19")
+setGenome("testgenome") #Use "hg19","hg38",etc. for your application
+foregroundBedPath <- system.file(package = "enrichTF", "extdata","testregion.bed")
+gen <- genBackground(inputForegroundBed = foregroundBedPath)
 conTG <- enrichRegionConnectTargetGene(gen)
 }
 \seealso{

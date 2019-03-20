@@ -53,6 +53,9 @@ setMethod(
         }else{
             .Object@paramList[["genome"]] <- genome
         }
+        if(.Object@paramList[["genome"]] == "testgenome"){
+            .Object@paramList[["genome"]] <- "hg19"
+        }
         .Object
     }
 )
@@ -190,8 +193,8 @@ setMethod(
 #' \code{\link{findMotifsInRegions}}
 #' \code{\link{tfsEnrichInRegions}}
 #' @examples
-#' setGenome("hg19")
-#' foregroundBedPath <- system.file(package = "enrichTF", "extdata","testForeGround.bed")
+#' setGenome("testgenome") #Use "hg19","hg38",etc. for your application
+#' foregroundBedPath <- system.file(package = "enrichTF", "extdata","testregion.bed")
 #' gen <- genBackground(inputForegroundBed = foregroundBedPath)
 #' findMotif <- enrichFindMotifsInRegions(gen,motifRc="integrate")
 

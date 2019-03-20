@@ -46,9 +46,19 @@ setMethod(
             .Object@outputList[["outputRegionBed"]] <- outputRegionBed
         }
         if(is.null(genome)){
-            .Object@paramList[["bsgenome"]] <- BSgenome::getBSgenome(getGenome())
+            if(getGenome() == "testgenome"){
+                .Object@paramList[["bsgenome"]] <- BSgenome::getBSgenome("hg19")
+            }else{
+                .Object@paramList[["bsgenome"]] <- BSgenome::getBSgenome(getGenome())
+            }
+
         }else{
+            if(genome == "testgenome"){
+                genome <- "hg19"
+            }
             .Object@paramList[["bsgenome"]] <- BSgenome::getBSgenome(genome = genome)
+
+
         }
         .Object@paramList[["regionLen"]] <- regionLen
         if(is.null(sampleNumb)){
@@ -85,6 +95,9 @@ setMethod(
 
 randomSampleOnGenome<-function(regionLen, sampleNumber,bsgenome){
     chrlens <-seqlengths(bsgenome)
+    if(getGenome() == "testgenome"){
+        chrlens<-chrlens['chr1']
+    }
     selchr <- grep("_|M",names(chrlens),invert=TRUE)
     chrlens <- chrlens[selchr]
     startchrlens <- chrlens - regionLen
@@ -220,8 +233,8 @@ setMethod(
 #' \code{\link{tfsEnrichInRegions}}
 
 #' @examples
-#' setGenome("hg19")
-#' foregroundBedPath <- system.file(package = "enrichTF", "extdata","testForeGround.bed")
+#' setGenome("testgenome") #Use "hg19","hg38",etc. for your application
+#' foregroundBedPath <- system.file(package = "enrichTF", "extdata","testregion.bed")
 #' gen <- genBackground(inputForegroundBed = foregroundBedPath)
 #' conTG <- enrichRegionConnectTargetGene(gen)
 

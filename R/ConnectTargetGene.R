@@ -214,8 +214,8 @@ setMethod(
 #' \code{\link{findMotifsInRegions}}
 #' \code{\link{tfsEnrichInRegions}}
 #' @examples
-#' setGenome("hg19")
-#' foregroundBedPath <- system.file(package = "enrichTF", "extdata","testForeGround.bed")
+#' setGenome("testgenome") #Use "hg19","hg38",etc. for your application
+#' foregroundBedPath <- system.file(package = "enrichTF", "extdata","testregion.bed")
 #' gen <- genBackground(inputForegroundBed = foregroundBedPath)
 #' conTG <- enrichRegionConnectTargetGene(gen)
 

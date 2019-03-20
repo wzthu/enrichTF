@@ -34,8 +34,8 @@ you can add argument \code{GenBackground.sampleNumb = 1000} to the function in t
 The number of arguments is not limited so you can add other arguments with \code{StepName.argumentName} in the same way.
 }
 \examples{
-foregroundBedPath <- system.file(package = "enrichTF", "extdata","testForeGround.bed")
-PECA_TF_enrich(inputForegroundBed = foregroundBedPath, genome = "hg19")
+foregroundBedPath <- system.file(package = "enrichTF", "extdata","testregion.bed")
+PECA_TF_enrich(inputForegroundBed = foregroundBedPath, genome = "testgenome")
 }
 \references{
 Duren Z.,.....PNAS

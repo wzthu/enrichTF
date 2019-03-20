@@ -76,8 +76,8 @@ Test each TF is enriched in regions or not
 Connect foreground and background regions to targetGene
 }
 \examples{
-setGenome("hg19")
-foregroundBedPath <- system.file(package = "enrichTF", "extdata","testForeGround.bed")
+setGenome("testgenome") #Use "hg19","hg38",etc. for your application
+foregroundBedPath <- system.file(package = "enrichTF", "extdata","testregion.bed")
 gen <- genBackground(inputForegroundBed = foregroundBedPath)
 conTG <- enrichRegionConnectTargetGene(gen)
 findMotif <- enrichFindMotifsInRegions(gen,motifRc="integrate")

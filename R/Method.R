@@ -20,8 +20,8 @@
 #' @references Duren Z.,.....PNAS
 #' @export PECA_TF_enrich
 #' @examples
-#' foregroundBedPath <- system.file(package = "enrichTF", "extdata","testForeGround.bed")
-#' PECA_TF_enrich(inputForegroundBed = foregroundBedPath, genome = "hg19")
+#' foregroundBedPath <- system.file(package = "enrichTF", "extdata","testregion.bed")
+#' PECA_TF_enrich(inputForegroundBed = foregroundBedPath, genome = "testgenome")
 
 PECA_TF_enrich <- function(inputForegroundBed, genome, threads = 2, ...){
     setGenome(genome)

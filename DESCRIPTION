@@ -25,7 +25,8 @@ Imports:
     S4Vectors,
     utils,
     parallel,
-    stats
+    stats,
+    BiocManager
 Suggests:
     knitr
 Collate: 

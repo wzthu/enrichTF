@@ -94,7 +94,7 @@ setMethod(
         inputMotifWeights <- getParam(.Object,"inputMotifWeights")
         inputTFgeneRelMtx <- getParam(.Object,"inputTFgeneRelMtx")
         inputMotifTFTable <- getParam(.Object,"inputMotifTFTable")
-
+        #return(.Object)
 
 
         if(endsWith(inputMotifWeights,".RData")){
@@ -166,6 +166,7 @@ setMethod(
                                                                   backgroundGeneBed,
                                                                   inputMotifTFTable,
                                                                   regionMotifBed){
+            tryCatch({
             pValue[i,2] <- t.test(x = inputTFgeneRelMtx[i,match(backgroundGeneBed$geneName,geneName)],
                                   y = inputTFgeneRelMtx[i,match(foregroundGeneBed$geneName,geneName)],
                                   alternative = "greater")$p.value
@@ -216,6 +217,9 @@ setMethod(
             })
 
             pValue[i,3] <- min(pvalueOfFisher1)
+            },error = function(e){
+                writeLog(.Object,as.character(e))
+            })
             return(pValue[i,])
 
         }
@@ -352,8 +356,8 @@ setMethod(
 #' \code{\link{findMotifsInRegions}}
 #' \code{\link{tfsEnrichInRegions}}
 #' @examples
-#' setGenome("hg19")
-#' foregroundBedPath <- system.file(package = "enrichTF", "extdata","testForeGround.bed")
+#' setGenome("testgenome") #Use "hg19","hg38",etc. for your application
+#' foregroundBedPath <- system.file(package = "enrichTF", "extdata","testregion.bed")
 #' gen <- genBackground(inputForegroundBed = foregroundBedPath)
 #' conTG <- enrichRegionConnectTargetGene(gen)
 #' findMotif <- enrichFindMotifsInRegions(gen,motifRc="integrate")
