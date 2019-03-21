@@ -1,6 +1,6 @@
 ---
 title: "enrichTF-Introduction"
-author: "Shining Ma"
+author: "Zheng Wei, Shining Ma, Duren Zhana"
 date: "`r Sys.Date()`"
 output: 
     html_document:
@@ -14,7 +14,7 @@ vignette: >
   
 ---
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE,warning = FALSE)
 ```
 
 # Quick Start
@@ -34,50 +34,137 @@ BiocManager::install("enrichTF")
 ## Loading
 Similar with other R packages, please load enrichTF each time before using the package.
 
-```{r loading00,eval=FALSE,message=FALSE}
+```{r loading00,eval=TRUE,message=FALSE}
 library(enrichTF)
 ```
+
+```{r echo=FALSE}
+dir.create('refdir')
+```
+
+## Use with default configuration
+
+User the default pipeline for data processing is easy.
+
+Users only need to provide a region list BED file with first 3 columns, which may be the peak calling result of sequencing data like ATAC-seq etc.
+
+All required data and software will be installed automatically.
+
+```{r}
+# provide your region list in a 3 columns bed file
+foregroundBedPath <- system.file(package = "enrichTF", "extdata","testregion.bed")
+# call the whole pipeline
+PECA_TF_enrich(inputForegroundBed = foregroundBedPath, genome = "testgenome") # change"testgenome" to one of "hg19", "hg38", "mm9", 'mm10' ! "testgenome" is only a test example.
+```
+
+
+
 # Introduction
 As transcription factors (TFs) play a crucial role in regulating the transcription process through binding on the genome alone or in a combinatorial manner, TF enrichment analysis is an efficient and important procedure to locate the candidate functional TFs from a set of experimentally defined regulatory regions. While it is commonly accepted that structurally related TFs may have similar binding preference to sequences (i.e. motifs) and one TF may have multiple motifs, TF enrichment analysis is much more challenging than motif enrichment analysis. Here we present a R package for TF enrichment analysis which combine motif enrichment with the PECA model.
 
-# Workflow
+# How TF Enrichment Work
+
+## Basic relations and concept
+
+There are four kinds of relations in this work. Here, we wil introduce them and how to test and get enriched TF in the methods rather than the motifs.
+
+
+### Regions-genes Relation Table
+
+When user given a region list in BED format, the relations between regions and a gene can be obtained in two way:
+
+1. The regions covered the gene's functional region. This relation can be obtain from gene refecence data.
+
+2. The regions are an enhancer or other distance regularation elements that may interact with the gene. This relation can be obained from 3D genome assays like Hi-C or HiChIP.
+
+We have already integrated the potential relation between regions and genes through may experiment data and gene reference. 
+So users can use this relations to obtain Regions-genes relations for their own region list.
+
+User can also customize their own  potential relation in their own work.
+
+
+
+### Genes-TFs Relation Matrix
+
+The correlation score of gene and TF comes from our work PECA. They should be in the range [-1,1]. User can also costomized this relation matrix base on their own experiment data.
+
+
+### TFs-motifs Relation Table
+
+One TF may related to many motifs. We mannually annotated more than 700 motifs with their corresponding TFs
+
+### Motifs-region Relation Table
+
+For each region, we use all collected motifs to scan to check if there are some motifs in the region. At last, the motif-region relation table can be generated.
+
+## Enrichment Test
+
+When user provide the candidate region list. 
+This package will randomly sample the same number of background region based on the users' foreground region list
+
+### Enrichment t-test
+
+Foreground and background region list can both connected with gene in Regions-genes Relation Table, 
+so either of them will get an gene list. We name them the foreground gene list and background gen list.
+
+For each TF, we will do a t-test and get p-values for TF-Gene scores of foreground vs TF-Gene scores of background. These scores comes from  Genes-TFs Relation Matrix.
+
+
+### Enrichment fisher test without threshold
+
+
+Each TF connected with many Motifs. For each Motifs this package will do the following fisher exact test to test if this motif correlated enriched in foreground regions with connected genes.
+
+|                                          | fall in region with TF's  motif  | not fall in region with TF's  motif  |
+|------------------------------------------|----------------------------|--------------------------------|
+| foreground regions (with connected gene) |                            |                                |
+| background regions (with connected gene) |                            |                                |
+
+At last, the package will select the motif with most significant p-value to represent this TF.
+
+Then, we also can get the p value for all of the TF
+
+
+### Enrichment fisher test with threshold
+
+Based on previous section result (the motif selected to represent the TF) and similar to previous section, the package will do the same test on the similar data. The only diffent point is different threshold (for -1 to 1 with interval 0.1) in TF-Gene relation matrix is used to filtered the connected gene. 
+
+In this way, we can select best threshold with the most significant p value. 
+
+Then, we also can get another p value for all of the TF
+
+### FDR
+
+At last, false discover rate correction is apply on last section's result
+
+
+# Customized Workflow
 
 ## Prepare inputs
 The function of genBackground is to generate random background regions based on the input regions and to set the length of input sequence regions. We try to select background sequence regions that match the GC-content distribution of the input sequence regions. The default length and number of background regions are 1000 and 10,000, respectively. The length of sequence regions used for motif finding is important. Here, we set 1000 as default value, which means for each region, we get sequences from -500 to +500 relative from center.
 For example,
-```{r loading01,eval=FALSE,message=FALSE}
-setGenome("hg19")
-foregroundBedPath <- system.file(package = "enrichTF", "extdata","testForeGround.bed")
-gen <- genBackground(inputForegroundBed = foregroundBedPath,genome = "hg19")
+```{r loading01}
+setGenome("testgenome")
+foregroundBedPath <- system.file(package = "enrichTF", "extdata","testregion.bed")
+gen <- genBackground(inputForegroundBed = foregroundBedPath)
 ```
 ## Motifscan
 The function of MotifsInRegions is to scan for motif occurrences using the prepared PWMs and obtain the promising candidate motifs in these regions.
 For example,
-```{r loading02,eval=FALSE,message=FALSE}
-setGenome("hg19")
-foregroundBedPath <- system.file(package = "enrichTF", "extdata","testForeGround.bed")
-gen <- genBackground(inputForegroundBed = foregroundBedPath)
-findMotif <- enrichFindMotifsInRegions(gen,motifRc="integrate")
+```{r loading02}
+conTG <- enrichRegionConnectTargetGene(gen)
 ```
 ## Connect regions with target genes
 
 The function of regionConnectTargetGene is to connect foreground and background regions to their target genes, which are predicted from PECA model.
 
 For example,
-```{r loading03,eval=FALSE,message=FALSE}
-setGenome("hg19")
-foregroundBedPath <- system.file(package = "enrichTF", "extdata","testForeGround.bed")
-gen <- genBackground(inputForegroundBed = foregroundBedPath)
-enrichFindMotifsInRegions(gen,motifRc="integrate")
+```{r loading03}
+findMotif <- enrichFindMotifsInRegions(gen,motifRc="integrate")
 ```
 ## TF enrichment test
 The function of TFsEnrichInRegions is to test whether each TF is enriched on input regions.
 For example,
-```{r loading04,eval=FALSE,message=FALSE}
-setGenome("hg19")
-foregroundBedPath <- system.file(package = "enrichTF", "extdata","testForeGround.bed")
-gen <- genBackground(inputForegroundBed = foregroundBedPath)
-conTG <- enrichRegionConnectTargetGene(gen)
-findMotif <- enrichFindMotifsInRegions(gen,motifRc="integrate")
-result <- enrichTFsEnrichInRegions(gen,findMotif,conTG)
+```{r loading04}
+result <- enrichTFsEnrichInRegions(gen,NULL,NULL)
 ```
