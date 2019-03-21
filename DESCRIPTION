@@ -36,7 +36,6 @@ Collate:
     FindMotifsInRegions.R
     GenBackground.R
     onLoad.R
-    corefunc.R
     untils.R
     Method.R
 RoxygenNote: 6.1.1

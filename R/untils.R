@@ -126,6 +126,5 @@ getMotifInfo1 <- function(motiffile = NULL){
     PWMList[[motifName]] <- p_matrix
 
     PWMList <- do.call(TFBSTools::PWMatrixList, PWMList)
-    print(names(PWMList))
     return(PWMList)
 }
