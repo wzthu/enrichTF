@@ -17,12 +17,14 @@
 #' The number of arguments is not limited so you can add other arguments with the format (\code{StepName.argumentName}) in the same way.
 #' @author Zheng Wei
 #' @return An invisible \code{list} contains all four steps \code{EnrichTF} objects
-#' @references Zhana Duren, et al., Modeling gene regulation from paired expression and chromatin accessibility data. 
+#' @references Zhana Duren, et al., Modeling gene regulation from paired expression and chromatin accessibility data.
 #' Proc Natl Acad Sci U S A. 2017 1;111(44):15675-80
 #' @export PECA_TF_enrich
 #' @examples
+#' \dontrun{
 #' foregroundBedPath <- system.file(package = "enrichTF", "extdata","testregion.bed")
 #' PECA_TF_enrich(inputForegroundBed = foregroundBedPath, genome = "testgenome")
+#' }
 
 PECA_TF_enrich <- function(inputForegroundBed, genome, threads = 2, ...){
     setGenome(genome)
