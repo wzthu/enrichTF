@@ -50,26 +50,15 @@ dowloadTFgeneRelMtxFile <- function(refFilePath){
 }
 
 checkAndInstallBSgenomeTestgenome <- function(refFilePath){
-    genome <- "hg19"
-    bsgenomename<- BSgenome::available.genomes()[grepl(paste0(genome,"$"),BSgenome::available.genomes())]
-    if(length(bsgenomename)==0){
-        message()
-        stop("There is no BSgenome support for this genome")
+    genome <- getGenome()
+    if(genome == "testgenome"){
+        genome <- "hg19"
     }
-    bsgenomeinstall <- BSgenome::installed.genomes()[grepl(paste0(genome,"$"),BSgenome::installed.genomes())]
-    if(length(bsgenomeinstall)==0){
-        message(paste("BSgenome for ",genome,"has not been installed,"))
-        message("begin to install ...")
-        BiocManager::install(bsgenomename)
-    }
+    checkAndInstallBSgenome(refFilePath, genome)
 }
 
 checkAndInstall <- function(check = TRUE, ...){
-    if(getGenome() == "testgenome"){
-        runWithFinishCheck(func = checkAndInstallBSgenomeTestgenome,refName = "bsgenome")
-    }else{
-        runWithFinishCheck(func = checkAndInstallBSgenome,refName = "bsgenome")
-    }
+    runWithFinishCheck(func = checkAndInstallBSgenomeTestgenome,refName = "bsgenome")
 #    runWithFinishCheck(func = checkAndInstallGenomeFa,refName = "fasta", refFilePath = paste0(getGenome(),".fa"))
     runWithFinishCheck(func = dowloadMotifFile,refName = "motifpwm", refFilePath = "motifpwm")
     runWithFinishCheck(func = convertPWMFileToPWMobj, "motifPWMOBJ", refFilePath = "motifPWMOBJ.RData")
