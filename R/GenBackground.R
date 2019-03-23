@@ -236,7 +236,6 @@ setMethod(
 #' setGenome("testgenome") #Use "hg19","hg38",etc. for your application
 #' foregroundBedPath <- system.file(package = "enrichTF", "extdata","testregion.bed")
 #' gen <- genBackground(inputForegroundBed = foregroundBedPath)
-#' conTG <- enrichRegionConnectTargetGene(gen)
 
 
 setGeneric("enrichGenBackground",function(prevStep,
