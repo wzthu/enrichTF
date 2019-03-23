@@ -33,10 +33,10 @@ Imports:
     S4Vectors,
     utils,
     parallel,
-    stats,
-    BiocManager
+    stats
 Suggests:
-    knitr
+    knitr,
+    magrittr
 Collate: 
     EnrichStep.R 
     ConnectTargetGene.R

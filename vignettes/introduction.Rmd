@@ -170,7 +170,21 @@ result <- enrichTFsEnrichInRegions(gen,NULL,NULL)
 ```
 
 
-## Session Information
+## Build a pipeline
+
+The user can build a pipeline easily based on pipeFrame (pipeline framework)
+
+```{r}
+library(magrittr)
+setGenome("testgenome")
+foregroundBedPath <- system.file(package = "enrichTF", "extdata","testregion.bed")
+result <- genBackground(inputForegroundBed = foregroundBedPath) %>%
+enrichRegionConnectTargetGene%>%
+enrichFindMotifsInRegions(motifRc="integrate") %>%
+enrichTFsEnrichInRegions(NULL,NULL)
+```
+
+# Session Information
 
 ```{r}
 sessionInfo()
