@@ -72,6 +72,9 @@ setMethod(
         pwmObj <- getParam(.Object,"pwmObj")
         genome <- getParam(.Object,"genome")
         outputRegionMotifBed <- getParam(.Object,"outputRegionMotifBed")
+        if(genome == "testgenome"){
+            pwmObj = pwmObj[names(pwmObj)[(seq_len(length(pwmObj))%%4==0)]]
+        }
         regions <- import(con = inputRegionBed,format = "bed")
         cl <- makeCluster(getThreads())
         motif_ix <-parallel::parLapply(pwmObj,motifmatchr::matchMotifs,subject = regions, genome = genome, out="positions",p.cutoff = 5e-04, cl = cl)

@@ -156,8 +156,13 @@ setMethod(
 
         cl <- makeCluster(getThreads())
 
+        tfsseq = seq_len(length(tfName))
+        if(getGenome() =="testgenome"){
+            tfsseq= tfsseq[tfsseq%%10==0]
+        }
+
         #for(i in 1:length(tfName)){
-        allpValue<-parLapply(X = 1:length(tfName), fun = function(i,
+        allpValue<-parLapply(X = tfsseq, fun = function(i,
                                                                   geneName,
                                                                   tfName,
                                                                   pValue,
