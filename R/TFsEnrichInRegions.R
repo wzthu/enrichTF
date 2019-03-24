@@ -365,6 +365,7 @@ setMethod(
 #' \code{\link{findMotifsInRegions}}
 #' \code{\link{tfsEnrichInRegions}}
 #' @examples
+#'  \dontrun{
 #' library(magrittr)
 #' setGenome("testgenome") #Use "hg19","hg38",etc. for your application
 #' foregroundBedPath <- system.file(package = "enrichTF", "extdata","testregion.bed")
@@ -377,6 +378,7 @@ setMethod(
 #'     enrichRegionConnectTargetGene %>%
 #'     enrichFindMotifsInRegions(motifRc="integrate") %>%
 #'     enrichTFsEnrichInRegions
+#'     }
 
 
 

@@ -21,10 +21,11 @@
 #' Proc Natl Acad Sci U S A. 2017 1;111(44):15675-80
 #' @export PECA_TF_enrich
 #' @examples
-#' \dontrun{
+#'
 #' foregroundBedPath <- system.file(package = "enrichTF", "extdata","testregion.bed")
-#' PECA_TF_enrich(inputForegroundBed = foregroundBedPath, genome = "testgenome")
-#' }
+#' # This is the whole pipeline example.
+#' # PECA_TF_enrich(inputForegroundBed = foregroundBedPath, genome = "testgenome")
+#'
 
 PECA_TF_enrich <- function(inputForegroundBed, genome, threads = 2, ...){
     setGenome(genome)
