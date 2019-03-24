@@ -1,7 +1,7 @@
 Package: enrichTF
 Type: Package
 Title: Transcription Factors Enrichment Analysis
-Version: 0.99.9
+Version: 0.99.10
 Author: Zheng Wei, Zhana Duren, Shining Ma
 Maintainer: Zheng Wei <wzwz@stanford.edu>
 Description: As transcription factors (TFs) play a crucial role in regulating the 
