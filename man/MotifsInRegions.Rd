@@ -65,7 +65,7 @@ obtain the promising candidate motifs in these regions.
 setGenome("testgenome") #Use "hg19","hg38",etc. for your application
 foregroundBedPath <- system.file(package = "enrichTF", "extdata","testregion.bed")
 gen <- genBackground(inputForegroundBed = foregroundBedPath)
-findMotif <- enrichFindMotifsInRegions(gen,motifRc="integrate")
+# findMotif <- enrichFindMotifsInRegions(gen,motifRc="integrate")
 }
 \seealso{
 \code{\link{genBackground}}
