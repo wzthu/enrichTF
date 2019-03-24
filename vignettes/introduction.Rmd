@@ -50,7 +50,7 @@ Users only need to provide a region list BED file with first 3 columns, which ma
 
 All required data and software will be installed automatically.
 
-```{r}
+```{r eval=FALSE}
 # provide your region list in a 3 columns bed file
 foregroundBedPath <- system.file(package = "enrichTF", "extdata","testregion.bed")
 # call the whole pipeline
@@ -165,12 +165,26 @@ findMotif <- enrichFindMotifsInRegions(gen,motifRc="integrate")
 ## TF enrichment test
 The function of TFsEnrichInRegions is to test whether each TF is enriched on input regions.
 For example,
-```{r loading04}
+```{r eval=FALSE}
 result <- enrichTFsEnrichInRegions(gen,NULL,NULL)
 ```
 
 
-## Session Information
+## Build a pipeline
+
+The user can build a pipeline easily based on pipeFrame (pipeline framework)
+
+```{r}
+library(magrittr)
+setGenome("testgenome")
+foregroundBedPath <- system.file(package = "enrichTF", "extdata","testregion.bed")
+result <- genBackground(inputForegroundBed = foregroundBedPath) %>%
+enrichRegionConnectTargetGene%>%
+enrichFindMotifsInRegions(motifRc="integrate") %>%
+enrichTFsEnrichInRegions(NULL,NULL)
+```
+
+# Session Information
 
 ```{r}
 sessionInfo()

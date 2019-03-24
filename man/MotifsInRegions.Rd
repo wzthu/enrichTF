@@ -25,7 +25,8 @@ findMotifsInRegions(inputRegionBed, outputRegionMotifBed = NULL,
 }
 \arguments{
 \item{prevStep}{\code{\link{Step-class}} object scalar.
-It needs to be the return value of upstream process from \code{\link{genBackground}} or \code{\link{enrichGenBackground}}}
+It needs to be the return value of upstream process from \code{\link{genBackground}} or \code{\link{enrichGenBackground}}
+when it is not used in a pipeline.  If it is used in a pipeline or \code{\%>\%} is applied on this function, any steps in this package is acceptable.}
 
 \item{inputRegionBed}{\code{Character} scalar.
 BED file for regions including foreground and background sequences.}

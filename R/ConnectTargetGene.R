@@ -188,6 +188,7 @@ setMethod(
 #' Connect foreground and background regions to their target genes, which is predicted from PECA model.
 #' @param prevStep \code{\link{Step-class}} object scalar.
 #' It needs to be the return value of upstream process from \code{\link{genBackground}} or \code{\link{enrichGenBackground}}
+#' when it is not used in a pipeline.  If it is used in a pipeline or \code{\%>\%} is applied on this function, any steps in this package is acceptable.
 #' @param inputForegroundBed \code{Character} scalar.
 #' The BED file directory of foreground regions.
 #' @param inputBackgroundBed  \code{Character} scalar.

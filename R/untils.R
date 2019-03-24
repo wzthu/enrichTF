@@ -14,18 +14,35 @@ downloadAndGunzip <- function(urlplaceholder,refFilePath){
     gunzip(paste0(refFilePath,'.gz'),remove = TRUE)
 }
 
+copyAndGunzip <- function(fileName,refFilePath){
+    file.copy(from = system.file(package = "enrichTF", "extdata",fileName),
+                    to = paste0(refFilePath,'.gz'),overwrite = TRUE)
+    gunzip(paste0(refFilePath,'.gz'),remove = TRUE)
+}
+
 dowloadMotifFile <- function(refFilePath){
-    downloadAndGunzip("https://wzthu.github.io/enrich/refdata/%s/all_motif_rmdup.gz",refFilePath)
+    if(getGenome() == "testgenome"){
+        copyAndGunzip("all_motif_rmdup.gz",refFilePath)
+    }else{
+        downloadAndGunzip("https://wzthu.github.io/enrich/refdata/%s/all_motif_rmdup.gz",refFilePath)
+    }
 }
 
 dowloadREgeneFile <- function(refFilePath){
-    downloadAndGunzip("https://wzthu.github.io/enrich/refdata/%s/RE_gene_corr.bed.gz",refFilePath)
-
+    if(getGenome() == "testgenome"){
+        copyAndGunzip("RE_gene_corr.bed.gz",refFilePath)
+    }else{
+        downloadAndGunzip("https://wzthu.github.io/enrich/refdata/%s/RE_gene_corr.bed.gz",refFilePath)
+    }
 }
 
 
 dowloadEnhancerREgeneFile <- function(refFilePath){
-    downloadAndGunzip("https://wzthu.github.io/enrich/refdata/%s/Enhancer_RE_gene_corr.bed.gz",refFilePath)
+    if(getGenome() == "testgenome"){
+        copyAndGunzip("Enhancer_RE_gene_corr.bed.gz",refFilePath)
+    }else{
+        downloadAndGunzip("https://wzthu.github.io/enrich/refdata/%s/Enhancer_RE_gene_corr.bed.gz",refFilePath)
+    }
 
 }
 
@@ -37,39 +54,37 @@ convertPWMFileToPWMobj <- function(refFilePath){
 
 
 dowloadMotifTFTableFile <- function(refFilePath){
-    downloadAndGunzip("https://wzthu.github.io/enrich/refdata/%s/MotifTFTable.RData.gz",refFilePath)
-
+    if(getGenome() == "testgenome"){
+        copyAndGunzip("MotifTFTable.RData.gz",refFilePath)
+    }else{
+        downloadAndGunzip("https://wzthu.github.io/enrich/refdata/%s/MotifTFTable.RData.gz",refFilePath)
+    }
 }
 dowloadMotifWeightsFile <- function(refFilePath){
-    downloadAndGunzip("https://wzthu.github.io/enrich/refdata/%s/MotifWeights.RData.gz",refFilePath)
-
+    if(getGenome() == "testgenome"){
+        copyAndGunzip("MotifWeights.RData.gz",refFilePath)
+    }else{
+        downloadAndGunzip("https://wzthu.github.io/enrich/refdata/%s/MotifWeights.RData.gz",refFilePath)
+    }
 }
 dowloadTFgeneRelMtxFile <- function(refFilePath){
-    downloadAndGunzip("https://wzthu.github.io/enrich/refdata/%s/TFgeneRelMtx.RData.gz",refFilePath)
-
+    if(getGenome() == "testgenome"){
+        copyAndGunzip("TFgeneRelMtx.RData.gz",refFilePath)
+    }else{
+        downloadAndGunzip("https://wzthu.github.io/enrich/refdata/%s/TFgeneRelMtx.RData.gz",refFilePath)
+    }
 }
 
 checkAndInstallBSgenomeTestgenome <- function(refFilePath){
-    genome <- "hg19"
-    bsgenomename<- BSgenome::available.genomes()[grepl(paste0(genome,"$"),BSgenome::available.genomes())]
-    if(length(bsgenomename)==0){
-        message()
-        stop("There is no BSgenome support for this genome")
+    genome <- getGenome()
+    if(genome == "testgenome"){
+        genome <- "hg19"
     }
-    bsgenomeinstall <- BSgenome::installed.genomes()[grepl(paste0(genome,"$"),BSgenome::installed.genomes())]
-    if(length(bsgenomeinstall)==0){
-        message(paste("BSgenome for ",genome,"has not been installed,"))
-        message("begin to install ...")
-        BiocManager::install(bsgenomename)
-    }
+    checkAndInstallBSgenome(refFilePath, genome)
 }
 
 checkAndInstall <- function(check = TRUE, ...){
-    if(getGenome() == "testgenome"){
-        runWithFinishCheck(func = checkAndInstallBSgenomeTestgenome,refName = "bsgenome")
-    }else{
-        runWithFinishCheck(func = checkAndInstallBSgenome,refName = "bsgenome")
-    }
+    runWithFinishCheck(func = checkAndInstallBSgenomeTestgenome,refName = "bsgenome")
 #    runWithFinishCheck(func = checkAndInstallGenomeFa,refName = "fasta", refFilePath = paste0(getGenome(),".fa"))
     runWithFinishCheck(func = dowloadMotifFile,refName = "motifpwm", refFilePath = "motifpwm")
     runWithFinishCheck(func = convertPWMFileToPWMobj, "motifPWMOBJ", refFilePath = "motifPWMOBJ.RData")

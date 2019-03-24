@@ -8,15 +8,15 @@
 \alias{tfsEnrichInRegions}
 \title{Test each TF is enriched in regions or not}
 \usage{
-enrichTFsEnrichInRegions(GenBackgroundStep, FindMotifsInRegionsStep,
-  RegionConnectTargetGeneStep, inputRegionBed = NULL,
-  inputForegroundGeneBed = NULL, inputBackgroundGeneBed = NULL,
-  inputRegionMotifBed = NULL, outputTFsEnrichTxt = NULL,
-  inputMotifWeights = NULL, inputTFgeneRelMtx = NULL,
-  inputMotifTFTable = NULL, ...)
+enrichTFsEnrichInRegions(GenBackgroundStep,
+  FindMotifsInRegionsStep = NULL, RegionConnectTargetGeneStep = NULL,
+  inputRegionBed = NULL, inputForegroundGeneBed = NULL,
+  inputBackgroundGeneBed = NULL, inputRegionMotifBed = NULL,
+  outputTFsEnrichTxt = NULL, inputMotifWeights = NULL,
+  inputTFgeneRelMtx = NULL, inputMotifTFTable = NULL, ...)
 
 \S4method{enrichTFsEnrichInRegions}{Step}(GenBackgroundStep,
-  FindMotifsInRegionsStep, RegionConnectTargetGeneStep,
+  FindMotifsInRegionsStep = NULL, RegionConnectTargetGeneStep = NULL,
   inputRegionBed = NULL, inputForegroundGeneBed = NULL,
   inputBackgroundGeneBed = NULL, inputRegionMotifBed = NULL,
   outputTFsEnrichTxt = NULL, inputMotifWeights = NULL,
@@ -29,25 +29,31 @@ tfsEnrichInRegions(inputRegionBed, inputForegroundGeneBed,
 }
 \arguments{
 \item{GenBackgroundStep}{\code{\link{Step-class}} object scalar.
-It has to be the return value of upstream process from \code{\link{genBackground}} and \code{\link{enrichGenBackground}}}
+It has to be the return value of upstream process from \code{\link{genBackground}} and \code{\link{enrichGenBackground}}
+when it is not used in a pipeline.  If it is used in a pipeline or \code{\%>\%} is applied on this function, any steps in this package is acceptable.}
 
 \item{FindMotifsInRegionsStep}{\code{\link{Step-class}} object scalar.
-It has to be the return value of upstream process from \code{\link{findMotifsInRegions}} and \code{\link{enrichFindMotifsInRegions}}}
+This parameter is not necessary when it is in pipeline.
+It has to be the return value of upstream process from \code{\link{findMotifsInRegions}} and \code{\link{enrichFindMotifsInRegions}}
+Default: NULL.}
 
 \item{RegionConnectTargetGeneStep}{\code{\link{Step-class}} object scalar.
-It has to be the return value of upstream process from \code{\link{genBackground}} and \code{\link{enrichGenBackground}}}
+It has to be the return value of upstream process from \code{\link{genBackground}} and \code{\link{enrichGenBackground}}
+This parameter is not necessary when it is in pipeline.
+Default: NULL.}
 
 \item{inputRegionBed}{\code{Character} scalar.
 Directory of Regions BED file  including foreground and background}
 
 \item{inputForegroundGeneBed}{\code{Character} scalar.
-Directory of BED file  including foreground regions connected to related genes. The forth colum is xxxxxxxxxxxxxxx, The fifth colum is xxxxxxxxxxxxxxx}
+Directory of BED file  including foreground regions connected to related genes. The forth column is region ID}
 
 \item{inputBackgroundGeneBed}{\code{Character} scalar.
-Directory BED file including foreground regions connected to related genes. The forth colum is xxxxxxxxxxxxxxx, The fifth colum is xxxxxxxxxxxxxxx}
+Directory BED file including foreground regions connected to related genes. The forth column is region ID}
 
 \item{inputRegionMotifBed}{\code{Character} scalar.
-Directory BED file  including foreground regions matched motifs. The forth colum is xxxxxxxxxxxxxxx, The fifth colum is xxxxxxxxxxxxxxx}
+Directory BED file  including foreground regions matched motifs. The forth column is region ID.
+The fifth column is motif calling score. The sixth column is motif name.}
 
 \item{outputTFsEnrichTxt}{\code{Character} scalar.
 Directory of Text result file  with five columns. The first columns is transcription factor ,The second column is xxxx}
@@ -73,15 +79,24 @@ An invisible \code{\link{EnrichStep-class}} object (\code{\link{Step-class}} bas
 Test each TF is enriched in regions or not
 }
 \details{
-Connect foreground and background regions to targetGene
+Connect foreground and background regions to targetGene.
+If you only use this function without previous steps and
+you do not familiar with the data format of the input,
+you can run the example to see the example input from previous steps.
 }
 \examples{
+library(magrittr)
 setGenome("testgenome") #Use "hg19","hg38",etc. for your application
 foregroundBedPath <- system.file(package = "enrichTF", "extdata","testregion.bed")
 gen <- genBackground(inputForegroundBed = foregroundBedPath)
 conTG <- enrichRegionConnectTargetGene(gen)
 findMotif <- enrichFindMotifsInRegions(gen,motifRc="integrate")
-result <- enrichTFsEnrichInRegions(gen,findMotif,conTG)
+result <- enrichTFsEnrichInRegions(gen)
+
+genBackground(inputForegroundBed = foregroundBedPath) \%>\%
+    enrichRegionConnectTargetGene \%>\%
+    enrichFindMotifsInRegions(motifRc="integrate") \%>\%
+    enrichTFsEnrichInRegions
 }
 \seealso{
 \code{\link{genBackground}}

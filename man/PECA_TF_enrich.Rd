@@ -34,11 +34,13 @@ you can add the argument \code{GenBackground.sampleNumb = 1000} into the functio
 The number of arguments is not limited so you can add other arguments with the format (\code{StepName.argumentName}) in the same way.
 }
 \examples{
+\dontrun{
 foregroundBedPath <- system.file(package = "enrichTF", "extdata","testregion.bed")
 PECA_TF_enrich(inputForegroundBed = foregroundBedPath, genome = "testgenome")
 }
+}
 \references{
-Zhana Duren, et al., Modeling gene regulation from paired expression and chromatin accessibility data. 
+Zhana Duren, et al., Modeling gene regulation from paired expression and chromatin accessibility data.
 Proc Natl Acad Sci U S A. 2017 1;111(44):15675-80
 }
 \author{

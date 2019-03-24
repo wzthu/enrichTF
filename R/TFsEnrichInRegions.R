@@ -323,18 +323,24 @@ setMethod(
 #' Test each TF is enriched in regions or not
 #' @param GenBackgroundStep \code{\link{Step-class}} object scalar.
 #' It has to be the return value of upstream process from \code{\link{genBackground}} and \code{\link{enrichGenBackground}}
+#' when it is not used in a pipeline.  If it is used in a pipeline or \code{\%>\%} is applied on this function, any steps in this package is acceptable.
 #' @param FindMotifsInRegionsStep \code{\link{Step-class}} object scalar.
+#' This parameter is not necessary when it is in pipeline.
 #' It has to be the return value of upstream process from \code{\link{findMotifsInRegions}} and \code{\link{enrichFindMotifsInRegions}}
+#' Default: NULL.
 #' @param RegionConnectTargetGeneStep \code{\link{Step-class}} object scalar.
 #' It has to be the return value of upstream process from \code{\link{genBackground}} and \code{\link{enrichGenBackground}}
+#' This parameter is not necessary when it is in pipeline.
+#' Default: NULL.
 #' @param inputRegionBed \code{Character} scalar.
 #' Directory of Regions BED file  including foreground and background
 #' @param inputForegroundGeneBed \code{Character} scalar.
-#' Directory of BED file  including foreground regions connected to related genes. The forth colum is xxxxxxxxxxxxxxx, The fifth colum is xxxxxxxxxxxxxxx
+#' Directory of BED file  including foreground regions connected to related genes. The forth column is region ID
 #' @param inputBackgroundGeneBed \code{Character} scalar.
-#' Directory BED file including foreground regions connected to related genes. The forth colum is xxxxxxxxxxxxxxx, The fifth colum is xxxxxxxxxxxxxxx
+#' Directory BED file including foreground regions connected to related genes. The forth column is region ID
 #' @param inputRegionMotifBed \code{Character} scalar.
-#' Directory BED file  including foreground regions matched motifs. The forth colum is xxxxxxxxxxxxxxx, The fifth colum is xxxxxxxxxxxxxxx
+#' Directory BED file  including foreground regions matched motifs. The forth column is region ID.
+#' The fifth column is motif calling score. The sixth column is motif name.
 #' @param outputTFsEnrichTxt \code{Character} scalar.
 #' Directory of Text result file  with five columns. The first columns is transcription factor ,The second column is xxxx
 #' @param inputMotifWeights \code{Character} scalar.
@@ -348,7 +354,10 @@ setMethod(
 #' Default: NULL (if \code{setGenome} is called.)
 #' @param ... Additional arguments, currently unused.
 #' @details
-#' Connect foreground and background regions to targetGene
+#' Connect foreground and background regions to targetGene.
+#' If you only use this function without previous steps and
+#' you do not familiar with the data format of the input,
+#' you can run the example to see the example input from previous steps.
 #' @return An invisible \code{\link{EnrichStep-class}} object (\code{\link{Step-class}} based) scalar for downstream analysis.
 #' @author Zheng Wei
 #' @seealso
@@ -356,19 +365,25 @@ setMethod(
 #' \code{\link{findMotifsInRegions}}
 #' \code{\link{tfsEnrichInRegions}}
 #' @examples
+#' library(magrittr)
 #' setGenome("testgenome") #Use "hg19","hg38",etc. for your application
 #' foregroundBedPath <- system.file(package = "enrichTF", "extdata","testregion.bed")
 #' gen <- genBackground(inputForegroundBed = foregroundBedPath)
 #' conTG <- enrichRegionConnectTargetGene(gen)
 #' findMotif <- enrichFindMotifsInRegions(gen,motifRc="integrate")
-#' result <- enrichTFsEnrichInRegions(gen,findMotif,conTG)
+#' result <- enrichTFsEnrichInRegions(gen)
+#'
+#' genBackground(inputForegroundBed = foregroundBedPath) %>%
+#'     enrichRegionConnectTargetGene %>%
+#'     enrichFindMotifsInRegions(motifRc="integrate") %>%
+#'     enrichTFsEnrichInRegions
 
 
 
 
 setGeneric("enrichTFsEnrichInRegions",function(GenBackgroundStep,
-                                               FindMotifsInRegionsStep,
-                                               RegionConnectTargetGeneStep,
+                                               FindMotifsInRegionsStep = NULL,
+                                               RegionConnectTargetGeneStep = NULL,
                                                inputRegionBed = NULL,
                                                inputForegroundGeneBed = NULL,
                                                inputBackgroundGeneBed = NULL,
@@ -388,8 +403,8 @@ setMethod(
     f = "enrichTFsEnrichInRegions",
     signature = "Step",
     definition = function(GenBackgroundStep,
-                          FindMotifsInRegionsStep,
-                          RegionConnectTargetGeneStep,
+                          FindMotifsInRegionsStep = NULL,
+                          RegionConnectTargetGeneStep = NULL,
                           inputRegionBed = NULL,
                           inputForegroundGeneBed = NULL,
                           inputBackgroundGeneBed = NULL,

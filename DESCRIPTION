@@ -1,7 +1,7 @@
 Package: enrichTF
 Type: Package
 Title: Transcription Factors Enrichment Analysis
-Version: 0.99.1
+Version: 0.99.5
 Author: Zheng Wei, Zhana Duren, Shining Ma
 Maintainer: Zheng Wei <wzwz@stanford.edu>
 Description: As transcription factors (TFs) play a crucial role in regulating the 
@@ -33,10 +33,10 @@ Imports:
     S4Vectors,
     utils,
     parallel,
-    stats,
-    BiocManager
+    stats
 Suggests:
-    knitr
+    knitr,
+    magrittr
 Collate: 
     EnrichStep.R 
     ConnectTargetGene.R

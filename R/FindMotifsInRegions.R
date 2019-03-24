@@ -166,6 +166,7 @@ setMethod(
 #' Scan for motif occurrences using the prepared PWMs and obtain the promising candidate motifs in these regions.
 #' @param prevStep \code{\link{Step-class}} object scalar.
 #' It needs to be the return value of upstream process from \code{\link{genBackground}} or \code{\link{enrichGenBackground}}
+#' when it is not used in a pipeline.  If it is used in a pipeline or \code{\%>\%} is applied on this function, any steps in this package is acceptable.
 #' @param inputRegionBed \code{Character} scalar.
 #' BED file for regions including foreground and background sequences.
 #' @param outputRegionMotifBed \code{Character} scalar.
