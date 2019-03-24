@@ -24,7 +24,7 @@
 #'
 #' foregroundBedPath <- system.file(package = "enrichTF", "extdata","testregion.bed")
 #' # This is the whole pipeline example.
-#' # PECA_TF_enrich(inputForegroundBed = foregroundBedPath, genome = "testgenome")
+#' PECA_TF_enrich(inputForegroundBed = foregroundBedPath, genome = "testgenome")
 #'
 
 PECA_TF_enrich <- function(inputForegroundBed, genome, threads = 2, ...){
