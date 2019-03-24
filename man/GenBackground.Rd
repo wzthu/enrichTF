@@ -66,7 +66,6 @@ The size of foreground regions will be unified into the length specified in argu
 setGenome("testgenome") #Use "hg19","hg38",etc. for your application
 foregroundBedPath <- system.file(package = "enrichTF", "extdata","testregion.bed")
 gen <- genBackground(inputForegroundBed = foregroundBedPath)
-conTG <- enrichRegionConnectTargetGene(gen)
 }
 \seealso{
 \code{\link{regionConnectTargetGene}}
