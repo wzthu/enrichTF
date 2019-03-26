@@ -42,7 +42,7 @@ library(enrichTF)
 dir.create('refdir')
 ```
 
-## Use with default configuration
+## Running with the default configuration
 
 It is quite convenient to run the default pipeline.
 
@@ -112,29 +112,23 @@ For each TF, we will perform t-test and obtain p-values for TF-Gene scores of fo
 ### Enrichment Fisher's exact test without threshold
 
 
-Each TF may connect with many Motifs. For each Motifs this package will do the following fisher exact test to test if this motif correlated enriched in foreground regions with connected genes.
+Each TF may be correlated with multiple motifs. For each motif, this package will do the following Fisher’s exact test to test if one motif is enriched in foreground regions.
 
-|                                          | fall in region with TF's  motif  | not fall in region with TF's  motif  |
-|------------------------------------------|----------------------------|--------------------------------|
-| foreground regions (with connected gene) |                            |                                |
-| background regions (with connected gene) |                            |                                |
+|                      | # with TF's  motif  | # without TF's  motif  |
+|----------------------|---------------------|------------------------|
+| # Foreground regions |                     |                        |
+| # Background regions |                     |                        |
 
-Finally, the package will select the motifs with most significant p-values to represent this TF.
-
-Then, we also can obtain the p-values for all of the TFs
+Finally, the package will select the motif with the most significant p-value to represent this TF and then compute p-values for all of the TFs.
 
 
-### Enrichment fisher test with threshold
+### Enrichment Fisher's exact test with threshold
 
-Based on previous section result (the motif selected to represent the TF) and similar to previous section, the package will do the same test on the similar data. The only diffent point is different threshold (for -1 to 1 with interval 0.1) in TF-Gene relation matrix is used to filtered the connected gene. 
-
-In this way, we can select best threshold with the most significant p value. 
-
-Then, we also can get another p value for all of the TF
+Similar to previous section, the package will perform Fisher’s exact test with TF-Gene relation matrix. Different thresholds ([-1,1] with interval 0.1) for TF-Gene relation scores are used to filter the connected genes with foreground and background. In this way, we select the most significant p-value to represent this TF and calculate the p-values for all of TFs.
 
 ### FDR
 
-At last, false discover rate correction is apply on last section's result
+Finally, false discover rate correction is applied on the results of Fisher's exact test with threshold. We rank all of the TFs based on their enrichment significance.
 
 
 # Customized Workflow
@@ -148,7 +142,7 @@ foregroundBedPath <- system.file(package = "enrichTF", "extdata","testregion.bed
 gen <- genBackground(inputForegroundBed = foregroundBedPath)
 ```
 ## Motifscan
-The function of MotifsInRegions is to scan for motif occurrences using the prepared PWMs and obtain the promising candidate motifs in these regions.
+The function MotifsInRegions is to scan for motif occurrences using the prepared PWMs and obtain the promising candidate motifs in these regions.
 For example,
 ```{r loading02}
 conTG <- enrichRegionConnectTargetGene(gen)
@@ -169,9 +163,9 @@ result <- enrichTFsEnrichInRegions(gen,NULL,NULL)
 ```
 
 
-## Build a pipeline
+## Building a pipeline
 
-The user can build a pipeline easily based on pipeFrame (pipeline framework)
+Users can build a pipeline easily based on pipeFrame (pipeline framework)
 
 ```{r}
 library(magrittr)
