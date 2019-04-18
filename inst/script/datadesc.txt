@@ -1,0 +1,21 @@
+
+Motif weight (MotifWeights.RData.gz): We scan motifs on random selected regions (1000bp in length) and calculate the average binding strength of motifs on random regions. We take this average binding strength as motif weight.
+
+Motif list (all_motif_rmdup.gz): We collected 4,823 position weight matrix (PWM) matrices for the known motifs from widely used databases, including Homer(1), JASPAR(2), UniPROBE(3), and Taipale(4). To scan motif efficiency, we remove redundant motif (similarity > 0.9) and get 1,465 motifs.
+
+TF-motif (MotifTFTable.RData.gz): We map TF to motif by considering the sequence similarity of DNA binding domain of TFs. TFs have similar DNA binding domain share same motifs(5).
+RE-TG (RE_gene_corr.bed.gz): We divide the TSS +/- 100kb regions into 200 bins (each bin is 100bp in length). We calculate correlation between these bin’s accessibility and genes’ expression across diverse cellular context and take these scores as RE-TG association score(6).
+Enhancer-TG (Enhancer_RE_gene_corr.bed.gz): We collect enhancers from ENCODE project and use the same way as RE-TG score to define enhancer-TG scores.
+TF-TG: Correlation between TF and TG expression on diverse cellular context(6).
+
+Test Regions(testregion): We use this 3-columns BED file as an example input of enrichTF.
+
+
+
+1.	Heinz S, et al. (2010) Simple combinations of lineage-determining transcription factors prime cis-regulatory elements required for macrophage and B cell identities. Molecular cell 38(4):576-589.
+2.	Bryne JC, et al. (2007) JASPAR, the open access database of transcription factor-binding profiles: new content and tools in the 2008 update. Nucleic acids research 36(suppl_1):D102-D106.
+3.	Newburger DE & Bulyk ML (2008) UniPROBE: an online database of protein binding microarray data on protein–DNA interactions. Nucleic acids research 37(suppl_1):D77-D82.
+4.	Jolma A, et al. (2013) DNA-binding specificities of human transcription factors. Cell 152(1-2):327-339.
+5.	Zamanighomi M, Lin Z, Wang Y, Jiang R, & Wong WH (2017) Predicting transcription factor binding motifs from DNA-binding domains, chromatin accessibility and gene expression data. Nucleic acids research 45(10):5666-5677.
+6.	Duren Z, Chen X, Jiang R, Wang Y, & Wong WH (2017) Modeling gene regulation from paired expression and chromatin accessibility data. Proceedings of the National Academy of Sciences 114(25):E4914-E4923.
+
