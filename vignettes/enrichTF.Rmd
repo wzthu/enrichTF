@@ -72,9 +72,9 @@ In this work, we define four kinds of relations which will be introduced in deta
 
 When users input a region list in BED format, the relations between regions and one gene can be obtained from two ways:
 
-1.	The regions which are overlapped with the functional region of this gene. This type of relation can be obtained from gene reference data.
+1.    The regions which are overlapped with the functional region of this gene. This type of relation can be obtained from gene reference data.
 
-2.	The regions are enhancers or other distal regulatory elements of this gene. This type of relation can be derived from 3D genome sequencing experiments such as Hi-C and HiChIP.
+2.    The regions are enhancers or other distal regulatory elements of this gene. This type of relation can be derived from 3D genome sequencing experiments such as Hi-C and HiChIP.
 
 As we have already integrated and organized the potential relations between regions and genes from both gene reference and experiment profiles, users can use this source to obtain region-gene relations for their input region list quite easily.
 
