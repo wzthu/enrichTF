@@ -23,7 +23,7 @@ knitr::opts_chunk$set(echo = TRUE,warning = FALSE)
 ## Download and Installation
 
 
-The package enrichTF is part of Bioconductor project starting from Bioc 3.9 built on R 3.5. To install the latest version of enrichTF, please check your current Bioconductor version and R version first. The latest version of R is recommended, and then you can download and install enrichTF and all its dependencies as follows:
+The package enrichTF is part of Bioconductor project starting from Bioc 3.9 built on R 3.6. To install the latest version of enrichTF, please check your current Bioconductor version and R version first. The latest version of R is recommended, and then you can download and install enrichTF and all its dependencies as follows:
 
 ```{r installpkg,eval=FALSE,message=FALSE,warning=FALSE}
 if (!requireNamespace("BiocManager", quietly=TRUE))
