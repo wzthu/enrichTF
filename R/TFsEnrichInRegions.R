@@ -134,7 +134,20 @@ setMethod(
         colnames(foregroundGeneBed) <- c("seqnames","start","end","name","score",
                                          "geneName","blockCount")
         foregroundGeneBed <- foregroundGeneBed[!duplicated(foregroundGeneBed[,c("name","geneName")]),]
-        backgroundGeneBed <- read.table(inputBackgroundGeneBed,sep = "\t")
+        backgroundGeneBed<-tryCatch({read.table(inputBackgroundGeneBed,sep = "\t")},error = function(e){
+#            writeLog(.Object,as.character(e))
+            pValue <- matrix(1,nrow = length(tfName),ncol = 4)
+
+            pValue<-data.frame(TF = tfName, Motif_enrichment = pValue[,1], Targt_gene_enrichment = pValue[,2], P_value = pValue[,3], FDR = pValue[,4])
+
+            write.table(pValue,file = outputTFsEnrichTxt,quote = FALSE, row.names = FALSE,sep = "\t")
+            return(.Object)
+
+        })
+        if(inherits(backgroundGeneBed,"Step")){
+            return(backgroundGeneBed)
+        }
+
         colnames(backgroundGeneBed)  <- c("seqnames","start","end","name","score",
                                           "geneName","blockCount")
         backgroundGeneBed <- backgroundGeneBed[!duplicated(backgroundGeneBed[,c("name","geneName")]),]
@@ -157,9 +170,9 @@ setMethod(
         cl <- makeCluster(getThreads())
 
         tfsseq = seq_len(length(tfName))
-        if(getGenome() =="testgenome"){
-            tfsseq= tfsseq[tfsseq%%10==0]
-        }
+        # if(getGenome() =="testgenome"){
+        #     tfsseq= tfsseq[tfsseq%%10==0]
+        # }
 
         #for(i in 1:length(tfName)){
         allpValue<-parLapply(X = tfsseq, fun = function(i,
@@ -225,6 +238,7 @@ setMethod(
             },error = function(e){
                 writeLog(.Object,as.character(e))
             })
+            writeLog(.Object,as.character(i))
             return(pValue[i,])
 
         }
@@ -237,7 +251,7 @@ setMethod(
         inputMotifTFTable =inputMotifTFTable,
         regionMotifBed = regionMotifBed,
         cl = cl)
-
+        print(allpValue)
         pValue <- matrix(unlist(allpValue),nrow = length(tfName),ncol = 4,byrow = TRUE)
 
         stopCluster(cl)

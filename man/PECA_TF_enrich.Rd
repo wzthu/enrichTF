@@ -37,7 +37,7 @@ The number of arguments is not limited so you can add other arguments with the f
 
 foregroundBedPath <- system.file(package = "enrichTF", "extdata","testregion.bed")
 # This is the whole pipeline example.
-# PECA_TF_enrich(inputForegroundBed = foregroundBedPath, genome = "testgenome")
+PECA_TF_enrich(inputForegroundBed = foregroundBedPath, genome = "testgenome")
 
 }
 \references{

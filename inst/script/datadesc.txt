@@ -10,7 +10,9 @@ TF-TG: Correlation between TF and TG expression on diverse cellular context(6).
 
 Test Regions(testregion): We use this 3-columns BED file as an example input of enrichTF.
 
+All of data list here are toy examples. The real data need to be downloaded from:
 
+https://github.com/wzthu/wzthu.github.io/tree/master/enrich/refdata
 
 1.	Heinz S, et al. (2010) Simple combinations of lineage-determining transcription factors prime cis-regulatory elements required for macrophage and B cell identities. Molecular cell 38(4):576-589.
 2.	Bryne JC, et al. (2007) JASPAR, the open access database of transcription factor-binding profiles: new content and tools in the 2008 update. Nucleic acids research 36(suppl_1):D102-D106.

@@ -104,6 +104,9 @@ randomSampleOnGenome<-function(regionLen, sampleNumber,bsgenome){
     spchrs <- sample(x = names(startchrlens),size =  sampleNumber, replace = TRUE, prob = startchrlens / sum(startchrlens))
     gr <- GRanges()
     for(chr in names(startchrlens)){
+        if(sum(spchrs == chr) == 0){
+            next
+        }
         startpt <- sample(x = 1:startchrlens[chr],size = sum(spchrs == chr),replace = FALSE)
         #non overlapped method:
         #startpt <- sample(x = 1:(startchrlens[chr] - sum(spchrs == chr) * regionLen),size = sum(spchrs == chr),replace = FALSE)
