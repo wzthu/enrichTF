@@ -10,7 +10,7 @@ test_that("test whole pipeline",{
     gen <- genBackground(inputForegroundBed = foregroundBedPath)
     conTG <- enrichRegionConnectTargetGene(gen)
     findMotif <- enrichFindMotifsInRegions(gen,motifRc="integrate")
-    result <- enrichTFsEnrichInRegions(gen)
+
 
     expect_true(file.exists(gen$outputForegroundBed))
     expect_true(file.exists(gen$outputBackgroundBed))
@@ -21,7 +21,7 @@ test_that("test whole pipeline",{
     expect_true(file.exists(conTG$enhancerRegularGeneCorrBed))
     expect_true(file.exists(findMotif$inputRegionBed))
     expect_true(file.exists(findMotif$outputRegionMotifBed))
-    expect_true(file.exists(result$outputTFsEnrichTxt))
+
 
 
 
