@@ -17,6 +17,12 @@ vignette: >
 knitr::opts_chunk$set(echo = TRUE,warning = FALSE)
 ```
 
+
+
+
+# Introduction
+As transcription factors (TFs) play a crucial role in regulating the transcription process through binding on the genome alone or in a combinatorial manner, TF enrichment analysis is an efficient and important procedure to locate the candidate functional TFs from a set of experimentally defined regulatory regions. While it is commonly accepted that structurally related TFs may have similar binding preference to sequences (i.e. motifs) and one TF may have multiple motifs, TF enrichment analysis is much more challenging than motif enrichment analysis. Here we present a R package for TF enrichment analysis which combine motif enrichment with the PECA model.
+
 # Quick Start
 
 
@@ -56,9 +62,6 @@ PECA_TF_enrich(inputForegroundBed = foregroundBedPath, genome = "testgenome") # 
 ```
 
 
-
-# Introduction
-As transcription factors (TFs) play a crucial role in regulating the transcription process through binding on the genome alone or in a combinatorial manner, TF enrichment analysis is an efficient and important procedure to locate the candidate functional TFs from a set of experimentally defined regulatory regions. While it is commonly accepted that structurally related TFs may have similar binding preference to sequences (i.e. motifs) and one TF may have multiple motifs, TF enrichment analysis is much more challenging than motif enrichment analysis. Here we present a R package for TF enrichment analysis which combine motif enrichment with the PECA model.
 
 # How TF Enrichment Works
 
@@ -132,7 +135,7 @@ Finally, false discover rate correction is applied on the results of Fisher's ex
 # Customized Workflow
 
 ## Prepare inputs
-The function of genBackground is to generate random background regions based on the input regions and to set the length of input sequence regions. We try to select background sequence regions that match the GC-content distribution of the input sequence regions. The default length and number of background regions are 1000 and 10,000, respectively. The length of sequence regions used for motif finding is important. Here, we set 1000 as default value, which means for each region, we get sequences from -500 to +500 relative from center.
+The function of `genBackground` is to generate random background regions based on the input regions and to set the length of input sequence regions. We try to select background sequence regions that match the GC-content distribution of the input sequence regions. The default length and number of background regions are 1000 and 10,000, respectively. The length of sequence regions used for motif finding is important. Here, we set 1000 as default value, which means for each region, we get sequences from -500 to +500 relative from center.
 For example,
 ```{r loading01}
 setGenome("testgenome")
@@ -140,21 +143,24 @@ foregroundBedPath <- system.file(package = "enrichTF", "extdata","testregion.bed
 gen <- genBackground(inputForegroundBed = foregroundBedPath)
 ```
 ## Motifscan
-The function MotifsInRegions is to scan for motif occurrences using the prepared PWMs and obtain the promising candidate motifs in these regions.
+
+The function of `regionConnectTargetGene` is to connect foreground and background regions to their target genes, which are predicted from PECA model.
+
 For example,
 ```{r loading02}
 conTG <- enrichRegionConnectTargetGene(gen)
 ```
 ## Connect regions with target genes
 
-The function of regionConnectTargetGene is to connect foreground and background regions to their target genes, which are predicted from PECA model.
+The function `MotifsInRegions` is to scan for motif occurrences using the prepared PWMs and obtain the promising candidate motifs in these regions.
+
 
 For example,
 ```{r loading03}
 findMotif <- enrichFindMotifsInRegions(gen,motifRc="integrate")
 ```
 ## TF enrichment test
-The function of TFsEnrichInRegions is to test whether each TF is enriched on input regions.
+The function of `TFsEnrichInRegions` is to test whether each TF is enriched on input regions.
 For example,
 ```{r eval=TRUE}
 result <- enrichTFsEnrichInRegions(gen,NULL,NULL)
