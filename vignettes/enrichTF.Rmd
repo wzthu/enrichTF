@@ -38,9 +38,7 @@ Similar with other R packages, please load enrichTF each time before using the p
 library(enrichTF)
 ```
 
-```{r echo=FALSE}
-dir.create('refdir')
-```
+
 
 ## Running with the default configuration
 
@@ -50,7 +48,7 @@ Users only need to provide a region list in BED format which contains 3 columns 
 
 All required data and software will be installed automatically.
 
-```{r eval=FALSE}
+```{r eval=TRUE}
 # Provide your region list in BED format with 3 columns.
 foregroundBedPath <- system.file(package = "enrichTF", "extdata","testregion.bed")
 # Call the whole pipeline
@@ -158,7 +156,7 @@ findMotif <- enrichFindMotifsInRegions(gen,motifRc="integrate")
 ## TF enrichment test
 The function of TFsEnrichInRegions is to test whether each TF is enriched on input regions.
 For example,
-```{r eval=FALSE}
+```{r eval=TRUE}
 result <- enrichTFsEnrichInRegions(gen,NULL,NULL)
 ```
 
