@@ -7,3 +7,6 @@
 setClass(Class = "EnrichStep",
          contains = "Step"
 )
+
+
+#' @importFrom pipeFrame input "input<-" output "output<-" "param" "param<-",
