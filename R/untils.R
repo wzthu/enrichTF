@@ -26,7 +26,9 @@ dowloadMotifFile <- function(refFilePath){
     if(getGenome() == "testgenome"){
         copyAndGunzip("all_motif_rmdup.gz",refFilePath)
     }else{
-        downloadAndGunzip("https://wzthu.github.io/enrich/refdata/%s/all_motif_rmdup.gz",refFilePath)
+        downloadAndGunzip(
+            "https://wzthu.github.io/enrich/refdata/%s/all_motif_rmdup.gz",
+            refFilePath)
     }
 }
 
@@ -34,7 +36,9 @@ dowloadREgeneFile <- function(refFilePath){
     if(getGenome() == "testgenome"){
         copyAndGunzip("RE_gene_corr.bed.gz",refFilePath)
     }else{
-        downloadAndGunzip("https://wzthu.github.io/enrich/refdata/%s/RE_gene_corr.bed.gz",refFilePath)
+        downloadAndGunzip(
+            "https://wzthu.github.io/enrich/refdata/%s/RE_gene_corr.bed.gz",
+            refFilePath)
     }
 }
 
@@ -43,7 +47,9 @@ dowloadEnhancerREgeneFile <- function(refFilePath){
     if(getGenome() == "testgenome"){
         copyAndGunzip("Enhancer_RE_gene_corr.bed.gz",refFilePath)
     }else{
-        downloadAndGunzip("https://wzthu.github.io/enrich/refdata/%s/Enhancer_RE_gene_corr.bed.gz",refFilePath)
+        downloadAndGunzip(
+            "https://wzthu.github.io/enrich/refdata/%s/Enhancer_RE_gene_corr.bed.gz",
+            refFilePath)
     }
 
 }
@@ -59,21 +65,27 @@ dowloadMotifTFTableFile <- function(refFilePath){
     if(getGenome() == "testgenome"){
         copyAndGunzip("MotifTFTable.RData.gz",refFilePath)
     }else{
-        downloadAndGunzip("https://wzthu.github.io/enrich/refdata/%s/MotifTFTable.RData.gz",refFilePath)
+        downloadAndGunzip(
+            "https://wzthu.github.io/enrich/refdata/%s/MotifTFTable.RData.gz",
+            refFilePath)
     }
 }
 dowloadMotifWeightsFile <- function(refFilePath){
     if(getGenome() == "testgenome"){
         copyAndGunzip("MotifWeights.RData.gz",refFilePath)
     }else{
-        downloadAndGunzip("https://wzthu.github.io/enrich/refdata/%s/MotifWeights.RData.gz",refFilePath)
+        downloadAndGunzip(
+            "https://wzthu.github.io/enrich/refdata/%s/MotifWeights.RData.gz",
+                          refFilePath)
     }
 }
 dowloadTFgeneRelMtxFile <- function(refFilePath){
     if(getGenome() == "testgenome"){
         copyAndGunzip("TFgeneRelMtx.RData.gz",refFilePath)
     }else{
-        downloadAndGunzip("https://wzthu.github.io/enrich/refdata/%s/TFgeneRelMtx.RData.gz",refFilePath)
+        downloadAndGunzip(
+            "https://wzthu.github.io/enrich/refdata/%s/TFgeneRelMtx.RData.gz",
+            refFilePath)
     }
 }
 
@@ -86,15 +98,30 @@ checkAndInstallBSgenomeTestgenome <- function(refFilePath){
 }
 
 checkAndInstall <- function(check = TRUE, ...){
-    runWithFinishCheck(func = checkAndInstallBSgenomeTestgenome,refName = "bsgenome")
+    runWithFinishCheck(func = checkAndInstallBSgenomeTestgenome,
+                       refName = "bsgenome")
 #    runWithFinishCheck(func = checkAndInstallGenomeFa,refName = "fasta", refFilePath = paste0(getGenome(),".fa"))
-    runWithFinishCheck(func = dowloadMotifFile,refName = "motifpwm", refFilePath = "motifpwm")
-    runWithFinishCheck(func = convertPWMFileToPWMobj, "motifPWMOBJ", refFilePath = "motifPWMOBJ.RData")
-    runWithFinishCheck(func = dowloadREgeneFile, "RE_gene_corr", refFilePath = "RE_gene_corr.bed")
-    runWithFinishCheck(func = dowloadEnhancerREgeneFile, "Enhancer_RE_gene_corr", refFilePath = "Enhancer_RE_gene_corr.bed")
-    runWithFinishCheck(func = dowloadMotifTFTableFile, "MotifTFTable", refFilePath = "MotifTFTable.RData")
-    runWithFinishCheck(func = dowloadMotifWeightsFile, "MotifWeights", refFilePath = "MotifWeights.RData")
-    runWithFinishCheck(func = dowloadTFgeneRelMtxFile, "TFgeneRelMtx", refFilePath = "TFgeneRelMtx.RData")
+    runWithFinishCheck(func = dowloadMotifFile,
+                       refName = "motifpwm",
+                       refFilePath = "motifpwm")
+    runWithFinishCheck(func = convertPWMFileToPWMobj,
+                       "motifPWMOBJ",
+                       refFilePath = "motifPWMOBJ.RData")
+    runWithFinishCheck(func = dowloadREgeneFile,
+                       "RE_gene_corr",
+                       refFilePath = "RE_gene_corr.bed")
+    runWithFinishCheck(func = dowloadEnhancerREgeneFile,
+                       "Enhancer_RE_gene_corr",
+                       refFilePath = "Enhancer_RE_gene_corr.bed")
+    runWithFinishCheck(func = dowloadMotifTFTableFile,
+                       "MotifTFTable",
+                       refFilePath = "MotifTFTable.RData")
+    runWithFinishCheck(func = dowloadMotifWeightsFile,
+                       "MotifWeights",
+                       refFilePath = "MotifWeights.RData")
+    runWithFinishCheck(func = dowloadTFgeneRelMtxFile,
+                       "TFgeneRelMtx",
+                       refFilePath = "TFgeneRelMtx.RData")
 }
 
 
@@ -139,11 +166,13 @@ getMotifInfo1 <- function(motiffile = NULL){
             exseq <- strlist[1]
             motifName <- strlist[2]
             threshold <- strlist[3]
-            return(list(p=NULL, exseq = exseq, motifName = motifName, threshold = threshold))
+            return(list(p=NULL, exseq = exseq,
+                        motifName = motifName, threshold = threshold))
         }else{
             val <- as.numeric(unlist(strsplit(line,"\t")))
             val <- val/sum(val)
-            return(list(p=val, exseq = NULL, motifName = NULL, threshold = NULL))
+            return(list(p=val, exseq = NULL,
+                        motifName = NULL, threshold = NULL))
         }
     })
     cutpoint <- lapply(seq_len(length(rs)), function(s){

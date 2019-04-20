@@ -31,7 +31,11 @@ setMethod(
         }
 
         if(is.null(outputRegionMotifBed)){
-            output(.Object,"outputRegionMotifBed") <- getAutoPath(.Object,originPath = .Object$inputList[["inputRegionBed"]],regexSuffixName = "allregion.bed",suffix = "region.motif.bed")
+            output(.Object,"outputRegionMotifBed") <-
+                getAutoPath(.Object,originPath =
+                                .Object$inputList[["inputRegionBed"]],
+                            regexSuffixName = "allregion.bed",
+                            suffix = "region.motif.bed")
         }else{
             output(.Object,"outputRegionMotifBed") <- outputRegionMotifBed
         }
@@ -77,7 +81,12 @@ setMethod(
         }
         regions <- import(con = inputRegionBed,format = "bed")
         cl <- makeCluster(getThreads())
-        motif_ix <-parallel::parLapply(pwmObj,motifmatchr::matchMotifs,subject = regions, genome = genome, out="positions",p.cutoff = 5e-04, cl = cl)
+        motif_ix <-
+            parallel::parLapply(pwmObj,
+                                motifmatchr::matchMotifs,
+                                subject = regions,
+                                genome = genome,
+                                out="positions",p.cutoff = 5e-04, cl = cl)
         stopCluster(cl)
         #motifmatchr::matchMotifs(pwms = pwmObj, subject = regions, genome = genome, out="positions")
         result <- c()
@@ -98,20 +107,26 @@ setMethod(
         #
         # }
         result <- lapply(seq_len(length(motif_ix)), function(i){
-            motif_region_pair <- findOverlapPairs(motif_ix[[i]][[1]],regions,ignore.strand = TRUE)
+            motif_region_pair <- findOverlapPairs(motif_ix[[i]][[1]],
+                                                  regions,ignore.strand = TRUE)
             if(length(second(motif_region_pair))>0){
-                second(motif_region_pair)$score <- first(motif_region_pair)$score
+                second(motif_region_pair)$score <-
+                    first(motif_region_pair)$score
                 second(motif_region_pair)$motifName <-pwmObj[[i]]@name
             }else{
                 return(NULL)
             }
-            return(second(motif_region_pair)[second(motif_region_pair)$score >= pwmObj[[i]]@tags$threshold])
+            return(second(motif_region_pair)[
+                second(motif_region_pair)$score >=
+                    pwmObj[[i]]@tags$threshold])
         })
         result <- do.call("c",result)
 #        .Object@propList[["motifs_in_region"]] <- result
 
-        write.table(as.data.frame(result)[,c("seqnames","start","end","name","score","motifName")],
-                    file = outputRegionMotifBed, sep="\t",quote = FALSE,row.names = FALSE,col.names = FALSE)
+        write.table(as.data.frame(result)[,c("seqnames","start","end",
+                                             "name","score","motifName")],
+                    file = outputRegionMotifBed, sep="\t",quote = FALSE,
+                    row.names = FALSE,col.names = FALSE)
 
    #     export.bed(result,con = outputRegionMotifBed)
 
@@ -176,10 +191,14 @@ setMethod(
 #' @importFrom JASPAR2018 JASPAR2018
 #' @title Find motifs in all input sequence regions
 #' @description
-#' Scan for motif occurrences using the prepared PWMs and obtain the promising candidate motifs in these regions.
+#' Scan for motif occurrences using the prepared PWMs and obtain
+#' the promising candidate motifs in these regions.
 #' @param prevStep \code{\link{Step-class}} object scalar.
-#' It needs to be the return value of upstream process from \code{\link{genBackground}} or \code{\link{enrichGenBackground}}
-#' when it is not used in a pipeline.  If it is used in a pipeline or \code{\%>\%} is applied on this function, any steps in this package is acceptable.
+#' It needs to be the return value of upstream process from
+#' \code{\link{genBackground}} or \code{\link{enrichGenBackground}}
+#' when it is not used in a pipeline.  If it is used in a pipeline or
+#' \code{\%>\%} is applied on this function,
+#' any steps in this package is acceptable.
 #' @param inputRegionBed \code{Character} scalar.
 #' BED file for regions including foreground and background sequences.
 #' @param outputRegionMotifBed \code{Character} scalar.
@@ -192,15 +211,18 @@ setMethod(
 #' "jaspar" package JASPAR2018,
 #' or "pwmfile" (User defined PWM file. inputPwmFile is required).
 #' @param inputPwmFile \code{Character} scalar.
-#' when "pwmfile" is set for motifRc, use this argument to provide PWM file directory.
+#' when "pwmfile" is set for motifRc, use this argument to provide
+#'  PWM file directory.
 #' @param genome \code{Character} scalar.
 #' Bioconductor supported genome, such as "hg19", "mm10", etc.
-#' Default: NULL (e.g. after \code{library (enrichTF)}, you can call function \code{setGenome("hg19")})
+#' Default: NULL (e.g. after \code{library (enrichTF)},
+#' you can call function \code{setGenome("hg19")})
 #' @param ... Additional arguments, currently unused.
 #' @details
 #' Scan for motif occurrences using the prepared PWMs and
 #' obtain the promising candidate motifs in these regions.
-#' @return An invisible \code{\link{EnrichStep-class}} object (\code{\link{Step-class}} based) scalar for downstream analysis.
+#' @return An invisible \code{\link{EnrichStep-class}} object
+#' (\code{\link{Step-class}} based) scalar for downstream analysis.
 #' @author Zheng Wei
 #' @seealso
 #' \code{\link{genBackground}}
@@ -208,7 +230,8 @@ setMethod(
 #' \code{\link{tfsEnrichInRegions}}
 #' @examples
 #' setGenome("testgenome") #Use "hg19","hg38",etc. for your application
-#' foregroundBedPath <- system.file(package = "enrichTF", "extdata","testregion.bed")
+#' foregroundBedPath <- system.file(package = "enrichTF",
+#'     "extdata","testregion.bed")
 #' gen <- genBackground(inputForegroundBed = foregroundBedPath)
 #' findMotif <- enrichFindMotifsInRegions(gen,motifRc="integrate")
 
@@ -216,13 +239,14 @@ setMethod(
 
 
 
-setGeneric("enrichFindMotifsInRegions",function(prevStep,
-                                          inputRegionBed = NULL,
-                                          outputRegionMotifBed = NULL,
-                                          motifRc = c("integrate","jaspar","pwmfile"),
-                                          inputPwmFile = getRefFiles("motifpwm"),
-                                          genome = getGenome(),
-                                          ...) standardGeneric("enrichFindMotifsInRegions"))
+setGeneric("enrichFindMotifsInRegions",
+           function(prevStep,
+                    inputRegionBed = NULL,
+                    outputRegionMotifBed = NULL,
+                    motifRc = c("integrate","jaspar","pwmfile"),
+                    inputPwmFile = getRefFiles("motifpwm"),
+                    genome = getGenome(),
+                    ...) standardGeneric("enrichFindMotifsInRegions"))
 
 
 
@@ -239,7 +263,9 @@ setMethod(
                           inputPwmFile = getRefFiles("motifpwm"),
                           genome = getGenome(),
                           ...){
-        allpara <- c(list(Class = "FindMotifsInRegions", prevSteps = list(prevStep)),as.list(environment()),list(...))
+        allpara <- c(list(Class = "FindMotifsInRegions",
+                          prevSteps = list(prevStep)),
+                     as.list(environment()),list(...))
         step <- do.call(new,allpara)
         invisible(step)
     }
@@ -253,7 +279,9 @@ findMotifsInRegions <- function(inputRegionBed,
                                 inputPwmFile = getRefFiles("motifpwm"),
                                 genome = getGenome(),
                                 ...){
-    allpara <- c(list(Class = "FindMotifsInRegions", prevSteps = list()),as.list(environment()),list(...))
+    allpara <- c(list(Class = "FindMotifsInRegions",
+                      prevSteps = list()),
+                 as.list(environment()),list(...))
     step <- do.call(new,allpara)
     invisible(step)
 }

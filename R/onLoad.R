@@ -47,7 +47,8 @@
 #' @importMethodsFrom pipeFrame isReady
 #' @importMethodsFrom pipeFrame writeLog
 .onLoad <- function(libname, pkgname) {
-    initPipeFrame(availableGenome = c("hg19", "hg38", "mm9", "mm10","testgenome"),
+    initPipeFrame(availableGenome = c("hg19", "hg38", "mm9",
+                                      "mm10","testgenome"),
                   defaultJobName = paste0(pkgname,"-pipeline"),
                   defaultCheckAndInstallFunc = checkAndInstall
     )
