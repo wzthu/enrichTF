@@ -181,6 +181,19 @@ enrichFindMotifsInRegions(motifRc="integrate") %>%
 enrichTFsEnrichInRegions(NULL,NULL)
 ```
 
+## Result
+
+Here we show an example result when applying this package on our own data.
+
+```{r}
+
+examplefile  <- system.file(package = "enrichTF", "extdata","result.example.txt")
+read.table(examplefile, sep='\t', header = TRUE)%>%
+  knitr::kable() 
+
+```
+
+
 # Session Information
 
 ```{r}
