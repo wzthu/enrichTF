@@ -14,6 +14,8 @@ All of data list here are toy examples. The real data need to be downloaded from
 
 https://github.com/wzthu/wzthu.github.io/tree/master/enrich/refdata
 
+Example result file is "result.example.txt".
+
 1.	Heinz S, et al. (2010) Simple combinations of lineage-determining transcription factors prime cis-regulatory elements required for macrophage and B cell identities. Molecular cell 38(4):576-589.
 2.	Bryne JC, et al. (2007) JASPAR, the open access database of transcription factor-binding profiles: new content and tools in the 2008 update. Nucleic acids research 36(suppl_1):D102-D106.
 3.	Newburger DE & Bulyk ML (2008) UniPROBE: an online database of protein binding microarray data on protein–DNA interactions. Nucleic acids research 37(suppl_1):D77-D82.
