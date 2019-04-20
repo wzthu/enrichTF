@@ -85,7 +85,7 @@ you do not familiar with the data format of the input,
 you can run the example to see the example input from previous steps.
 }
 \examples{
- \dontrun{
+
 library(magrittr)
 setGenome("testgenome") #Use "hg19","hg38",etc. for your application
 foregroundBedPath <- system.file(package = "enrichTF", "extdata","testregion.bed")
@@ -98,7 +98,7 @@ genBackground(inputForegroundBed = foregroundBedPath) \%>\%
     enrichRegionConnectTargetGene \%>\%
     enrichFindMotifsInRegions(motifRc="integrate") \%>\%
     enrichTFsEnrichInRegions
-    }
+
 }
 \seealso{
 \code{\link{genBackground}}
