@@ -82,22 +82,32 @@ setMethod(
         #motifmatchr::matchMotifs(pwms = pwmObj, subject = regions, genome = genome, out="positions")
         result <- c()
 #        .Object@propList[["motif_ix"]] <-motif_ix
-        for(i in 1:length(motif_ix)){
+        # for(i in 1:length(motif_ix)){
+        #     motif_region_pair <- findOverlapPairs(motif_ix[[i]][[1]],regions,ignore.strand = TRUE)
+        #     if(length(second(motif_region_pair))>0){
+        #         second(motif_region_pair)$score <- first(motif_region_pair)$score
+        #         second(motif_region_pair)$motifName <-pwmObj[[i]]@name
+        #     }else{
+        #         next
+        #     }
+        #     if(i == 1){
+        #         result <- second(motif_region_pair)[second(motif_region_pair)$score >= pwmObj[[i]]@tags$threshold]
+        #     }else{
+        #         result <- c(result,second(motif_region_pair)[second(motif_region_pair)$score >= pwmObj[[i]]@tags$threshold])
+        #     }
+        #
+        # }
+        result <- lapply(seq_len(length(motif_ix)), function(i){
             motif_region_pair <- findOverlapPairs(motif_ix[[i]][[1]],regions,ignore.strand = TRUE)
             if(length(second(motif_region_pair))>0){
                 second(motif_region_pair)$score <- first(motif_region_pair)$score
                 second(motif_region_pair)$motifName <-pwmObj[[i]]@name
             }else{
-                next
+                return(NULL)
             }
-            if(i == 1){
-                result <- second(motif_region_pair)[second(motif_region_pair)$score >= pwmObj[[i]]@tags$threshold]
-            }else{
-                result <- c(result,second(motif_region_pair)[second(motif_region_pair)$score >= pwmObj[[i]]@tags$threshold])
-            }
-
-        }
-
+            return(second(motif_region_pair)[second(motif_region_pair)$score >= pwmObj[[i]]@tags$threshold])
+        })
+        result <- do.call("c",result)
 #        .Object@propList[["motifs_in_region"]] <- result
 
         write.table(as.data.frame(result)[,c("seqnames","start","end","name","score","motifName")],

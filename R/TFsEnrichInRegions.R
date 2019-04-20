@@ -122,10 +122,10 @@ setMethod(
 
 
         geneName <- colnames(inputTFgeneRelMtx)
-        genes <- data.frame(geneName = geneName, name = 1:length(geneName))
+        genes <- data.frame(geneName = geneName, name = seq_len(length(geneName)))
         tfName <- rownames(inputTFgeneRelMtx)
-        tfs <- data.frame(tfName = tfName, name = 1:length(tfName))
-        inputMotifWeights <- cbind(inputMotifWeights,1:nrow(inputMotifWeights))
+        tfs <- data.frame(tfName = tfName, name = seq_len(length(tfName)))
+        inputMotifWeights <- cbind(inputMotifWeights,seq_len(nrow(inputMotifWeights)))
         motifName <- as.character(inputMotifWeights[,1])
         motifWeight <- as.numeric(inputMotifWeights[,2])
 
@@ -195,7 +195,7 @@ setMethod(
                 return(pValue[i,]) #next
             }
             print(Sys.time())
-            pvalueOfFisher<- sapply(1:length(motifsOfTF), function(motifsOfTFi) {
+            pvalueOfFisher<- vapply(seq_len(length(motifsOfTF)), function(motifsOfTFi) {
                 motif <- as.character(motifsOfTF[motifsOfTFi])
 
                 regionsName <- regionMotifBed[regionMotifBed$motifName == motif, c("name")]
@@ -210,13 +210,13 @@ setMethod(
                 fisherMtx[2,2] <- sum(is.na(backgroundGeneFalledInMotifReiong))
 
                 fisher.test(fisherMtx)$p.value
-            })
+            },FUN.VALUE=rep(0,length(motifsOfTF)))
             pValue[i,1] <- min(pvalueOfFisher)
             motif <- as.character(motifsOfTF[which.min(pvalueOfFisher)])
             regionsName <- regionMotifBed[regionMotifBed$motifName == motif, c("name")]
             foregroundGeneFalledInMotifReiong<-match(foregroundGeneBed$name , regionsName)
             backgroundGeneFalledInMotifReiong<-match(backgroundGeneBed$name , regionsName)
-            pvalueOfFisher1 <- sapply(-9:9, function(cut_off){
+            pvalueOfFisher1 <- vapply(-9:9, function(cut_off){
                 cut_off <- cut_off /10
                 genesName <- geneName[inputTFgeneRelMtx[i,] > cut_off]
                 foregroundGeneAboveCutOff<-match(foregroundGeneBed$geneName , genesName)
@@ -232,7 +232,7 @@ setMethod(
                 fisherMtx[2,2] <- sum(backPos)
 
                 fisher.test(fisherMtx)$p.value
-            })
+            },FUN.VALUE = rep(0,length(-9:9)))
 
             pValue[i,3] <- min(pvalueOfFisher1)
             },error = function(e){
@@ -251,7 +251,6 @@ setMethod(
         inputMotifTFTable =inputMotifTFTable,
         regionMotifBed = regionMotifBed,
         cl = cl)
-        print(allpValue)
         pValue <- matrix(unlist(allpValue),nrow = length(tfName),ncol = 4,byrow = TRUE)
 
         stopCluster(cl)

@@ -97,7 +97,7 @@ checkAndInstall <- function(check = TRUE, ...){
 
 
 getMotifInfo1 <- function(motiffile = NULL){
-    PWMList <- list()
+    #PWMList <- list()
 
 
     con <- file(motiffile, "r")
@@ -105,41 +105,75 @@ getMotifInfo1 <- function(motiffile = NULL){
     close(con)
     exseq <- NULL
     motifName <- NULL
-    motifSrc <- NULL
     motifPlf <- NULL
     threshold <- NULL
     p <- c()
-    for(line in lines){
+    # for(line in lines){
+    #     if(substring(line, 1, 1) == ">"){
+    #         if(!is.null(motifName)){
+    #             pwm <- log2(matrix(data = p, nrow = 4, dimnames = list(c("A","C","G","T"))) * 4)
+    #             p_matrix <- TFBSTools::PWMatrix(profileMatrix = pwm,
+    #                                             name = motifName,
+    #                                             tags = list(seq=exseq,
+    #                                                         motifName = motifName,
+    #                                                         threshold = as.numeric(threshold)))
+    #             PWMList[[motifName]] <- p_matrix
+    #
+    #         }
+    #         strlist <- unlist(unlist(strsplit(substring(line,2),"\t")))
+    #         exseq <- strlist[1]
+    #         motifName <- strlist[2]
+    #         threshold <- strlist[3]
+    #         p <- c()
+    #     }else{
+    #         val <- as.numeric(unlist(strsplit(line,"\t")))
+    #         val <- val/sum(val)
+    #         p <- c(p,val)
+    #     }
+    # }
+    rs <- lapply(lines, function(line){
         if(substring(line, 1, 1) == ">"){
-            if(!is.null(motifName)){
-                pwm <- log2(matrix(data = p, nrow = 4, dimnames = list(c("A","C","G","T"))) * 4)
-                p_matrix <- TFBSTools::PWMatrix(profileMatrix = pwm,
-                                                name = motifName,
-                                                tags = list(seq=exseq,
-                                                            motifName = motifName,
-                                                            threshold = as.numeric(threshold)))
-                PWMList[[motifName]] <- p_matrix
-
-            }
             strlist <- unlist(unlist(strsplit(substring(line,2),"\t")))
             exseq <- strlist[1]
             motifName <- strlist[2]
             threshold <- strlist[3]
-            p <- c()
+            return(list(p=NULL, exseq = exseq, motifName = motifName, threshold = threshold))
         }else{
             val <- as.numeric(unlist(strsplit(line,"\t")))
             val <- val/sum(val)
-            p <- c(p,val)
+            return(list(p=val, exseq = NULL, motifName = NULL, threshold = NULL))
         }
-    }
-    pwm <- log2(matrix(data = as.numeric(p), nrow = 4, dimnames = list(c("A","C","G","T")))*4)
-    p_matrix <- TFBSTools::PWMatrix(profileMatrix = pwm,
-                                    name = motifName,
-                                    tags = list(seq=exseq,
-                                                motifName = motifName,
-                                                threshold = as.numeric(threshold)))
-    PWMList[[motifName]] <- p_matrix
+    })
+    cutpoint <- lapply(seq_len(length(rs)), function(s){
+        if(is.null(rs[[s]][["motifName"]])){
+           return(NULL)
+        }else{return(s)}
+    })
+    cutpoint <- unlist(cutpoint)
 
+    cutpoint <- c(cutpoint,length(lines) + 1 )
+    PWMList <- lapply(seq_len(length(cutpoint)-1), function(i){
+        begin <- cutpoint[i]
+        exseq <- rs[[begin]][["exseq"]]
+        motifName <- rs[[begin]][["motifName"]]
+        threshold <- rs[[begin]][["threshold"]]
+        begin <- begin + 1
+        end <- cutpoint[i + 1] - 1
+        p <- lapply(rs[begin:end], function(t){
+            return(t$p)
+        })
+        p <- do.call("c",p)
+        pwm <- log2(matrix(data = p, nrow = 4, dimnames = list(c("A","C","G","T"))) * 4)
+        p_matrix <- TFBSTools::PWMatrix(profileMatrix = pwm,
+                                            name = motifName,
+                                            tags = list(seq=exseq,
+                                                        motifName = motifName,
+                                                        threshold = as.numeric(threshold)))
+        pwmrs <- list()
+        pwmrs[[motifName]] <- p_matrix
+        return(p_matrix)
+    })
+    PWMList <- do.call("c",PWMList)
     PWMList <- do.call(TFBSTools::PWMatrixList, PWMList)
     return(PWMList)
 }

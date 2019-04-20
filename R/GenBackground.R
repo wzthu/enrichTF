@@ -101,17 +101,28 @@ randomSampleOnGenome<-function(regionLen, sampleNumber,bsgenome){
     chrlens <- chrlens[selchr]
     startchrlens <- chrlens - regionLen
     spchrs <- sample(x = names(startchrlens),size =  sampleNumber, replace = TRUE, prob = startchrlens / sum(startchrlens))
-    gr <- GRanges()
-    for(chr in names(startchrlens)){
+    #gr <- GRanges()
+    # for(chr in names(startchrlens)){
+    #     if(sum(spchrs == chr) == 0){
+    #         next
+    #     }
+    #     startpt <- sample(x = 1:startchrlens[chr],size = sum(spchrs == chr),replace = FALSE)
+    #     #non overlapped method:
+    #     #startpt <- sample(x = 1:(startchrlens[chr] - sum(spchrs == chr) * regionLen),size = sum(spchrs == chr),replace = FALSE)
+    #     #startpt <- startpt + 0:(sum(spchrs == chr)-1) * regionLen
+    #     gr <- c(gr,GRanges(seqnames = chr, ranges = IRanges(start = startpt, width = 1000)))
+    # }
+    gr <- lapply(names(startchrlens), function(chr){
         if(sum(spchrs == chr) == 0){
-            next
+            return(NULL)
         }
-        startpt <- sample(x = 1:startchrlens[chr],size = sum(spchrs == chr),replace = FALSE)
+        startpt <- sample(x = seq_len(startchrlens[chr]),size = sum(spchrs == chr),replace = FALSE)
         #non overlapped method:
         #startpt <- sample(x = 1:(startchrlens[chr] - sum(spchrs == chr) * regionLen),size = sum(spchrs == chr),replace = FALSE)
         #startpt <- startpt + 0:(sum(spchrs == chr)-1) * regionLen
-        gr <- c(gr,GRanges(seqnames = chr, ranges = IRanges(start = startpt, width = 1000)))
-    }
+        return(GRanges(seqnames = chr, ranges = IRanges(start = startpt, width = 1000)))
+    })
+    gr <- do.call("c",gr)
     return(sort(gr,ignore.strand=TRUE))
 }
 
@@ -132,7 +143,7 @@ setMethod(
         start(foregroundgr) <- floor(midpoint - regionLen/2)
         end(foregroundgr) <- floor(midpoint + regionLen/2)
         foregroundgr <- sort(foregroundgr,ignore.strand=TRUE)
-        mcols(foregroundgr)$name <-  1:length(foregroundgr)
+        mcols(foregroundgr)$name <-  seq_len(length(foregroundgr))
         export.bed(object = foregroundgr, con = outputForegroundBed)
         if(sampleNumb == 0){
             sampleNumb = length(foregroundgr)
