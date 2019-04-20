@@ -40,7 +40,8 @@ Imports:
     stats
 Suggests:
     knitr,
-    magrittr
+    magrittr,
+    testthat
 Collate: 
     EnrichStep.R 
     ConnectTargetGene.R

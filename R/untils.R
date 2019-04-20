@@ -6,6 +6,8 @@
 #' @importFrom BSgenome getBSgenome
 #' @importFrom utils download.file
 #' @importFrom R.utils gunzip
+#' @importFrom pipeFrame input "input<-" output "output<-" "param" "param<-"
+
 
 downloadAndGunzip <- function(urlplaceholder,refFilePath){
     genome <- getGenome()
