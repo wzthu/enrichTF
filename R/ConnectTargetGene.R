@@ -21,41 +21,41 @@ setMethod(
         enhancerRegularGeneCorrBed <- allparam[["enhancerRegularGeneCorrBed"]]
         if(length(prevSteps)>0){
             prevStep <- prevSteps[[1]]
-            .Object@inputList[["inputForegroundBed"]] <- getParam(prevStep,"outputForegroundBed")
-            .Object@inputList[["inputBackgroundBed"]] <- getParam(prevStep,"outputBackgroundBed")
+            input(.Object,"inputForegroundBed") <- prevStep$outputForegroundBed
+            input(.Object,"inputBackgroundBed") <- prevStep$outputBackgroundBed
         }
         if(!is.null(inputForegroundBed)){
-            .Object@inputList[["inputForegroundBed"]] <- inputForegroundBed
+            input(.Object,"inputForegroundBed") <- inputForegroundBed
         }
         if(!is.null(inputBackgroundBed)){
-            .Object@inputList[["inputBackgroundBed"]] <- inputBackgroundBed
+            input(.Object,"inputBackgroundBed") <- inputBackgroundBed
         }
 
 
 
         if(is.null(outputForegroundBed)){
-            .Object@outputList[["outputForegroundBed"]] <- getAutoPath(.Object,originPath = .Object@inputList[["inputForegroundBed"]],regexSuffixName = "foreground.bed",suffix = "gene.foreground.bed")
+            output(.Object,"outputForegroundBed") <- getAutoPath(.Object,originPath = .Object$inputList[["inputForegroundBed"]],regexSuffixName = "foreground.bed",suffix = "gene.foreground.bed")
         }else{
-            .Object@outputList[["outputForegroundBed"]] <- outputForegroundBed
+            output(.Object,"outputForegroundBed") <- outputForegroundBed
         }
 
 
         if(is.null(outputBackgroundBed)){
-            .Object@outputList[["outputBackgroundBed"]] <- getAutoPath(.Object,originPath = .Object@inputList[["inputBackgroundBed"]],regexSuffixName = "background.bed",suffix = "gene.background.bed")
+            output(.Object,"outputBackgroundBed") <- getAutoPath(.Object,originPath = .Object$inputList[["inputBackgroundBed"]],regexSuffixName = "background.bed",suffix = "gene.background.bed")
         }else{
-            .Object@outputList[["outputBackgroundBed"]] <- outputBackgroundBed
+            output(.Object,"outputBackgroundBed") <- outputBackgroundBed
         }
 
         if(is.null(regularGeneCorrBed)){
-            .Object@outputList[["regularGeneCorrBed"]] <- getRefFiles("RE_gene_corr")
+            output(.Object,"regularGeneCorrBed") <- getRefFiles("RE_gene_corr")
         }else{
-            .Object@outputList[["regularGeneCorrBed"]] <- regularGeneCorrBed
+            output(.Object,"regularGeneCorrBed") <- regularGeneCorrBed
         }
 
         if(is.null(enhancerRegularGeneCorrBed)){
-            .Object@outputList[["enhancerRegularGeneCorrBed"]] <- getRefFiles("Enhancer_RE_gene_corr")
+            output(.Object,"enhancerRegularGeneCorrBed") <- getRefFiles("Enhancer_RE_gene_corr")
         }else{
-            .Object@outputList[["enhancerRegularGeneCorrBed"]] <- enhancerRegularGeneCorrBed
+            output(.Object,"enhancerRegularGeneCorrBed") <- enhancerRegularGeneCorrBed
         }
         .Object
     }
@@ -127,10 +127,10 @@ setMethod(
     f = "checkRequireParam",
     signature = "RegionConnectTargetGene",
     definition = function(.Object,...){
-        if(is.null(.Object@inputList[["inputForegroundBed"]])){
+        if(is.null(.Object$inputForegroundBed)){
             stop("inputForegroundBed is required.")
         }
-        if(is.null(.Object@inputList[["inputBackgroundBed"]])){
+        if(is.null(.Object$inputBackgroundBed)){
             stop("inputBackgroundBed is required.")
         }
 
@@ -143,40 +143,11 @@ setMethod(
     f = "checkAllPath",
     signature = "RegionConnectTargetGene",
     definition = function(.Object,...){
-        checkFileExist(.Object@inputList[["inputForegroundBed"]])
-        checkFileExist(.Object@inputList[["inputBackgroundBed"]])
+        checkFileExist(.Object$inputForegroundBed)
+        checkFileExist(.Object$inputBackgroundBed)
 
     }
 )
-
-setMethod(
-    f = "getReportValImp",
-    signature = "RegionConnectTargetGene",
-    definition = function(.Object,item,...){
-        txt <- readLines(.Object@paramlist[["reportOutput"]])
-        if(item == "total"){
-            s<-strsplit(txt[1]," ")
-            return(as.integer(s[[1]][1]))
-        }
-        if(item == "maprate"){
-            s<-strsplit(txt[length(txt)],"% ")
-            return(as.numeric(s[[1]][1])/100)
-        }
-        if(item == "detail"){
-            return(txt)
-        }
-        stop(paste0(item," is not an item of report value."))
-    }
-)
-
-setMethod(
-    f = "getReportItemsImp",
-    signature = "RegionConnectTargetGene",
-    definition = function(.Object, ...){
-        return(c("total","maprate","detail"))
-    }
-)
-
 
 
 #' @name RegionConnectTargetGene

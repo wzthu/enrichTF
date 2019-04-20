@@ -21,50 +21,49 @@ setMethod(
         if(length(prevSteps)>0){
             prevStep <- prevSteps[[1]]
             foregroundBed <- getParam(prevStep,"bedOutput")
-            .Object@inputList[["inputForegroundBed"]] <- foregroundBed
+            input(.Object,"inputForegroundBed") <- foregroundBed
         }
 
         if(!is.null(inputForegroundBed)){
-            .Object@inputList[["inputForegroundBed"]] <- inputForegroundBed
+            input(.Object,"inputForegroundBed") <- inputForegroundBed
         }
 
         if(is.null(outputForegroundBed)){
-            .Object@outputList[["outputForegroundBed"]] <- getAutoPath(.Object,originPath = .Object@inputList[["inputForegroundBed"]],regexSuffixName = "bed",suffix = "foreground.bed")
+            output(.Object,"outputForegroundBed") <- getAutoPath(.Object,originPath = input(.Object)[["inputForegroundBed"]],regexSuffixName = "bed",suffix = "foreground.bed")
         }else{
-            .Object@outputList[["outputForegroundBed"]] <- outputForegroundBed
+            output(.Object,"outputForegroundBed") <- outputForegroundBed
         }
 
         if(is.null(outputBackgroundBed)){
-            .Object@outputList[["outputBackgroundBed"]] <- getAutoPath(.Object,originPath = .Object@inputList[["inputForegroundBed"]],regexSuffixName = "bed",suffix = "background.bed")
+            output(.Object,"outputBackgroundBed") <- getAutoPath(.Object,originPath = input(.Object)[["inputForegroundBed"]],regexSuffixName = "bed",suffix = "background.bed")
         }else{
-            .Object@outputList[["outputBackgroundBed"]] <- outputBackgroundBed
+            output(.Object,"outputBackgroundBed") <- outputBackgroundBed
         }
 
         if(is.null(outputRegionBed)){
-            .Object@outputList[["outputRegionBed"]] <- getAutoPath(.Object,originPath = .Object@inputList[["inputForegroundBed"]],regexSuffixName = "bed",suffix = "allregion.bed")
+            output(.Object,"outputRegionBed") <- getAutoPath(.Object,originPath = input(.Object)[["inputForegroundBed"]],regexSuffixName = "bed",suffix = "allregion.bed")
         }else{
-            .Object@outputList[["outputRegionBed"]] <- outputRegionBed
+            output(.Object,"outputRegionBed") <- outputRegionBed
         }
         if(is.null(genome)){
             if(getGenome() == "testgenome"){
-                .Object@paramList[["bsgenome"]] <- BSgenome::getBSgenome("hg19")
+                param(.Object,"bsgenome") <- BSgenome::getBSgenome("hg19")
             }else{
-                .Object@paramList[["bsgenome"]] <- BSgenome::getBSgenome(getGenome())
+                param(.Object,"bsgenome") <- BSgenome::getBSgenome(getGenome())
             }
-
         }else{
             if(genome == "testgenome"){
                 genome <- "hg19"
             }
-            .Object@paramList[["bsgenome"]] <- BSgenome::getBSgenome(genome = genome)
+            param(.Object,"bsgenome") <- BSgenome::getBSgenome(genome = genome)
 
 
         }
-        .Object@paramList[["regionLen"]] <- regionLen
+        param(.Object,"regionLen") <- regionLen
         if(is.null(sampleNumb)){
-            .Object@paramList[["sampleNumb"]] <- 0
+            param(.Object,"sampleNumb")<- 0
         }else{
-            .Object@paramList[["sampleNumb"]] <- sampleNumb
+            param(.Object,"sampleNumb") <- sampleNumb
         }
 
         .Object
@@ -151,10 +150,9 @@ setMethod(
     f = "checkRequireParam",
     signature = "GenBackground",
     definition = function(.Object,...){
-        if(is.null(.Object@inputList[["inputForegroundBed"]])){
+        if(is.null(input(.Object)[["inputForegroundBed"]])){
             stop("inputForegroundBed is required.")
         }
-
     }
 )
 
@@ -164,7 +162,7 @@ setMethod(
     f = "checkAllPath",
     signature = "GenBackground",
     definition = function(.Object,...){
-        checkFileExist(.Object@inputList[["inputForegroundBed"]]);
+        checkFileExist(input(.Object)[["inputForegroundBed"]]);
 
     }
 )
@@ -173,7 +171,7 @@ setMethod(
     f = "getReportValImp",
     signature = "GenBackground",
     definition = function(.Object,item,...){
-        txt <- readLines(.Object@paramlist[["reportOutput"]])
+        txt <- readLines(param(.Object)[["reportOutput"]])
         if(item == "total"){
             s<-strsplit(txt[1]," ")
             return(as.integer(s[[1]][1]))

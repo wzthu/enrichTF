@@ -20,41 +20,41 @@ setMethod(
         if(length(prevSteps)>0){
             prevStep <- prevSteps[[1]]
             outputRegionBed <- getParam(prevStep,"outputRegionBed")
-            .Object@inputList[["inputRegionBed"]] <- outputRegionBed
+            input(.Object,"inputRegionBed") <- outputRegionBed
         }
         motifRc <- match.arg(motifRc, c("integrate","jaspar","pwmfile"))
 
-        .Object@paramList[["motifRc"]] <- motifRc
+        param(.Object, "motifRc") <- motifRc
 
         if(!is.null(inputRegionBed)){
-            .Object@inputList[["inputRegionBed"]] <- inputRegionBed
+            input(.Object,"inputRegionBed") <- inputRegionBed
         }
 
         if(is.null(outputRegionMotifBed)){
-            .Object@outputList[["outputRegionMotifBed"]] <- getAutoPath(.Object,originPath = .Object@inputList[["inputRegionBed"]],regexSuffixName = "allregion.bed",suffix = "region.motif.bed")
+            output(.Object,"outputRegionMotifBed") <- getAutoPath(.Object,originPath = .Object$inputList[["inputRegionBed"]],regexSuffixName = "allregion.bed",suffix = "region.motif.bed")
         }else{
-            .Object@outputList[["outputRegionMotifBed"]] <- outputRegionMotifBed
+            output(.Object,"outputRegionMotifBed") <- outputRegionMotifBed
         }
 
         if(motifRc == "integrate"){
 
-            .Object@inputList[["pwmObj"]] <- get(load(getRefFiles("motifPWMOBJ")))
+            input(.Object, "pwmObj") <- get(load(getRefFiles("motifPWMOBJ")))
         }else if(motifRc == "jarspar"){
-            .Object@inputList[["pwmObj"]] <- JASPAR2018::JASPAR2018
+            input(.Object, "pwmObj") <- JASPAR2018::JASPAR2018
 
         }else if(motifRc == "pwmfile"){
-            .Object@inputList[["pwmObj"]] <- getMotifInfo1(inputPwmFile)
+            input(.Object, "pwmObj") <- getMotifInfo1(inputPwmFile)
         }
 
 
 
         if(is.null(genome)){
-            .Object@paramList[["genome"]] <- getGenome()
+            param(.Object, "genome") <- getGenome()
         }else{
-            .Object@paramList[["genome"]] <- genome
+            param(.Object, "genome") <- genome
         }
-        if(.Object@paramList[["genome"]] == "testgenome"){
-            .Object@paramList[["genome"]] <- "hg19"
+        if(.Object$paramList[["genome"]] == "testgenome"){
+            param(.Object, "genome") <- "hg19"
         }
         .Object
     }
@@ -81,7 +81,7 @@ setMethod(
         stopCluster(cl)
         #motifmatchr::matchMotifs(pwms = pwmObj, subject = regions, genome = genome, out="positions")
         result <- c()
-        .Object@propList[["motif_ix"]] <-motif_ix
+#        .Object@propList[["motif_ix"]] <-motif_ix
         for(i in 1:length(motif_ix)){
             motif_region_pair <- findOverlapPairs(motif_ix[[i]][[1]],regions,ignore.strand = TRUE)
             if(length(second(motif_region_pair))>0){
@@ -98,7 +98,7 @@ setMethod(
 
         }
 
-        .Object@propList[["motifs_in_region"]] <- result
+#        .Object@propList[["motifs_in_region"]] <- result
 
         write.table(as.data.frame(result)[,c("seqnames","start","end","name","score","motifName")],
                     file = outputRegionMotifBed, sep="\t",quote = FALSE,row.names = FALSE,col.names = FALSE)
@@ -113,7 +113,7 @@ setMethod(
     f = "checkRequireParam",
     signature = "FindMotifsInRegions",
     definition = function(.Object,...){
-        if(is.null(.Object@inputList[["inputRegionBed"]])){
+        if(is.null(.Object$inputList[["inputRegionBed"]])){
             stop("inputRegionBed is required.")
         }
 
@@ -126,7 +126,7 @@ setMethod(
     f = "checkAllPath",
     signature = "FindMotifsInRegions",
     definition = function(.Object,...){
-        checkFileExist(.Object@inputList[["inputRegionBed"]])
+        checkFileExist(.Object$inputList[["inputRegionBed"]])
 
     }
 )
@@ -135,7 +135,7 @@ setMethod(
     f = "getReportValImp",
     signature = "FindMotifsInRegions",
     definition = function(.Object,item,...){
-        txt <- readLines(.Object@paramlist[["reportOutput"]])
+        txt <- readLines(.Object$paramlist[["reportOutput"]])
         if(item == "total"){
             s<-strsplit(txt[1]," ")
             return(as.integer(s[[1]][1]))

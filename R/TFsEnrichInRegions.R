@@ -19,61 +19,61 @@ setMethod(
             GenBackgroundStep <- prevSteps[[1]]
             FindMotifsInRegionsStep  <- prevSteps[[2]]
             RegionConnectTargetGeneStep  <- prevSteps[[3]]
-            .Object@inputList[["inputRegionBed"]] <- getParam(GenBackgroundStep,"outputRegionBed")
-            .Object@inputList[["inputRegionMotifBed"]] <- getParam(FindMotifsInRegionsStep,"outputRegionMotifBed")
-            .Object@inputList[["inputForegroundGeneBed"]] <- getParam(RegionConnectTargetGeneStep,"outputForegroundBed")
-            .Object@inputList[["inputBackgroundGeneBed"]] <- getParam(RegionConnectTargetGeneStep,"outputBackgroundBed")
+            input(.Object, "inputRegionBed") <- getParam(GenBackgroundStep,"outputRegionBed")
+            input(.Object, "inputRegionMotifBed") <- getParam(FindMotifsInRegionsStep,"outputRegionMotifBed")
+            input(.Object, "inputForegroundGeneBed") <- getParam(RegionConnectTargetGeneStep,"outputForegroundBed")
+            input(.Object, "inputBackgroundGeneBed") <- getParam(RegionConnectTargetGeneStep,"outputBackgroundBed")
         }
 
         if(!is.null(inputRegionBed)){
-            .Object@inputList[["inputRegionBed"]] <- inputRegionBed
+            input(.Object,"inputRegionBed") <- inputRegionBed
         }
         if(!is.null(inputRegionMotifBed)){
-            .Object@inputList[["inputRegionMotifBed"]] <- inputRegionMotifBed
+            input(.Object, "inputRegionMotifBed") <- inputRegionMotifBed
         }
         if(!is.null(inputForegroundGeneBed)){
-            .Object@inputList[["inputForegroundGeneBed"]] <- inputForegroundGeneBed
+            input(.Object, "inputForegroundGeneBed") <- inputForegroundGeneBed
         }
         if(!is.null(inputBackgroundGeneBed)){
-            .Object@inputList[["inputBackgroundGeneBed"]] <- inputBackgroundGeneBed
+            input(.Object, "inputBackgroundGeneBed") <- inputBackgroundGeneBed
         }
 
 
 
 
         if(is.null(outputTFsEnrichTxt)){
-            .Object@outputList[["outputTFsEnrichTxt"]] <- getAutoPath(.Object,originPath = .Object@inputList[["inputRegionBed"]],regexSuffixName = "allregion.bed",suffix = "PECA_TF_enrich.txt")
+            output(.Object, "outputTFsEnrichTxt") <- getAutoPath(.Object,originPath = .Object$inputList[["inputRegionBed"]],regexSuffixName = "allregion.bed",suffix = "PECA_TF_enrich.txt")
         }else{
-            .Object@outputList[["outputTFsEnrichTxt"]] <- outputTFsEnrichTxt
+            output(.Object, "outputTFsEnrichTxt") <- outputTFsEnrichTxt
         }
 
         if(!is.null(inputRegionBed)){
-            .Object@inputList[["inputRegionBed"]] <- inputRegionBed
+            input(.Object, "inputRegionBed") <- inputRegionBed
         }
         if(!is.null(inputRegionMotifBed)){
-            .Object@inputList[["inputRegionMotifBed"]] <- inputRegionMotifBed
+            input(.Object, "inputRegionMotifBed") <- inputRegionMotifBed
         }
         if(!is.null(inputForegroundGeneBed)){
-            .Object@inputList[["inputForegroundGeneBed"]] <- inputForegroundGeneBed
+            input(.Object, "inputForegroundGeneBed") <- inputForegroundGeneBed
         }
         if(!is.null(inputBackgroundGeneBed)){
-            .Object@inputList[["inputBackgroundGeneBed"]] <- inputBackgroundGeneBed
+            input(.Object, "inputBackgroundGeneBed") <- inputBackgroundGeneBed
         }
 
         if(is.null(inputMotifWeights)){
-            .Object@inputList[["inputMotifWeights"]] <- getRefFiles("MotifWeights")
+            input(.Object, "inputMotifWeights") <- getRefFiles("MotifWeights")
         }else{
-            .Object@inputList[["inputMotifWeights"]] <- inputMotifWeights
+            input(.Object, "inputMotifWeights") <- inputMotifWeights
         }
         if(is.null(inputTFgeneRelMtx)){
-            .Object@inputList[["inputTFgeneRelMtx"]] <- getRefFiles("TFgeneRelMtx")
+            input(.Object, "inputTFgeneRelMtx") <- getRefFiles("TFgeneRelMtx")
         }else{
-            .Object@inputList[["inputTFgeneRelMtx"]] <- inputTFgeneRelMtx
+            input(.Object, "inputTFgeneRelMtx") <- inputTFgeneRelMtx
         }
         if(is.null(inputMotifTFTable)){
-            .Object@inputList[["inputMotifTFTable"]] <- getRefFiles("MotifTFTable")
+            input(.Object, "inputMotifTFTable") <- getRefFiles("MotifTFTable")
         }else{
-            .Object@inputList[["inputMotifTFTable"]] <- inputMotifTFTable
+            input(.Object, "inputMotifTFTable") <- inputMotifTFTable
         }
         .Object
     }
@@ -276,16 +276,16 @@ setMethod(
     f = "checkRequireParam",
     signature = "TFsEnrichInRegions",
     definition = function(.Object,...){
-        if(is.null(.Object@inputList[["inputRegionBed"]])){
+        if(is.null(.Object$inputList[["inputRegionBed"]])){
             stop("inputRegionBed is required.")
         }
-        if(is.null(.Object@inputList[["inputForegroundGeneBed"]])){
+        if(is.null(.Object$inputList[["inputForegroundGeneBed"]])){
             stop("inputForegroundGeneBed is required.")
         }
-        if(is.null(.Object@inputList[["inputBackgroundGeneBed"]])){
+        if(is.null(.Object$inputList[["inputBackgroundGeneBed"]])){
             stop("inputBackgroundGeneBed is required.")
         }
-        if(is.null(.Object@inputList[["inputRegionMotifBed"]])){
+        if(is.null(.Object$inputList[["inputRegionMotifBed"]])){
             stop("inputRegionMotifBed is required.")
         }
 
@@ -298,39 +298,11 @@ setMethod(
     f = "checkAllPath",
     signature = "TFsEnrichInRegions",
     definition = function(.Object,...){
-        checkFileExist(.Object@inputList[["inputRegionBed"]])
-        checkFileExist(.Object@inputList[["inputForegroundGeneBed"]])
-        checkFileExist(.Object@inputList[["inputBackgroundGeneBed"]])
-        checkFileExist(.Object@inputList[["inputRegionMotifBed"]])
+        checkFileExist(.Object$inputList[["inputRegionBed"]])
+        checkFileExist(.Object$inputList[["inputForegroundGeneBed"]])
+        checkFileExist(.Object$inputList[["inputBackgroundGeneBed"]])
+        checkFileExist(.Object$inputList[["inputRegionMotifBed"]])
 
-    }
-)
-
-setMethod(
-    f = "getReportValImp",
-    signature = "TFsEnrichInRegions",
-    definition = function(.Object,item,...){
-        txt <- readLines(.Object@paramlist[["reportOutput"]])
-        if(item == "total"){
-            s<-strsplit(txt[1]," ")
-            return(as.integer(s[[1]][1]))
-        }
-        if(item == "maprate"){
-            s<-strsplit(txt[length(txt)],"% ")
-            return(as.numeric(s[[1]][1])/100)
-        }
-        if(item == "detail"){
-            return(txt)
-        }
-        stop(paste0(item," is not an item of report value."))
-    }
-)
-
-setMethod(
-    f = "getReportItemsImp",
-    signature = "TFsEnrichInRegions",
-    definition = function(.Object, ...){
-        return(c("total","maprate","detail"))
     }
 )
 
