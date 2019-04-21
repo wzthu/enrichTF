@@ -191,34 +191,6 @@ setMethod(
     }
 )
 
-setMethod(
-    f = "getReportValImp",
-    signature = "GenBackground",
-    definition = function(.Object,item,...){
-        txt <- readLines(param(.Object)[["reportOutput"]])
-        if(item == "total"){
-            s<-strsplit(txt[1]," ")
-            return(as.integer(s[[1]][1]))
-        }
-        if(item == "maprate"){
-            s<-strsplit(txt[length(txt)],"% ")
-            return(as.numeric(s[[1]][1])/100)
-        }
-        if(item == "detail"){
-            return(txt)
-        }
-        stop(paste0(item," is not an item of report value."))
-    }
-)
-
-setMethod(
-    f = "getReportItemsImp",
-    signature = "GenBackground",
-    definition = function(.Object, ...){
-        return(c("total","maprate","detail"))
-    }
-)
-
 
 #' @name GenBackground
 #' @importFrom rtracklayer import

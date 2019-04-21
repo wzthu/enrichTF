@@ -356,25 +356,14 @@ setMethod(
 #' @title Test each TF is enriched in regions or not
 #' @description
 #' Test each TF is enriched in regions or not
-#' @param GenBackgroundStep \code{\link{Step-class}} object scalar.
+#' @param enrichStep \code{\link{Step-class}} object scalar.
 #' It has to be the return value of upstream process from
-#' \code{\link{genBackground}} and \code{\link{enrichGenBackground}}
-#' when it is not used in a pipeline.  If it is used in a pipeline or
+#' \code{\link{regionConnectTargetGene}}, \code{\link{regionConnectTargetGene}},
+#' \code{\link{findMotifsInRegions}} or
+#' \code{\link{enrichFindMotifsInRegions}},
+#' If it is used in a pipeline or
 #' \code{\%>\%} is applied on this function, any steps in this
 #' package is acceptable.
-#' @param FindMotifsInRegionsStep \code{\link{Step-class}}
-#' object scalar.
-#' This parameter is not necessary when it is in pipeline.
-#' It has to be the return value of upstream process from
-#' \code{\link{findMotifsInRegions}} and
-#' \code{\link{enrichFindMotifsInRegions}}
-#' Default: NULL.
-#' @param RegionConnectTargetGeneStep \code{\link{Step-class}}
-#' object scalar.
-#' It has to be the return value of upstream process from
-#' \code{\link{genBackground}} and \code{\link{enrichGenBackground}}
-#' This parameter is not necessary when it is in pipeline.
-#' Default: NULL.
 #' @param inputRegionBed \code{Character} scalar.
 #' Directory of Regions BED file  including foreground and background
 #' @param inputForegroundGeneBed \code{Character} scalar.
@@ -435,9 +424,7 @@ setMethod(
 
 
 setGeneric("enrichTFsEnrichInRegions",
-           function(GenBackgroundStep,
-                    FindMotifsInRegionsStep = NULL,
-                    RegionConnectTargetGeneStep = NULL,
+           function(enrichStep,
                     inputRegionBed = NULL,
                     inputForegroundGeneBed = NULL,
                     inputBackgroundGeneBed = NULL,
@@ -455,9 +442,7 @@ setGeneric("enrichTFsEnrichInRegions",
 setMethod(
     f = "enrichTFsEnrichInRegions",
     signature = "Step",
-    definition = function(GenBackgroundStep,
-                          FindMotifsInRegionsStep = NULL,
-                          RegionConnectTargetGeneStep = NULL,
+    definition = function(enrichStep,
                           inputRegionBed = NULL,
                           inputForegroundGeneBed = NULL,
                           inputBackgroundGeneBed = NULL,
@@ -468,9 +453,7 @@ setMethod(
                           inputMotifTFTable = NULL,
                           ...){
         allpara <- c(list(Class = "TFsEnrichInRegions",
-                          prevSteps = list(GenBackgroundStep,
-                                           FindMotifsInRegionsStep,
-                                           RegionConnectTargetGeneStep)),
+                          prevSteps = list(enrichStep)),
                      as.list(environment()),list(...))
         step <- do.call(new,allpara)
         invisible(step)

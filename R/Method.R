@@ -42,7 +42,7 @@ PECA_TF_enrich <- function(inputForegroundBed, genome, threads = 2, ...){
     gen <- genBackground(inputForegroundBed = inputForegroundBed,...)
     conTG <- enrichRegionConnectTargetGene(gen,...)
     findMotif <- enrichFindMotifsInRegions(gen,motifRc="integrate",...)
-    result <- enrichTFsEnrichInRegions(gen,findMotif,conTG,...)
+    result <- enrichTFsEnrichInRegions(findMotif,...)
     invisible(list(GenBackground = gen,
                    RegionConnectTargetGene = conTG,
                    FindMotifsInRegions = findMotif,

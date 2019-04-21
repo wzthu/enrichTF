@@ -20,18 +20,26 @@ The max number of threads that can be used by each step of the pipeline}
 See below for details.}
 }
 \value{
-An invisible \code{list} contains all four steps \code{EnrichTF} objects
+An invisible \code{list} contains all four steps
+\code{EnrichTF} objects
 }
 \description{
 This is a pipeline for TF enrichment with PECA model.
 }
 \details{
-This is a function for the pipeline. There are four steps in this pipeline: GenBackground, RegionConnectTarget,
-FindMotifsInRegions and TFsEnrichInRegions. Parameter setting is available for all these functions. For example, if you want to change
+This is a function for the pipeline.
+There are four steps in this pipeline:
+GenBackground, RegionConnectTarget,
+FindMotifsInRegions and TFsEnrichInRegions.
+Parameter setting is available for all these functions. For example,
+if you want to change
 the number of background regions (\code{sampleNumb}) into 1000,
-you can add the argument \code{GenBackground.sampleNumb = 1000} into the function like this:
-\code{PECA_TF_enrich(inputForegroundBed = "your_file.bed",genome="hg19",GenBackground.sampleNumb = 1000)}.
-The number of arguments is not limited so you can add other arguments with the format (\code{StepName.argumentName}) in the same way.
+you can add the argument \code{GenBackground.sampleNumb = 1000}
+into the function like this:
+\code{PECA_TF_enrich(inputForegroundBed = "your_file.bed",
+genome="hg19",GenBackground.sampleNumb = 1000)}.
+The number of arguments is not limited so you can add other
+arguments with the format (\code{StepName.argumentName}) in the same way.
 }
 \examples{
 
@@ -41,7 +49,8 @@ PECA_TF_enrich(inputForegroundBed = foregroundBedPath, genome = "testgenome")
 
 }
 \references{
-Zhana Duren, et al., Modeling gene regulation from paired expression and chromatin accessibility data.
+Zhana Duren, et al., Modeling gene regulation from paired
+expression and chromatin accessibility data.
 Proc Natl Acad Sci U S A. 2017 1;111(44):15675-80
 }
 \author{

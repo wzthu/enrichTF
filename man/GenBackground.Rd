@@ -6,7 +6,8 @@
 \alias{enrichGenBackground,Step-method}
 \alias{enrichGenBackground}
 \alias{genBackground}
-\title{Generate background regions and reset the size of foreground regions}
+\title{Generate background regions and reset the size of
+foreground regions}
 \usage{
 enrichGenBackground(prevStep, inputForegroundBed = NULL, genome = NULL,
   outputForegroundBed = NULL, outputBackgroundBed = NULL,
@@ -23,14 +24,16 @@ genBackground(inputForegroundBed, genome = NULL,
 }
 \arguments{
 \item{prevStep}{\code{\link{Step-class}} object scalar.
-It needs to be the return value of upstream process from other packages, such as esATAC.}
+It needs to be the return value of upstream process
+from other packages, such as esATAC.}
 
 \item{inputForegroundBed}{\code{Character} scalar.
 The directory of foreground BED file.}
 
 \item{genome}{\code{Character} scalar.
 Bioconductor supported genome such as "hg19", "mm10", etc.
-Default: NULL (e.g. after library (enrichTF), you can call function \code{setGenome("hg19")})}
+Default: NULL (e.g. after library (enrichTF),
+you can call function \code{setGenome("hg19")})}
 
 \item{outputForegroundBed}{\code{Character} scalar.
 The BED file directory of reshaped foreground regions.
@@ -44,23 +47,31 @@ Default: NULL (generated base on inputForegroundBed)}
 Foreground and background merged BED files.
 Default: NULL (generated base on inputForegroundBed)}
 
-\item{regionLen}{\code{Character} scalar. It sets the length of forground sequence regions. Default: 1000}
+\item{regionLen}{\code{Character} scalar.
+It sets the length of forground sequence regions.
+Default: 1000}
 
 \item{sampleNumb}{\code{numeric} scalar.
-It sets the number of background regions that will be sampled. Default: 10000}
+It sets the number of background regions that
+will be sampled. Default: 10000}
 
 \item{...}{Additional arguments, currently unused.}
 }
 \value{
-An invisible \code{\link{EnrichStep-class}} object (\code{\link{Step-class}} based) scalar for downstream analysis.
+An invisible \code{\link{EnrichStep-class}}
+object (\code{\link{Step-class}} based) scalar for downstream analysis.
 }
 \description{
-Use uniform distribution to generate background sequence regions from genome.
-The size of foreground regions will be unified into the length specified in argument.
+Use uniform distribution to generate background
+sequence regions from genome.
+The size of foreground regions will be unified into the
+length specified in argument.
 }
 \details{
-Use uniform distribution to generate background sequence regions from genome.
-The size of foreground regions will be unified into the length specified in argument.
+Use uniform distribution to generate background sequence
+regions from genome.
+The size of foreground regions will be unified into the
+ length specified in argument.
 }
 \examples{
 setGenome("testgenome") #Use "hg19","hg38",etc. for your application

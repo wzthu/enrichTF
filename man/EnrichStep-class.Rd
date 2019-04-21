@@ -6,5 +6,6 @@
 \title{Base class of this package}
 \description{
 This class is inherit from \code{Step} in pipeFrame package,
-no more method is extended or override. Please see \code{Step} class for detail.
+no more method is extended or override. Please see \code{Step}
+class for detail.
 }

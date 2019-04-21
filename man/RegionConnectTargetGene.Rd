@@ -24,8 +24,11 @@ regionConnectTargetGene(inputForegroundBed, inputBackgroundBed,
 }
 \arguments{
 \item{prevStep}{\code{\link{Step-class}} object scalar.
-It needs to be the return value of upstream process from \code{\link{genBackground}} or \code{\link{enrichGenBackground}}
-when it is not used in a pipeline.  If it is used in a pipeline or \code{\%>\%} is applied on this function, any steps in this package is acceptable.}
+It needs to be the return value of upstream process from
+\code{\link{genBackground}} or \code{\link{enrichGenBackground}}
+when it is not used in a pipeline.  If it is used in a pipeline or
+\code{\%>\%} is applied on this function, any steps in this package
+is acceptable.}
 
 \item{inputForegroundBed}{\code{Character} scalar.
 The BED file directory of foreground regions.}
@@ -34,31 +37,38 @@ The BED file directory of foreground regions.}
 The BED file directory of background regions.}
 
 \item{outputForegroundBed}{\code{Character} scalar.
-The BED file directory of target genes connecting with foreground regions, which are derived from PECA model.
+The BED file directory of target genes connecting with foreground regions,
+which are derived from PECA model.
 Default: NULL (generated base on inputForegroundBed)}
 
 \item{outputBackgroundBed}{\code{Character} scalar.
-The BED file directory of target genes connecting with background regions, which are derived from PECA model.
+The BED file directory of target genes connecting with background regions,
+which are derived from PECA model.
 Default: NULL (generated base on inputBackgroundBed)}
 
 \item{regularGeneCorrBed}{\code{Character} scalar.
 The BED file directory of target genes which are predicted from PECA.
-Default: NULL (e.g. after \code{library (enrichTF)}, you can call function \code{setGenome("hg19")})}
+Default: NULL (e.g. after \code{library (enrichTF)}, you can call
+function \code{setGenome("hg19")})}
 
 \item{enhancerRegularGeneCorrBed}{\code{Character} scalar.
 The BED file directory of enhancer-targets predicted from PECA.
-Default: NULL (e.g. after \code{library (enrichTF)}, you can call function \code{setGenome("hg19")})}
+Default: NULL (e.g. after \code{library (enrichTF)}, you can call
+function \code{setGenome("hg19")})}
 
 \item{...}{Additional arguments, currently unused.}
 }
 \value{
-An invisible \code{\link{EnrichStep-class}} object (\code{\link{Step-class}} based) scalar for downstream analysis.
+An invisible \code{\link{EnrichStep-class}} object
+(\code{\link{Step-class}} based) scalar for downstream analysis.
 }
 \description{
-Connect foreground and background regions to their target genes, which is predicted from PECA model.
+Connect foreground and background regions to their target genes,
+which is predicted from PECA model.
 }
 \details{
-Connect foreground and background regions to target genes, which are predicted from PECA.
+Connect foreground and background regions to target genes,
+which are predicted from PECA.
 }
 \examples{
 setGenome("testgenome") #Use "hg19","hg38",etc. for your application

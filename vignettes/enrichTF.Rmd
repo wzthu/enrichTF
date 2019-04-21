@@ -163,7 +163,7 @@ findMotif <- enrichFindMotifsInRegions(gen,motifRc="integrate")
 The function of `TFsEnrichInRegions` is to test whether each TF is enriched on input regions.
 For example,
 ```{r eval=TRUE}
-result <- enrichTFsEnrichInRegions(gen,NULL,NULL)
+result <- enrichTFsEnrichInRegions(gen)
 ```
 
 
@@ -178,7 +178,7 @@ foregroundBedPath <- system.file(package = "enrichTF", "extdata","testregion.bed
 result <- genBackground(inputForegroundBed = foregroundBedPath) %>%
 enrichRegionConnectTargetGene%>%
 enrichFindMotifsInRegions(motifRc="integrate") %>%
-enrichTFsEnrichInRegions(NULL,NULL)
+enrichTFsEnrichInRegions
 ```
 
 ## Result
