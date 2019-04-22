@@ -21,58 +21,58 @@ setMethod(
         if(length(prevSteps)>0){
             prevStep <- prevSteps[[1]]
             foregroundBed <- getParam(prevStep,"bedOutput")
-            input(.Object,"inputForegroundBed") <- foregroundBed
+            input(.Object)$inputForegroundBed <- foregroundBed
         }
 
         if(!is.null(inputForegroundBed)){
-            input(.Object,"inputForegroundBed") <- inputForegroundBed
+            input(.Object)$inputForegroundBed <- inputForegroundBed
         }
 
         if(is.null(outputForegroundBed)){
-            output(.Object,"outputForegroundBed") <-
+            output(.Object)$outputForegroundBed <-
                 getAutoPath(.Object,originPath =
                                 input(.Object)[["inputForegroundBed"]],
                             regexSuffixName = "bed",suffix = "foreground.bed")
         }else{
-            output(.Object,"outputForegroundBed") <- outputForegroundBed
+            output(.Object)$outputForegroundBed <- outputForegroundBed
         }
 
         if(is.null(outputBackgroundBed)){
-            output(.Object,"outputBackgroundBed") <-
+            output(.Object)$outputBackgroundBed <-
                 getAutoPath(.Object,originPath =
                                 input(.Object)[["inputForegroundBed"]],
                             regexSuffixName = "bed",suffix = "background.bed")
         }else{
-            output(.Object,"outputBackgroundBed") <- outputBackgroundBed
+            output(.Object)$outputBackgroundBed <- outputBackgroundBed
         }
 
         if(is.null(outputRegionBed)){
-            output(.Object,"outputRegionBed") <-
+            output(.Object)$outputRegionBed <-
                 getAutoPath(.Object,originPath =
                                 input(.Object)[["inputForegroundBed"]],
                             regexSuffixName = "bed",suffix = "allregion.bed")
         }else{
-            output(.Object,"outputRegionBed") <- outputRegionBed
+            output(.Object)$outputRegionBed <- outputRegionBed
         }
         if(is.null(genome)){
             if(getGenome() == "testgenome"){
-                param(.Object,"bsgenome") <- BSgenome::getBSgenome("hg19")
+                param(.Object)$bsgenome <- BSgenome::getBSgenome("hg19")
             }else{
-                param(.Object,"bsgenome") <- BSgenome::getBSgenome(getGenome())
+                param(.Object)$bsgenome <- BSgenome::getBSgenome(getGenome())
             }
         }else{
             if(genome == "testgenome"){
                 genome <- "hg19"
             }
-            param(.Object,"bsgenome") <- BSgenome::getBSgenome(genome = genome)
+            param(.Object)$bsgenome <- BSgenome::getBSgenome(genome = genome)
 
 
         }
-        param(.Object,"regionLen") <- regionLen
+        param(.Object)$regionLen <- regionLen
         if(is.null(sampleNumb)){
-            param(.Object,"sampleNumb")<- 0
+            param(.Object)$sampleNumb<- 0
         }else{
-            param(.Object,"sampleNumb") <- sampleNumb
+            param(.Object)$sampleNumb <- sampleNumb
         }
 
         .Object

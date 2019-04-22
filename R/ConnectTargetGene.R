@@ -21,52 +21,52 @@ setMethod(
         enhancerRegularGeneCorrBed <- allparam[["enhancerRegularGeneCorrBed"]]
         if(length(prevSteps)>0){
             prevStep <- prevSteps[[1]]
-            input(.Object,"inputForegroundBed") <- prevStep$outputForegroundBed
-            input(.Object,"inputBackgroundBed") <- prevStep$outputBackgroundBed
+            input(.Object)$inputForegroundBed <- prevStep$outputForegroundBed
+            input(.Object)$inputBackgroundBed <- prevStep$outputBackgroundBed
         }
         if(!is.null(inputForegroundBed)){
-            input(.Object,"inputForegroundBed") <- inputForegroundBed
+            input(.Object)$inputForegroundBed <- inputForegroundBed
         }
         if(!is.null(inputBackgroundBed)){
-            input(.Object,"inputBackgroundBed") <- inputBackgroundBed
+            input(.Object)$inputBackgroundBed <- inputBackgroundBed
         }
 
 
 
         if(is.null(outputForegroundBed)){
-            output(.Object,"outputForegroundBed") <-
+            output(.Object)$outputForegroundBed <-
                 getAutoPath(.Object,originPath =
                                 .Object$inputList[["inputForegroundBed"]],
                             regexSuffixName = "foreground.bed",
                             suffix = "gene.foreground.bed")
         }else{
-            output(.Object,"outputForegroundBed") <- outputForegroundBed
+            output(.Object)$outputForegroundBed <- outputForegroundBed
         }
 
 
         if(is.null(outputBackgroundBed)){
-            output(.Object,"outputBackgroundBed") <-
+            output(.Object)$outputBackgroundBed <-
                 getAutoPath(.Object,originPath =
                                 .Object$inputList[["inputBackgroundBed"]],
                             regexSuffixName = "background.bed",
                             suffix = "gene.background.bed")
         }else{
-            output(.Object,"outputBackgroundBed") <- outputBackgroundBed
+            output(.Object)$outputBackgroundBed <- outputBackgroundBed
         }
 
         if(is.null(regularGeneCorrBed)){
-            output(.Object,"regularGeneCorrBed") <-
+            output(.Object)$regularGeneCorrBed <-
                 getRefFiles("RE_gene_corr")
         }else{
-            output(.Object,"regularGeneCorrBed") <-
+            output(.Object)$regularGeneCorrBed <-
                 regularGeneCorrBed
         }
 
         if(is.null(enhancerRegularGeneCorrBed)){
-            output(.Object,"enhancerRegularGeneCorrBed") <-
+            output(.Object)$enhancerRegularGeneCorrBed <-
                 getRefFiles("Enhancer_RE_gene_corr")
         }else{
-            output(.Object,"enhancerRegularGeneCorrBed") <-
+            output(.Object)$enhancerRegularGeneCorrBed <-
                 enhancerRegularGeneCorrBed
         }
         .Object

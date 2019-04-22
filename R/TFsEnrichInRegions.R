@@ -19,69 +19,69 @@ setMethod(
             GenBackgroundStep <- prevSteps[[1]]
             FindMotifsInRegionsStep  <- prevSteps[[2]]
             RegionConnectTargetGeneStep  <- prevSteps[[3]]
-            input(.Object, "inputRegionBed") <-
+            input(.Object)$inputRegionBed <-
                 getParam(GenBackgroundStep,"outputRegionBed")
-            input(.Object, "inputRegionMotifBed") <-
+            input(.Object)$inputRegionMotifBed <-
                 getParam(FindMotifsInRegionsStep,"outputRegionMotifBed")
-            input(.Object, "inputForegroundGeneBed") <-
+            input(.Object)$inputForegroundGeneBed <-
                 getParam(RegionConnectTargetGeneStep,"outputForegroundBed")
-            input(.Object, "inputBackgroundGeneBed") <-
+            input(.Object)$inputBackgroundGeneBed <-
                 getParam(RegionConnectTargetGeneStep,"outputBackgroundBed")
         }
 
         if(!is.null(inputRegionBed)){
-            input(.Object,"inputRegionBed") <- inputRegionBed
+            input(.Object)$inputRegionBed <- inputRegionBed
         }
         if(!is.null(inputRegionMotifBed)){
-            input(.Object, "inputRegionMotifBed") <- inputRegionMotifBed
+            input(.Object)$inputRegionMotifBed <- inputRegionMotifBed
         }
         if(!is.null(inputForegroundGeneBed)){
-            input(.Object, "inputForegroundGeneBed") <- inputForegroundGeneBed
+            input(.Object)$inputForegroundGeneBed <- inputForegroundGeneBed
         }
         if(!is.null(inputBackgroundGeneBed)){
-            input(.Object, "inputBackgroundGeneBed") <- inputBackgroundGeneBed
+            input(.Object)$inputBackgroundGeneBed <- inputBackgroundGeneBed
         }
 
 
 
 
         if(is.null(outputTFsEnrichTxt)){
-            output(.Object, "outputTFsEnrichTxt") <-
+            output(.Object)$outputTFsEnrichTxt <-
                 getAutoPath(.Object,originPath =
                                 .Object$inputList[["inputRegionBed"]],
                             regexSuffixName = "allregion.bed",
                             suffix = "PECA_TF_enrich.txt")
         }else{
-            output(.Object, "outputTFsEnrichTxt") <- outputTFsEnrichTxt
+            output(.Object)$outputTFsEnrichTxt <- outputTFsEnrichTxt
         }
 
         if(!is.null(inputRegionBed)){
-            input(.Object, "inputRegionBed") <- inputRegionBed
+            input(.Object)$inputRegionBed <- inputRegionBed
         }
         if(!is.null(inputRegionMotifBed)){
-            input(.Object, "inputRegionMotifBed") <- inputRegionMotifBed
+            input(.Object)$inputRegionMotifBed <- inputRegionMotifBed
         }
         if(!is.null(inputForegroundGeneBed)){
-            input(.Object, "inputForegroundGeneBed") <- inputForegroundGeneBed
+            input(.Object)$inputForegroundGeneBed <- inputForegroundGeneBed
         }
         if(!is.null(inputBackgroundGeneBed)){
-            input(.Object, "inputBackgroundGeneBed") <- inputBackgroundGeneBed
+            input(.Object)$inputBackgroundGeneBed <- inputBackgroundGeneBed
         }
 
         if(is.null(inputMotifWeights)){
-            input(.Object, "inputMotifWeights") <- getRefFiles("MotifWeights")
+            input(.Object)$inputMotifWeights <- getRefFiles("MotifWeights")
         }else{
-            input(.Object, "inputMotifWeights") <- inputMotifWeights
+            input(.Object)$inputMotifWeights <- inputMotifWeights
         }
         if(is.null(inputTFgeneRelMtx)){
-            input(.Object, "inputTFgeneRelMtx") <- getRefFiles("TFgeneRelMtx")
+            input(.Object)$inputTFgeneRelMtx <- getRefFiles("TFgeneRelMtx")
         }else{
-            input(.Object, "inputTFgeneRelMtx") <- inputTFgeneRelMtx
+            input(.Object)$inputTFgeneRelMtx <- inputTFgeneRelMtx
         }
         if(is.null(inputMotifTFTable)){
-            input(.Object, "inputMotifTFTable") <- getRefFiles("MotifTFTable")
+            input(.Object)$inputMotifTFTable <- getRefFiles("MotifTFTable")
         }else{
-            input(.Object, "inputMotifTFTable") <- inputMotifTFTable
+            input(.Object)$inputMotifTFTable <- inputMotifTFTable
         }
         .Object
     }
@@ -176,7 +176,7 @@ setMethod(
                 ,c("name","geneName")]),]
         regionMotifBed <- read.table(inputRegionMotifBed,sep = "\t")
         colnames(regionMotifBed) <- c("seqnames","start","end",
-                                      "name","score","motifName")
+                                      "name","score","strand","motifName")
 
         motifWeight1 <- log(1/(motifWeight + 0.1) + 1)
         motifidx <- match(regionMotifBed$motifName,motifName)

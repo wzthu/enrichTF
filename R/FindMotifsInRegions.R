@@ -20,45 +20,45 @@ setMethod(
         if(length(prevSteps)>0){
             prevStep <- prevSteps[[1]]
             outputRegionBed <- getParam(prevStep,"outputRegionBed")
-            input(.Object,"inputRegionBed") <- outputRegionBed
+            input(.Object)$inputRegionBed <- outputRegionBed
         }
         motifRc <- match.arg(motifRc, c("integrate","jaspar","pwmfile"))
 
-        param(.Object, "motifRc") <- motifRc
+        param(.Object)$motifRc <- motifRc
 
         if(!is.null(inputRegionBed)){
-            input(.Object,"inputRegionBed") <- inputRegionBed
+            input(.Object)$inputRegionBed <- inputRegionBed
         }
 
         if(is.null(outputRegionMotifBed)){
-            output(.Object,"outputRegionMotifBed") <-
+            output(.Object)$outputRegionMotifBed <-
                 getAutoPath(.Object,originPath =
                                 .Object$inputList[["inputRegionBed"]],
                             regexSuffixName = "allregion.bed",
                             suffix = "region.motif.bed")
         }else{
-            output(.Object,"outputRegionMotifBed") <- outputRegionMotifBed
+            output(.Object)$outputRegionMotifBed <- outputRegionMotifBed
         }
 
         if(motifRc == "integrate"){
 
-            input(.Object, "pwmObj") <- get(load(getRefFiles("motifPWMOBJ")))
+            input(.Object)$pwmObj <- get(load(getRefFiles("motifPWMOBJ")))
         }else if(motifRc == "jarspar"){
-            input(.Object, "pwmObj") <- JASPAR2018::JASPAR2018
+            input(.Object)$pwmObj <- JASPAR2018::JASPAR2018
 
         }else if(motifRc == "pwmfile"){
-            input(.Object, "pwmObj") <- getMotifInfo1(inputPwmFile)
+            input(.Object)$pwmObj <- getMotifInfo1(inputPwmFile)
         }
 
 
 
         if(is.null(genome)){
-            param(.Object, "genome") <- getGenome()
+            param(.Object)$genome <- getGenome()
         }else{
-            param(.Object, "genome") <- genome
+            param(.Object)$genome <- genome
         }
         if(.Object$paramList[["genome"]] == "testgenome"){
-            param(.Object, "genome") <- "hg19"
+            param(.Object)$genome <- "hg19"
         }
         .Object
     }
@@ -86,7 +86,7 @@ setMethod(
                                 motifmatchr::matchMotifs,
                                 subject = regions,
                                 genome = genome,
-                                out="positions",p.cutoff = 5e-04, cl = cl)
+                                out = "positions", p.cutoff = 5e-04, cl = cl)
         stopCluster(cl)
         #motifmatchr::matchMotifs(pwms = pwmObj, subject = regions, genome = genome, out="positions")
         result <- c()
@@ -106,12 +106,18 @@ setMethod(
         #     }
         #
         # }
+        #print(head(motif_ix[[1]][[1]]))
+        #print(findOverlapPairs(motif_ix[[1]][[1]],
+        #                       regions,ignore.strand = FALSE))
+
         result <- lapply(seq_len(length(motif_ix)), function(i){
             motif_region_pair <- findOverlapPairs(motif_ix[[i]][[1]],
-                                                  regions,ignore.strand = TRUE)
+                                                  regions,ignore.strand = FALSE)
             if(length(second(motif_region_pair))>0){
                 second(motif_region_pair)$score <-
                     first(motif_region_pair)$score
+                second(motif_region_pair)$strand <-
+                    first(motif_region_pair)$strand
                 second(motif_region_pair)$motifName <-pwmObj[[i]]@name
             }else{
                 return(NULL)
@@ -124,7 +130,7 @@ setMethod(
 #        .Object@propList[["motifs_in_region"]] <- result
 
         write.table(as.data.frame(result)[,c("seqnames","start","end",
-                                             "name","score","motifName")],
+                                             "name","score","strand","motifName")],
                     file = outputRegionMotifBed, sep="\t",quote = FALSE,
                     row.names = FALSE,col.names = FALSE)
 
