@@ -1,9 +1,15 @@
-CHANGES IN VERSION 1.0.0
------------------------
+Changes in version 0.99.0 (2019-03-21)
++ Submitted to Bioconductor
 
-INITIAL RELEASE
+
+
+
+Changes in version 1.0.0 (2019-04-30)
 + Transcription factors enriched in regions based on Bioconductor is released.
 + Initial release version contains pipeline and all dependents for
 transcription factors enrichment analysis in given regions.
 User only need to provide a BED file and can obtain significant enriched
 transcription factors' p-values of three statistic test.
+
+
+
