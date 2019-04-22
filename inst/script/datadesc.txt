@@ -6,7 +6,7 @@ Motif list (all_motif_rmdup.gz): We collected 4,823 position weight matrix (PWM)
 TF-motif (MotifTFTable.RData.gz): We map TF to motif by considering the sequence similarity of DNA binding domain of TFs. TFs have similar DNA binding domain share same motifs(5).
 RE-TG (RE_gene_corr.bed.gz): We divide the TSS +/- 100kb regions into 200 bins (each bin is 100bp in length). We calculate correlation between these bin’s accessibility and genes’ expression across diverse cellular context and take these scores as RE-TG association score(6).
 Enhancer-TG (Enhancer_RE_gene_corr.bed.gz): We collect enhancers from ENCODE project and use the same way as RE-TG score to define enhancer-TG scores.
-TF-TG: Correlation between TF and TG expression on diverse cellular context(6).
+TF-TG: (TFgeneRelMtx.RData.gz): Correlation between TF and TG expression on diverse cellular context(6).
 
 Test Regions(testregion): We use this 3-columns BED file as an example input of enrichTF.
 
