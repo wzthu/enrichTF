@@ -40,6 +40,12 @@ setMethod(
             output(.Object)$outputRegionMotifBed <- outputRegionMotifBed
         }
 
+        output(.Object)$outputMotifBed <-
+            getAutoPath(.Object,originPath =
+                            .Object$inputList[["inputRegionBed"]],
+                        regexSuffixName = "allregion.bed",
+                        suffix = "motif.bed")
+
         if(motifRc == "integrate"){
 
             input(.Object)$pwmObj <- get(load(getRefFiles("motifPWMOBJ")))
@@ -72,10 +78,12 @@ setMethod(
     f = "processing",
     signature = "FindMotifsInRegions",
     definition = function(.Object,...){
+#        return(.Object)
         inputRegionBed <- getParam(.Object,"inputRegionBed")
         pwmObj <- getParam(.Object,"pwmObj")
         genome <- getParam(.Object,"genome")
         outputRegionMotifBed <- getParam(.Object,"outputRegionMotifBed")
+        outputMotifBed <- getParam(.Object,"outputMotifBed")
         if(genome == "testgenome"){
             pwmObj = pwmObj[names(pwmObj)[(seq_len(length(pwmObj))%%4==0)]]
         }
@@ -110,29 +118,45 @@ setMethod(
         #print(findOverlapPairs(motif_ix[[1]][[1]],
         #                       regions,ignore.strand = FALSE))
 
-        result <- lapply(seq_len(length(motif_ix)), function(i){
+       lapply(seq_len(length(motif_ix)), function(i){
             motif_region_pair <- findOverlapPairs(motif_ix[[i]][[1]],
                                                   regions,ignore.strand = FALSE)
             if(length(second(motif_region_pair))>0){
                 second(motif_region_pair)$score <-
                     first(motif_region_pair)$score
-                second(motif_region_pair)$strand <-
-                    first(motif_region_pair)$strand
-                second(motif_region_pair)$motifName <-pwmObj[[i]]@name
-            }else{
-                return(NULL)
+                strand(second(motif_region_pair))<-
+                    strand(first(motif_region_pair))
+                second(motif_region_pair)$motifName <- pwmObj[[i]]@name
+                first(motif_region_pair)$motifName <- pwmObj[[i]]@name
+                first(motif_region_pair)$name <- second(motif_region_pair)$name
+                result <- second(motif_region_pair)[
+                    second(motif_region_pair)$score >=
+                        pwmObj[[i]]@tags$threshold]
+
+                write.table(as.data.frame(result)[,c("seqnames","start","end",
+                                                     "name","score","strand","motifName")],
+                            file = outputRegionMotifBed, sep="\t",quote = FALSE, append = TRUE,
+                            row.names = FALSE,col.names = FALSE)
+
+                result <- first(motif_region_pair)[
+                    first(motif_region_pair)$score >=
+                        pwmObj[[i]]@tags$threshold]
+
+                write.table(as.data.frame(result)[,c("seqnames","start","end",
+                                                     "motifName","score","strand","name")],
+                            file = outputMotifBed, sep="\t",quote = FALSE, append = TRUE,
+                            row.names = FALSE,col.names = FALSE)
             }
-            return(second(motif_region_pair)[
-                second(motif_region_pair)$score >=
-                    pwmObj[[i]]@tags$threshold])
+            return(NULL)
+
+           # return(second(motif_region_pair)[
+        #        second(motif_region_pair)$score >=
+         #           pwmObj[[i]]@tags$threshold])
         })
-        result <- do.call("c",result)
+      #  result <- do.call("c",result)
 #        .Object@propList[["motifs_in_region"]] <- result
 
-        write.table(as.data.frame(result)[,c("seqnames","start","end",
-                                             "name","score","strand","motifName")],
-                    file = outputRegionMotifBed, sep="\t",quote = FALSE,
-                    row.names = FALSE,col.names = FALSE)
+
 
    #     export.bed(result,con = outputRegionMotifBed)
 
@@ -159,34 +183,6 @@ setMethod(
     definition = function(.Object,...){
         checkFileExist(.Object$inputList[["inputRegionBed"]])
 
-    }
-)
-
-setMethod(
-    f = "getReportValImp",
-    signature = "FindMotifsInRegions",
-    definition = function(.Object,item,...){
-        txt <- readLines(.Object$paramlist[["reportOutput"]])
-        if(item == "total"){
-            s<-strsplit(txt[1]," ")
-            return(as.integer(s[[1]][1]))
-        }
-        if(item == "maprate"){
-            s<-strsplit(txt[length(txt)],"% ")
-            return(as.numeric(s[[1]][1])/100)
-        }
-        if(item == "detail"){
-            return(txt)
-        }
-        stop(paste0(item," is not an item of report value."))
-    }
-)
-
-setMethod(
-    f = "getReportItemsImp",
-    signature = "FindMotifsInRegions",
-    definition = function(.Object, ...){
-        return(c("total","maprate","detail"))
     }
 )
 

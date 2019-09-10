@@ -134,6 +134,13 @@ Finally, false discover rate correction is applied on the results of Fisher's ex
 
 # Customized Workflow
 
+There are 4 steps to customize the workflow. You can follow the order below:
+
+```{r}
+printMap()
+
+```
+
 ## Prepare inputs
 The function of `genBackground` is to generate random background regions based on the input regions and to set the length of input sequence regions. We try to select background sequence regions that match the GC-content distribution of the input sequence regions. The default length and number of background regions are 1000 and 10,000, respectively. The length of sequence regions used for motif finding is important. Here, we set 1000 as default value, which means for each region, we get sequences from -500 to +500 relative from center.
 For example,
