@@ -97,6 +97,39 @@ checkAndInstallBSgenomeTestgenome <- function(refFilePath){
     checkAndInstallBSgenome(refFilePath, genome)
 }
 
+
+get_os <- function(){
+    sysinf <- Sys.info()
+    if (!is.null(sysinf)){
+        os <- sysinf['sysname']
+        if (os == 'Darwin')
+            os <- "osx"
+    } else { ## mystery machine
+        os <- .Platform$OS.type
+        if (grepl("^darwin", R.version$os))
+            os <- "osx"
+        if (grepl("linux-gnu", R.version$os))
+            os <- "linux"
+    }
+    tolower(os)
+}
+
+checkAndInstallHOMER <- function(refFilePath){
+    genome <- getGenome()
+    if(genome == "testgenome"){
+        return(NULL)
+    }
+    osname <- get_os()
+    if(osname == "osx" || osname == "linux"){
+        #        tpdir <- tempdir()
+        dir.create(refFilePath)
+        installFilePath <- file.path(refFilePath,"configureHomer.pl")
+        stopifnot(0==system(paste("curl http://homer.ucsd.edu/homer/configureHomer.pl > ",installFilePath)))
+        stopifnot(0==system(paste("perl ",installFilePath," -install")))
+        stopifnot(0==system(paste("perl ",installFilePath," -install", genome)))
+    }
+}
+
 checkAndInstall <- function(check = TRUE, ...){
     runWithFinishCheck(func = checkAndInstallBSgenomeTestgenome,
                        refName = "bsgenome")
@@ -122,6 +155,9 @@ checkAndInstall <- function(check = TRUE, ...){
     runWithFinishCheck(func = dowloadTFgeneRelMtxFile,
                        "TFgeneRelMtx",
                        refFilePath = "TFgeneRelMtx.RData")
+    runWithFinishCheck(func = checkAndInstallHOMER,
+                       "HOMER",
+                       refFilePath = "HOMER")
 }
 
 

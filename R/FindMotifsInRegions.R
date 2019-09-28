@@ -70,15 +70,77 @@ setMethod(
     }
 )
 
+
+homerOutputToBed <- function(regionsbed, outputtxt){
+    #  regionsbed <- "region.bed"
+    #  outputtxt <- "outputfile.txt"
+
+    regions <- import(con = regionsbed,format = "bed")
+    txt <- read.table(outputtxt,sep = "\t", header = TRUE)
+    txt[['idx']] <- 1:nrow(txt)
+    start(regions) <- start(regions) -1
+
+    pos <- txt[txt$Strand == '+',]
+    neg <- txt[txt$Strand == '-',]
+
+    mcols(regions)$mid <- round((start(regions)/2 + end(regions)/2))
+    mcols(regions)$id <- 1:length(regions)
+
+    posbed <- regions[pos$PositionID,]
+    negbed <- regions[neg$PositionID,]
+
+    posbedst <- mcols(posbed)$mid + as.integer(pos$Offset)
+
+    posbed <- data.frame(chrom = seqnames(posbed),
+                         start = posbedst,
+                         end = posbedst + as.numeric(sapply(as.character(pos$Sequence),nchar)),
+                         strand = '+',
+                         names = as.character(pos$Motif.Name),
+                         score = as.numeric(pos$MotifScore),
+                         idx = as.numeric(pos$idx)
+                         #           str = as.character(pos$Sequence)
+    )
+
+
+
+    negbeded <- mcols(negbed)$mid + as.integer(neg$Offset)
+
+    negbed <- data.frame(chrom = seqnames(negbed),
+                         start = negbeded - as.numeric(sapply(as.character(neg$Sequence),nchar)),
+                         end = negbeded,
+                         strand = '-',
+                         names = as.character(neg$Motif.Name),
+                         score = as.numeric(neg$MotifScore),
+                         idx = as.numeric(neg$idx)
+                         #                     str = as.character(neg$Sequence)
+    )
+
+
+
+    allbed <- rbind(posbed,negbed)
+
+    idx <- order(allbed$idx)
+    allbed <- allbed[idx,]
+
+    allbed <- GRanges(allbed)
+    names(allbed) <- mcols(allbed)$names
+    return(allbed)
+    #  export.bed(con="tobed.r.test.bed",allbed)
+
+}
+
+
 #' @importFrom parallel parLapply
 #' @importFrom parallel stopCluster
 #' @importFrom parallel makeCluster
+
+
 
 setMethod(
     f = "processing",
     signature = "FindMotifsInRegions",
     definition = function(.Object,...){
-#        return(.Object)
+        #        return(.Object)
         inputRegionBed <- getParam(.Object,"inputRegionBed")
         pwmObj <- getParam(.Object,"pwmObj")
         genome <- getParam(.Object,"genome")
@@ -88,77 +150,111 @@ setMethod(
             pwmObj = pwmObj[names(pwmObj)[(seq_len(length(pwmObj))%%4==0)]]
         }
         regions <- import(con = inputRegionBed,format = "bed")
-        cl <- makeCluster(getThreads())
-        motif_ix <-
-            parallel::parLapply(pwmObj,
-                                motifmatchr::matchMotifs,
-                                subject = regions,
-                                genome = genome,
-                                out = "positions", p.cutoff = 5e-04, cl = cl)
-        stopCluster(cl)
-        #motifmatchr::matchMotifs(pwms = pwmObj, subject = regions, genome = genome, out="positions")
-        result <- c()
-#        .Object@propList[["motif_ix"]] <-motif_ix
-        # for(i in 1:length(motif_ix)){
-        #     motif_region_pair <- findOverlapPairs(motif_ix[[i]][[1]],regions,ignore.strand = TRUE)
-        #     if(length(second(motif_region_pair))>0){
-        #         second(motif_region_pair)$score <- first(motif_region_pair)$score
-        #         second(motif_region_pair)$motifName <-pwmObj[[i]]@name
-        #     }else{
-        #         next
-        #     }
-        #     if(i == 1){
-        #         result <- second(motif_region_pair)[second(motif_region_pair)$score >= pwmObj[[i]]@tags$threshold]
-        #     }else{
-        #         result <- c(result,second(motif_region_pair)[second(motif_region_pair)$score >= pwmObj[[i]]@tags$threshold])
-        #     }
-        #
-        # }
-        #print(head(motif_ix[[1]][[1]]))
-        #print(findOverlapPairs(motif_ix[[1]][[1]],
-        #                       regions,ignore.strand = FALSE))
+        homer <- getRefFiles("HOMER")
+        if(dir.exists(homer)){
+            findMotifsGenome <- file.path(homer,"bin","findMotifsGenome.pl")
+            homeroutput <- file.path(getStepWorkDir(.Object), "homer.output.txt")
+            stopifnot(0==system(paste(findMotifsGenome, inputRegionBed, getGenome(),
+                                      file.path(getStepWorkDir(.Object),"region.all.hommer/"),
+                                      "-find", getRefFiles("motifpwm"),
+                                      ">",homeroutput)))
+            motifranges <- homerOutputToBed(inputRegionBed,homeroutput)
 
-       lapply(seq_len(length(motif_ix)), function(i){
-            motif_region_pair <- findOverlapPairs(motif_ix[[i]][[1]],
+            motif_region_pair <- findOverlapPairs(motifranges,
                                                   regions,ignore.strand = FALSE)
             if(length(second(motif_region_pair))>0){
                 second(motif_region_pair)$score <-
                     first(motif_region_pair)$score
                 strand(second(motif_region_pair))<-
                     strand(first(motif_region_pair))
-                second(motif_region_pair)$motifName <- pwmObj[[i]]@name
-                first(motif_region_pair)$motifName <- pwmObj[[i]]@name
+                second(motif_region_pair)$motifName <- first(motif_region_pair)$name
                 first(motif_region_pair)$name <- second(motif_region_pair)$name
-                result <- second(motif_region_pair)[
-                    second(motif_region_pair)$score >=
-                        pwmObj[[i]]@tags$threshold]
+                result <- second(motif_region_pair)
 
                 write.table(as.data.frame(result)[,c("seqnames","start","end",
                                                      "name","score","strand","motifName")],
-                            file = outputRegionMotifBed, sep="\t",quote = FALSE, append = TRUE,
+                            file = outputRegionMotifBed, sep="\t",quote = FALSE,
                             row.names = FALSE,col.names = FALSE)
 
-                result <- first(motif_region_pair)[
-                    first(motif_region_pair)$score >=
-                        pwmObj[[i]]@tags$threshold]
+                result <- first(motif_region_pair)
 
-                write.table(as.data.frame(result)[,c("seqnames","start","end",
-                                                     "motifName","score","strand","name")],
-                            file = outputMotifBed, sep="\t",quote = FALSE, append = TRUE,
+                write.table(as.data.frame(result)[,c("chrom","start","end",
+                                                     "names","score","strand","name")],
+                            file = outputMotifBed, sep="\t",quote = FALSE,
                             row.names = FALSE,col.names = FALSE)
             }
-            return(NULL)
 
-           # return(second(motif_region_pair)[
-        #        second(motif_region_pair)$score >=
-         #           pwmObj[[i]]@tags$threshold])
-        })
-      #  result <- do.call("c",result)
-#        .Object@propList[["motifs_in_region"]] <- result
+        }else{
+            motif_ix <-
+                parallel::mclapply(pwmObj,
+                                   motifmatchr::matchMotifs,
+                                   subject = regions,
+                                   genome = genome,
+                                   out = "positions", p.cutoff = 5e-04, mc.cores = getThreads())
+            #motifmatchr::matchMotifs(pwms = pwmObj, subject = regions, genome = genome, out="positions")
+            result <- c()
+            #        .Object@propList[["motif_ix"]] <-motif_ix
+            # for(i in 1:length(motif_ix)){
+            #     motif_region_pair <- findOverlapPairs(motif_ix[[i]][[1]],regions,ignore.strand = TRUE)
+            #     if(length(second(motif_region_pair))>0){
+            #         second(motif_region_pair)$score <- first(motif_region_pair)$score
+            #         second(motif_region_pair)$motifName <-pwmObj[[i]]@name
+            #     }else{
+            #         next
+            #     }
+            #     if(i == 1){
+            #         result <- second(motif_region_pair)[second(motif_region_pair)$score >= pwmObj[[i]]@tags$threshold]
+            #     }else{
+            #         result <- c(result,second(motif_region_pair)[second(motif_region_pair)$score >= pwmObj[[i]]@tags$threshold])
+            #     }
+            #
+            # }
+            #print(head(motif_ix[[1]][[1]]))
+            #print(findOverlapPairs(motif_ix[[1]][[1]],
+            #                       regions,ignore.strand = FALSE))
+
+            lapply(seq_len(length(motif_ix)), function(i){
+                motif_region_pair <- findOverlapPairs(motif_ix[[i]][[1]],
+                                                      regions,ignore.strand = FALSE)
+                if(length(second(motif_region_pair))>0){
+                    second(motif_region_pair)$score <-
+                        first(motif_region_pair)$score
+                    strand(second(motif_region_pair))<-
+                        strand(first(motif_region_pair))
+                    second(motif_region_pair)$motifName <- pwmObj[[i]]@name
+                    first(motif_region_pair)$motifName <- pwmObj[[i]]@name
+                    first(motif_region_pair)$name <- second(motif_region_pair)$name
+                    result <- second(motif_region_pair)[
+                        second(motif_region_pair)$score >=
+                            pwmObj[[i]]@tags$threshold]
+
+                    write.table(as.data.frame(result)[,c("seqnames","start","end",
+                                                         "name","score","strand","motifName")],
+                                file = outputRegionMotifBed, sep="\t",quote = FALSE, append = TRUE,
+                                row.names = FALSE,col.names = FALSE)
+
+                    result <- first(motif_region_pair)[
+                        first(motif_region_pair)$score >=
+                            pwmObj[[i]]@tags$threshold]
+
+                    write.table(as.data.frame(result)[,c("seqnames","start","end",
+                                                         "motifName","score","strand","name")],
+                                file = outputMotifBed, sep="\t",quote = FALSE, append = TRUE,
+                                row.names = FALSE,col.names = FALSE)
+                }
+                return(NULL)
+
+                # return(second(motif_region_pair)[
+                #        second(motif_region_pair)$score >=
+                #           pwmObj[[i]]@tags$threshold])
+            })
+        }
+        #  result <- do.call("c",result)
+        #        .Object@propList[["motifs_in_region"]] <- result
 
 
 
-   #     export.bed(result,con = outputRegionMotifBed)
+        #     export.bed(result,con = outputRegionMotifBed)
 
         .Object
     }
