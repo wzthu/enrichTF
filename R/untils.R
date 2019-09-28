@@ -117,16 +117,17 @@ get_os <- function(){
 checkAndInstallHOMER <- function(refFilePath){
     genome <- getGenome()
     if(genome == "testgenome"){
-        return(NULL)
-    }
-    osname <- get_os()
-    if(osname == "osx" || osname == "linux"){
-        #        tpdir <- tempdir()
         dir.create(refFilePath)
-        installFilePath <- file.path(refFilePath,"configureHomer.pl")
-        stopifnot(0==system(paste("curl http://homer.ucsd.edu/homer/configureHomer.pl > ",installFilePath)))
-        stopifnot(0==system(paste("perl ",installFilePath," -install")))
-        stopifnot(0==system(paste("perl ",installFilePath," -install", genome)))
+    }else{
+        osname <- get_os()
+        if(osname == "osx" || osname == "linux"){
+            #        tpdir <- tempdir()
+            dir.create(refFilePath)
+            installFilePath <- file.path(refFilePath,"configureHomer.pl")
+            stopifnot(0==system(paste("curl http://homer.ucsd.edu/homer/configureHomer.pl > ",installFilePath)))
+            stopifnot(0==system(paste("perl ",installFilePath," -install")))
+            stopifnot(0==system(paste("perl ",installFilePath," -install", genome)))
+        }
     }
 }
 

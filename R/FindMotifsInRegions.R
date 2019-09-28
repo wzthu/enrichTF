@@ -151,7 +151,7 @@ setMethod(
         }
         regions <- import(con = inputRegionBed,format = "bed")
         homer <- getRefFiles("HOMER")
-        if(dir.exists(homer)){
+        if(dir.exists(file.path(homer,"bin"))){
             findMotifsGenome <- file.path(homer,"bin","findMotifsGenome.pl")
             homeroutput <- file.path(getStepWorkDir(.Object), "homer.output.txt")
             stopifnot(0==system(paste(findMotifsGenome, inputRegionBed, getGenome(),
