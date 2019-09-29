@@ -152,9 +152,11 @@ setMethod(
         regions <- import(con = inputRegionBed,format = "bed")
         homer <- getRefFiles("HOMER")
         if(dir.exists(file.path(homer,"bin"))){
+            homerinput <- file.path(getStepWorkDir(.Object), "homer.input.bed")
+            system(paste("awk -F'\t' '{print $1\"\t\"$2\"\t\"$3}'",inputRegionBed, ">",homerinput))
             findMotifsGenome <- file.path(homer,"bin","findMotifsGenome.pl")
             homeroutput <- file.path(getStepWorkDir(.Object), "homer.output.txt")
-            stopifnot(0==system(paste(findMotifsGenome, inputRegionBed, getGenome(),
+            stopifnot(0==system(paste(findMotifsGenome, homerinput, getGenome(),
                                       file.path(getStepWorkDir(.Object),"region.all.hommer/"),
                                       "-find", getRefFiles("motifpwm"),
                                       ">",homeroutput)))
