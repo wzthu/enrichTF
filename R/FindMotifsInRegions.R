@@ -165,13 +165,17 @@ setMethod(
             motif_region_pair <- findOverlapPairs(motifranges,
                                                   regions,ignore.strand = FALSE)
             if(length(second(motif_region_pair))>0){
-                second(motif_region_pair)$score <-
-                    first(motif_region_pair)$score
-                strand(second(motif_region_pair))<-
-                    strand(first(motif_region_pair))
-                second(motif_region_pair)$motifName <- first(motif_region_pair)$name
+                #            second(motif_region_pair)$score <-
+                #                first(motif_region_pair)$score
+                #            strand(second(motif_region_pair))<-
+                #                strand(first(motif_region_pair))
+                #            second(motif_region_pair)$motifName <- first(motif_region_pair)$name
                 first(motif_region_pair)$name <- second(motif_region_pair)$name
                 result <- second(motif_region_pair)
+                result$score <- first(motif_region_pair)$score
+                strand(result) <-strand(first(motif_region_pair))
+                mcols(result)$motifName <- first(motif_region_pair)$names
+
 
                 write.table(as.data.frame(result)[,c("seqnames","start","end",
                                                      "name","score","strand","motifName")],
@@ -179,8 +183,9 @@ setMethod(
                             row.names = FALSE,col.names = FALSE)
 
                 result <- first(motif_region_pair)
+                names(result) <- 1:length(result)
 
-                write.table(as.data.frame(result)[,c("chrom","start","end",
+                write.table(as.data.frame(result)[,c("seqnames","start","end",
                                                      "names","score","strand","name")],
                             file = outputMotifBed, sep="\t",quote = FALSE,
                             row.names = FALSE,col.names = FALSE)
