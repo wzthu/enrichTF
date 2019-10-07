@@ -47,6 +47,7 @@ Collate:
     ConnectTargetGene.R
     TFsEnrichInRegions.R
     FindMotifsInRegions.R
+    UnzipAndMergeBed.R
     GenBackground.R
     onLoad.R
     untils.R
