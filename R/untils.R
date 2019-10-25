@@ -89,6 +89,47 @@ dowloadTFgeneRelMtxFile <- function(refFilePath){
     }
 }
 
+dowloadSampleName <- function(refFilePath){
+    if(getGenome() == "testgenome"){
+#        copyAndGunzip("TFgeneRelMtx.RData.gz",refFilePath)
+        downloadAndGunzip(
+            "https://wzthu.github.io/enrich/refdata/%s/sampleName.txt.gz",
+            refFilePath)
+    }else{
+        downloadAndGunzip(
+            "https://wzthu.github.io/enrich/refdata/%s/sampleName.txt.gz",
+            refFilePath)
+    }
+}
+
+dowloadOpenRegion <- function(refFilePath){
+    if(getGenome() == "testgenome"){
+        #        copyAndGunzip("TFgeneRelMtx.RData.gz",refFilePath)
+        downloadAndGunzip(
+            "https://wzthu.github.io/enrich/refdata/%s/region.open.bed.gz",
+            refFilePath)
+    }else{
+        downloadAndGunzip(
+            "https://wzthu.github.io/enrich/refdata/%s/region.open.bed.gz",
+            refFilePath)
+    }
+}
+
+
+dowloadConserveRegion <- function(refFilePath){
+    if(getGenome() == "testgenome"){
+        #        copyAndGunzip("TFgeneRelMtx.RData.gz",refFilePath)
+        downloadAndGunzip(
+            "https://wzthu.github.io/enrich/refdata/%s/region.conserve.bed.gz",
+            refFilePath)
+    }else{
+        downloadAndGunzip(
+            "https://wzthu.github.io/enrich/refdata/%s/region.conserve.bed.gz",
+            refFilePath)
+    }
+}
+
+
 checkAndInstallBSgenomeTestgenome <- function(refFilePath){
     genome <- getGenome()
     if(genome == "testgenome"){
@@ -156,6 +197,15 @@ checkAndInstall <- function(check = TRUE, ...){
     runWithFinishCheck(func = dowloadTFgeneRelMtxFile,
                        "TFgeneRelMtx",
                        refFilePath = "TFgeneRelMtx.RData")
+    runWithFinishCheck(func = dowloadSampleName,
+                       "SampleName",
+                       refFilePath = "SampleName.txt")
+    runWithFinishCheck(func = dowloadOpenRegion,
+                       "OpenRegion",
+                       refFilePath = "region.open.bed")
+    runWithFinishCheck(func = dowloadConserveRegion,
+                       "ConserveRegion",
+                       refFilePath = "region.conserve.bed")
     runWithFinishCheck(func = checkAndInstallHOMER,
                        "HOMER",
                        refFilePath = "HOMER")
