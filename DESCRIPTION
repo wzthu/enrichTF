@@ -48,6 +48,7 @@ Collate:
     TFsEnrichInRegions.R
     FindMotifsInRegions.R
     UnzipAndMergeBed.R
+    TissueOpennessSpecificity.R
     GenBackground.R
     onLoad.R
     untils.R
