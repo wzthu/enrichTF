@@ -91,10 +91,7 @@ dowloadTFgeneRelMtxFile <- function(refFilePath){
 
 dowloadSampleName <- function(refFilePath){
     if(getGenome() == "testgenome"){
-#        copyAndGunzip("TFgeneRelMtx.RData.gz",refFilePath)
-        downloadAndGunzip(
-            "https://wzthu.github.io/enrich/refdata/%s/sampleName.txt.gz",
-            refFilePath)
+        copyAndGunzip("sampleName.txt.gz",refFilePath)
     }else{
         downloadAndGunzip(
             "https://wzthu.github.io/enrich/refdata/%s/sampleName.txt.gz",
@@ -104,10 +101,7 @@ dowloadSampleName <- function(refFilePath){
 
 dowloadOpenRegion <- function(refFilePath){
     if(getGenome() == "testgenome"){
-        #        copyAndGunzip("TFgeneRelMtx.RData.gz",refFilePath)
-        downloadAndGunzip(
-            "https://wzthu.github.io/enrich/refdata/%s/region.open.bed.gz",
-            refFilePath)
+        copyAndGunzip("region.open.bed.gz",refFilePath)
     }else{
         downloadAndGunzip(
             "https://wzthu.github.io/enrich/refdata/%s/region.open.bed.gz",
@@ -118,10 +112,7 @@ dowloadOpenRegion <- function(refFilePath){
 
 dowloadConserveRegion <- function(refFilePath){
     if(getGenome() == "testgenome"){
-        #        copyAndGunzip("TFgeneRelMtx.RData.gz",refFilePath)
-        downloadAndGunzip(
-            "https://wzthu.github.io/enrich/refdata/%s/region.conserve.bed.gz",
-            refFilePath)
+        copyAndGunzip("region.conserve.bed.gz",refFilePath)
     }else{
         downloadAndGunzip(
             "https://wzthu.github.io/enrich/refdata/%s/region.conserve.bed.gz",
