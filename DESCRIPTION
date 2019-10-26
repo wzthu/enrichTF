@@ -37,7 +37,9 @@ Imports:
     S4Vectors,
     utils,
     parallel,
-    stats
+    stats,
+    ggpubr,
+    heatmap3
 Suggests:
     knitr,
     magrittr,

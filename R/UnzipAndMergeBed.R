@@ -12,8 +12,8 @@ setMethod(
         bedOutput <- allparam[["bedOutput"]]
         if(length(prevSteps)>0){
             prevStep <- prevSteps[[1]]
-            bedInput <- getParam(prevStep,"bedOutput")
-            input(.Object)$bedInput <- foregroundBed
+            bedInput0 <- getParam(prevStep,"bedOutput")
+            input(.Object)$bedInput <- bedInput0
         }
 
         if(!is.null(bedInput)){

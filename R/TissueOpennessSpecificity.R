@@ -9,56 +9,164 @@ setMethod(
     definition = function(.Object,prevSteps = list(),...){
         allparam <- list(...)
         bedInput <- allparam[["bedInput"]]
+        openBedInput <- allparam[["openBedInput"]]
+        sampleTxtInput <- allparam[["sampleTxtInput"]]
         bedOutput <- allparam[["bedOutput"]]
+        distPdfOutput <- allparam[["distPdfOutput"]]
+        heatmapPdfOutput <- allparam[["heatmapPdfOutput"]]
+        sampleTxtOutput <- allparam[["sampleTxtOutput"]]
         if(length(prevSteps)>0){
             prevStep <- prevSteps[[1]]
-            bedInput <- getParam(prevStep,"bedOutput")
-            input(.Object)$bedInput <- foregroundBed
+            bedInput0 <- getParam(prevStep,"bedOutput")
+            input(.Object)$bedInput <- bedInput0
         }
 
         if(!is.null(bedInput)){
             input(.Object)$bedInput <- bedInput
         }
 
+        if(!is.null(openBedInput)){
+            input(.Object)$openBedInput <- openBedInput
+        }else{
+            input(.Object)$openBedInput <- getRefFiles("OpenRegion")
+        }
+
+        if(!is.null(sampleTxtInput)){
+            input(.Object)$sampleTxtInput <- sampleTxtInput
+        }else{
+            input(.Object)$sampleTxtInput <- getRefFiles("SampleName")
+        }
+
+
         if(is.null(bedOutput)){
             output(.Object)$bedOutput <-
                 getAutoPath(.Object,originPath =
                                 input(.Object)[["bedInput"]][1],
-                            regexSuffixName = "bed|bed.gz|bed.bz2",suffix = "bed")
+                            regexSuffixName = "bed",suffix = "bed")
         }else{
             output(.Object)$bedOutput <- bedOutput
         }
+
+        if(is.null(distPdfOutput)){
+            output(.Object)$distPdfOutput <-
+                getAutoPath(.Object,originPath =
+                                input(.Object)[["bedInput"]][1],
+                            regexSuffixName = "bed",suffix = "dist.pdf")
+        }else{
+            output(.Object)$distPdfOutput <- distPdfOutput
+        }
+
+        if(is.null(heatmapPdfOutput)){
+            output(.Object)$heatmapPdfOutput <-
+                getAutoPath(.Object,originPath =
+                                input(.Object)[["bedInput"]][1],
+                            regexSuffixName = "bed",suffix = "heat.pdf")
+            output(.Object)$heatmapDataOutput <-
+                getAutoPath(.Object,originPath =
+                                input(.Object)[["bedInput"]][1],
+                            regexSuffixName = "bed",suffix = "heat.pdf.Rdata")
+        }else{
+            output(.Object)$heatmapPdfOutput <- heatmapPdfOutput
+            output(.Object)$heatmapDataOutput <- paste0(heatmapPdfOutput,".Rdata")
+        }
+
+        if(is.null(sampleTxtOutput)){
+            output(.Object)$sampleTxtOutput <-
+                getAutoPath(.Object,originPath =
+                                input(.Object)[["bedInput"]][1],
+                            regexSuffixName = "bed",suffix = "txt")
+        }else{
+            output(.Object)$sampleTxtOutput <- sampleTxtOutput
+        }
+
 
         .Object
     }
 )
 
-
+#' @importFrom ggpubr ggarrange
+#' @importFrom  heatmap3 heatmap3
 
 setMethod(
     f = "processing",
-    signature = "UnzipAndMergeBed",
+    signature = "TissueOpennessSpecificity",
     definition = function(.Object,...){
         bedInput <- getParam(.Object,"bedInput")
         bedOutput <- getParam(.Object,"bedOutput")
+        openBedInput <-getParam(.Object,"openBedInput")
+        sampleTxtInput <-getParam(.Object,"sampleTxtInput")
+        distPdfOutput <- getParam(.Object,"distPdfOutput")
+        heatmapPdfOutput <- getParam(.Object,"heatmapPdfOutput")
+        sampleTxtOutput <- getParam(.Object,"sampleTxtOutput")
+        heatmapDataOutput <- getParam(.Object,"heatmapDataOutput")
 
-        beds <- lapply(bedInput, function(bedfile){
-            stopifnot(is.character(bedfile))
-            stopifnot(file.exists(bedfile))
-            tmpfile <- getAutoPath(.Object, bedfile, "bed|bed.gz|bed.bz2","tmp.bed")
-            decompressBed(.Object, bedfile, tmpfile)
-            bed <- read.table(tmpfile, header = FALSE, sep = "\t")
-            bed <- bed[,1:3]
-            colnames(bed) <-c("chrom", "start", "end")
-            unlink(tmpfile)
-            return(bed)
+        # read input data
+        region <- import.bed(bedInput)
+        openTable <- read.table(openBedInputs,header = F,sep = "\t")
+        spname <- read.table(sampleTxtInput, header = F, sep = "\t")
+
+        # transform open table into GRanges format
+        openBed <- openTable[,1:3]
+        colnames(openBed) <- c("chrom", "start", "end")
+        openValue <- openTable[,4:ncol(openTable)]
+        colnames(openValue) <- seq_len(ncol(openValue))
+        openRanges <- as(openBed,"GRanges")
+        mcols(openRanges) <- openValue
+
+        # find overlapped region
+        pairs <- findOverlapPairs(openRanges, region, ignore.strand = TRUE)
+        openRegion <- first(pairs)
+
+
+
+        # median open leve of each tissue sample
+
+        rs<-lapply(as.list(openValue), median)
+        allidx<-order(unlist(rs),decreasing = TRUE)
+        showspname<-spname[,3:4]
+        showspname<-cbind(showspname,unlist(rs))
+        colnames(showspname)<-c("Tissue / Cell Type", "ENCODE", "Median")
+        showspname <- showspname[allidx,]
+        write.table(sampleTxtOutput,col.names = TRUE, row.names = TRUE, sep = '\t')
+
+        # draw distribution
+
+        idx <- allidx
+
+        plt<-lapply(idx, function(x){
+            v <- openValue[[x]]
+            ggplot(open,aes(x=v)) +
+                geom_histogram(binwidth = 0.1) +
+                geom_vline(xintercept = median(v)) +
+                annotate("text", x = median(v),
+                         y = 50, color="white",
+                         size=2 ,label = paste("median:", median(v))) + xlab(spname[x,2])
         })
 
-        bed <- do.call(c, beds)
+        plt[["nrow"]] <- ceiling(length(idx)/2)
+        plt[["ncol"]] <- 2
 
-        bed <- as(bed, "GRanges")
+        pdf(distPdfOutput)
+        do.call(what = ggarrange,args = plt)
+        dev.off()
 
-        export.bed(bed, con = bedOutput)
+        # draw heatmap
+
+
+        rownames(openheat) <- seq_len(nrow(openValue))
+        colnames(openheat) <- spname[,3]
+
+        heatmapData <- as.matrix(openheat)
+
+        pdf(heatmapPdfOutput)
+        heatmap3(heatmapData, useRaster = TRUE)
+        dev.off()
+
+        save(heatmapData,file = heatmapDataOutput)
+
+
+
+
 
         .Object
     }
@@ -66,7 +174,7 @@ setMethod(
 
 setMethod(
     f = "checkRequireParam",
-    signature = "UnzipAndMergeBed",
+    signature = "TissueOpennessSpecificity",
     definition = function(.Object,...){
         if(is.null(input(.Object)[["bedInput"]])){
             stop("bedInput is required.")
@@ -78,7 +186,7 @@ setMethod(
 
 setMethod(
     f = "checkAllPath",
-    signature = "UnzipAndMergeBed",
+    signature = "TissueOpennessSpecificity",
     definition = function(.Object,...){
         checkFileExist(input(.Object)[["bedInput"]]);
 
@@ -86,47 +194,75 @@ setMethod(
 )
 
 
-#' @name UnzipAndMergeBed
+#' @name TissueOpennessSpecificity
 #' @importFrom rtracklayer import
 #' @importFrom rtracklayer import.bed
-#' @title Generate background regions and reset the size of
-#' foreground regions
+#' @title Tissue's open specificity of the given region
 #' @description
-#' Use uniform distribution to generate background
-#' sequence regions from genome.
-#' The size of foreground regions will be unified into the
-#' length specified in argument.
+#' User provide region through a BED file.
+#' This function will provide tissue's open specificity analysis for this region.
+#' Open level median,  distribution and clustering result (heatmap)
+#' based on tissue and region will be provided.
 #' @param prevStep \code{\link{Step-class}} object scalar.
 #' It needs to be the return value of upstream process
 #' from other packages, such as esATAC.
-#' @param bedInput \code{Character} scalar or vector.
-#' The directory of region BED files for analysis.
-#' BED, BED.gz, BED.bz2 formats are supported.
+#' @param bedInput \code{Character} scalar.
+#' The directory of region BED file for analysis.
+#' @param openBedInput \code{Character} scalar.
+#' The open level BED file for analysis. The first three columns are chromosome, start and end,
+#' The remaining columns are the open level for each tissue.
+#' The order of tissue should be consistent with the order in the file provided by sampleTxtInput.
+#' @param sampleTxtInput \code{Character} scalar.
+#' The tissue sample information of in the file provided by openBedInput.
+#' There are 4 columns seperated by tab. The first column is the order number.
+#' The second column is the tissue detail information.
+#' The third column is the tissue name.
+#' The forth column is the code from source project like ENCODE
 #' @param bedOutput \code{Character} scalar.
 #' The BED output file directory of merged BED files.
 #' Default: NULL (generated base on bedInput)
+#' @param distPdfOutput \code{Character} scalar.
+#' The open level distribution figure for each tissue will be provided in PDF file.
+#' The order is strong to weak.
+#' @param heatmapPdfOutput \code{Character} scalar.
+#' The open level hiachical clustering heatmap base on region and tissue will be provided in this PDF file.
+#' The corresponding heatmap data will store at the same directory with suffix .Rdata
+#' @param  sampleTxtOutput \code{Character} scalar.
+#' In this file, there are five columns seperated with tab.
+#' Fist four columns are the same with sampleTxtInput:
+#' The first column is the order number.
+#' The second column is the tissue detail information.
+#' The third column is the tissue name.
+#' The forth column is the code from source project like ENCODE
+#' The last column is the open level median level for each tissue.
+#' The table is in decreasing order of last column
 #' @param ... Additional arguments, currently unused.
 #' @details
-#' All compressed files will be de-compressed.
-#' Only first 3 columns (chromasomes, start and end) will be collected.
-#' All BED files will be merged into one BED file.
+#' We collect 201 DNase-seq or ATAC-seq sample from ENCODE and calculate their open level value.
+#' They can be download and install automatically. So users do not need to configure themselves.
 #' @return An invisible \code{\link{EnrichStep-class}}
 #' object (\code{\link{Step-class}} based) scalar for downstream analysis.
 #' @author Zheng Wei
 #' @seealso
-#' \code{\link{genBackground}}
+#' \code{\link{unzipAndMergeBed}}
 
 
 #' @examples
 #' foregroundBedPath <- system.file(package = "enrichTF", "extdata","testregion.bed.gz")
-#' gen <- unzipAndMergeBed(bedInput = foregroundBedPath)
+#' rs <- unzipAndMergeBed(bedInput = foregroundBedPath) %>%
+#'          enrichTissueOpennessSpecificity
 
 
-setGeneric("enrichUnzipAndMergeBed",
+setGeneric("enrichTissueOpennessSpecificity",
            function(prevStep,
                     bedInput = NULL,
+                    openBedInput = NULL,
+                    sampleTxtInput = NULL,
                     bedOutput = NULL,
-                    ...) standardGeneric("enrichUnzipAndMergeBed"))
+                    distPdfOutput = NULL,
+                    heatmapPdfOutput = NULL,
+                    sampleTxtOutput = NULL,
+                    ...) standardGeneric("enrichTissueOpennessSpecificity"))
 
 
 
@@ -134,10 +270,17 @@ setGeneric("enrichUnzipAndMergeBed",
 #' @aliases enrichTissueOpennessSpecificity
 #' @export
 setMethod(
-    f = "enrichUnzipAndMergeBed",
+    f = "enrichTissueOpennessSpecificity",
     signature = "Step",
-    definition = function(prevStep,bedInput, bedOutput = NULL, ...){
-        allpara <- c(list(Class = "UnzipAndMergeBed",
+    definition = function(prevStep,
+                          bedInput = NULL,
+                          openBedInput = NULL,
+                          sampleTxtInput = NULL,
+                          bedOutput = NULL,
+                          distPdfOutput = NULL,
+                          heatmapPdfOutput = NULL,
+                          sampleTxtOutput = NULL, ...){
+        allpara <- c(list(Class = "TissueOpennessSpecificity",
                           prevSteps = list(prevStep)),
                      as.list(environment()),list(...))
         step <- do.call(new,allpara)
@@ -147,8 +290,14 @@ setMethod(
 #' @rdname TissueOpennessSpecificity
 #' @aliases tissueOpennessSpecificity
 #' @export
-unzipAndMergeBed <- function(bedInput, bedOutput = NULL, ...){
-    allpara <- c(list(Class = "UnzipAndMergeBed",
+tissueOpennessSpecificity <- function(bedInput,
+                                      openBedInput = NULL,
+                                      sampleTxtInput = NULL,
+                                      bedOutput = NULL,
+                                      distPdfOutput = NULL,
+                                      heatmapPdfOutput = NULL,
+                                      sampleTxtOutput = NULL, ...){
+    allpara <- c(list(Class = "TissueOpennessSpecificity",
                       prevSteps = list()),
                  as.list(environment()),list(...))
     step <- do.call(new,allpara)
