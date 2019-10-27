@@ -116,6 +116,9 @@ setMethod(
         # find overlapped region
         pairs <- findOverlapPairs(openRanges, region, ignore.strand = TRUE)
         openRegion <- first(pairs)
+        openRegion <- as.data.frame(openRegion)
+        write.table(openRegion[,c(1:3,6:ncol(openRegion))],file = bedOutput,
+                    sep="\t", col.names = FALSE, row.names = FALSE)
 
 
 
