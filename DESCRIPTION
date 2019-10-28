@@ -51,6 +51,8 @@ Collate:
     FindMotifsInRegions.R
     UnzipAndMergeBed.R
     TissueOpennessSpecificity.R
+    TissueOpennessConserve.R
+    SingleSampleReport.R
     GenBackground.R
     onLoad.R
     untils.R
