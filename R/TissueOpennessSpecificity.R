@@ -88,6 +88,10 @@ setMethod(
 #' @importFrom  heatmap3 heatmap3
 #' @importFrom ggplot2 ggplot
 #' @importFrom ggplot2 aes
+#' @importFrom ggplot2 geom_histogram
+#' @importFrom ggplot2 geom_vline
+#' @importFrom ggplot2 annotate
+#'
 
 setMethod(
     f = "processing",
