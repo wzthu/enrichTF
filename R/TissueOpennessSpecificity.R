@@ -91,6 +91,7 @@ setMethod(
 #' @importFrom ggplot2 geom_histogram
 #' @importFrom ggplot2 geom_vline
 #' @importFrom ggplot2 annotate
+#' @importFrom ggplot2 xlab
 #'
 
 setMethod(
