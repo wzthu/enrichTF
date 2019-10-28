@@ -139,7 +139,7 @@ setMethod(
 
         plt<-lapply(idx, function(x){
             v <- openValue[[x]]
-            ggplot(open,aes(x=v)) +
+            ggplot(data.frame(v=v),aes(x=v)) +
                 geom_histogram(binwidth = 0.1) +
                 geom_vline(xintercept = median(v)) +
                 annotate("text", x = median(v),
