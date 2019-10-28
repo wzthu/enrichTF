@@ -37,6 +37,8 @@ setMethod(
 
 #' @importFrom R.utils isBzipped
 #' @importFrom R.utils isGzipped
+#' @importFrom R.utils bunzip2
+#' @importFrom R.utils gunzip
 
 setGeneric(
     name = "decompressBed",
