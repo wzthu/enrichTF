@@ -86,6 +86,7 @@ setMethod(
 
 #' @importFrom ggpubr ggarrange
 #' @importFrom  heatmap3 heatmap3
+#' @importFrom ggplot2 ggplot
 
 setMethod(
     f = "processing",

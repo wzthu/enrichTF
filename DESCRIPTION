@@ -39,7 +39,8 @@ Imports:
     parallel,
     stats,
     ggpubr,
-    heatmap3
+    heatmap3,
+    ggplot2
 Suggests:
     knitr,
     magrittr,
