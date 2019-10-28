@@ -85,13 +85,10 @@ setMethod(
             if(bedfile != tmpfile){
                 unlink(tmpfile)
             }
-            return(bed)
+            return(as(bed, "GRanges"))
         })
 
-        bed <- do.call(c, beds)
-
-        bed <- as(bed, "GRanges")
-
+        bed <- do.call(c, args = beds)
         export.bed(bed, con = bedOutput)
 
         .Object
