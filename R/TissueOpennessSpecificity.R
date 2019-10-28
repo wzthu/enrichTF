@@ -102,7 +102,7 @@ setMethod(
 
         # read input data
         region <- import.bed(bedInput)
-        openTable <- read.table(openBedInputs,header = F,sep = "\t")
+        openTable <- read.table(openBedInput,header = F,sep = "\t")
         spname <- read.table(sampleTxtInput, header = F, sep = "\t")
 
         # transform open table into GRanges format
