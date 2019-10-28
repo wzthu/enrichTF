@@ -162,7 +162,7 @@ setMethod(
 
         # draw heatmap
 
-
+        openheat <- openValue
         rownames(openheat) <- seq_len(nrow(openValue))
         colnames(openheat) <- spname[,3]
 
