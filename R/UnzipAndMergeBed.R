@@ -46,9 +46,9 @@ setMethod(
     signature = "UnzipAndMergeBed",
     definition = function(.Object,filename,destpath,...){
         destname<-file.path(destpath,basename(filename))
-        .Object<-writeLog(.Object,paste0("processing file:"))
-        .Object<-writeLog(.Object,sprintf("source:%s",filename))
-        .Object<-writeLog(.Object,sprintf("destination:%s",destname))
+        writeLog(.Object,paste0("processing file:"))
+        writeLog(.Object,sprintf("source:%s",filename))
+        writeLog(.Object,sprintf("destination:%s",destname))
         if(isBzipped(filename)){
             destname<-gsub(sprintf("[.]%s$", "bz2"), "", destname, ignore.case=TRUE)
             return(bunzip2(filename,destname=destname,overwrite=TRUE,remove=FALSE))
