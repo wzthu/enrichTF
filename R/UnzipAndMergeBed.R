@@ -78,12 +78,13 @@ setMethod(
         beds <- lapply(bedInput, function(bedfile){
             stopifnot(is.character(bedfile))
             stopifnot(file.exists(bedfile))
-            tmpfile <- getAutoPath(.Object, bedfile, "bed|bed.gz|bed.bz2","tmp.bed")
-            decompressBed(.Object, bedfile, tmpfile)
+            tmpfile <- decompressBed(.Object, bedfile, getStepWorkDir(.Object))
             bed <- read.table(tmpfile, header = FALSE, sep = "\t")
             bed <- bed[,1:3]
             colnames(bed) <-c("chrom", "start", "end")
-            unlink(tmpfile)
+            if(bedfile != tmpfile){
+                unlink(tmpfile)
+            }
             return(bed)
         })
 
