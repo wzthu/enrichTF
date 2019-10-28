@@ -35,6 +35,8 @@ setMethod(
 
 
 
+#' @importFrom R.utils isBzipped
+
 setGeneric(
     name = "decompressBed",
     def = function(.Object,filename,destpath,...){
