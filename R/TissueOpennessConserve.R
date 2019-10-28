@@ -53,6 +53,7 @@ setMethod(
 )
 
 
+#' @importFrom ggplot2 ylab
 
 setMethod(
     f = "processing",
