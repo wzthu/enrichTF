@@ -85,11 +85,11 @@ setMethod(
             if(bedfile != tmpfile){
                 unlink(tmpfile)
             }
-            return(as(bed, "GRanges"))
+            return(bed)
         })
 
-        bed <- do.call(c, args = beds)
-        export.bed(bed, con = bedOutput)
+        bed <- do.call(rbind, args = beds)
+        write.table(bed, file = "bedOutput", col.names = FALSE, row.names = FALSE)
 
         .Object
     }
