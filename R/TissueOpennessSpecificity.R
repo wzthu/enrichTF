@@ -107,12 +107,12 @@ setMethod(
         sampleTxtOutput <- getParam(.Object,"sampleTxtOutput")
         heatmapDataOutput <- getParam(.Object,"heatmapDataOutput")
 
-        # read input data
+        message("read input data")
         region <- import.bed(bedInput)
         openTable <- read.table(openBedInput,header = F,sep = "\t")
         spname <- read.table(sampleTxtInput, header = F, sep = "\t")
 
-        # transform open table into GRanges format
+        message("transform open table into GRanges format")
         openBed <- openTable[,1:3]
         colnames(openBed) <- c("chrom", "start", "end")
         openValue <- openTable[,4:ncol(openTable)]
@@ -120,7 +120,7 @@ setMethod(
         openRanges <- as(openBed,"GRanges")
         mcols(openRanges) <- openValue
 
-        # find overlapped region
+        message("find overlapped region")
         pairs <- findOverlapPairs(openRanges, region, ignore.strand = TRUE)
         openRegion <- first(pairs)
         openValue <- mcols(openRegion)
@@ -131,7 +131,7 @@ setMethod(
 
 
 
-        # median open leve of each tissue sample
+        message("median open leve of each tissue sample")
 
         rs<-lapply(as.list(openValue), median)
         allidx<-order(unlist(rs),decreasing = TRUE)
@@ -141,7 +141,7 @@ setMethod(
         showspname <- showspname[allidx,]
         write.table(showspname, file = sampleTxtOutput,col.names = TRUE, row.names = TRUE, sep = '\t')
 
-        # draw distribution
+         message("draw distribution")
 
         idx <- allidx
 
@@ -162,7 +162,7 @@ setMethod(
         do.call(what = ggarrange,args = plt)
         dev.off()
 
-        # draw heatmap
+        message("draw heatmap")
 
         openheat <- openValue
         rownames(openheat) <- seq_len(nrow(openValue))
