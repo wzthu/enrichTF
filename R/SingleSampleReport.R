@@ -13,30 +13,35 @@ setMethod(
 
         if(is.null(htmlOutput)){
             output(.Object)$htmlOutput <- getStepWorkDir(.Object, filename = "report.html")
-            output(.Object)$htmlDataOutput <- getStepWorkDir(.Object, filename = "report.html.data")
         }else{
             output(.Object)$htmlOutput <- htmlOutput
-            output(.Object)$htmlDataOutput <- paste0(htmlOutput, ".data")
         }
 
         .Object
     }
 )
 
-
+#' @importFrom rmarkdown render
 
 setMethod(
     f = "processing",
     signature = "SingleSampleReport",
     definition = function(.Object, ...){
+        htmlOutput <- getParam(.Object, "htmlOutput")
         prevSteps <- list(...)[["prevSteps"]]
         prevStepsType <- lapply(prevSteps, function(step){
             return(stepType(step))
         })
         names(prevSteps) <- unlist(prevStepsType)
 
-        dir.create(getParam(.Object,"htmlDataOutput"))
+        save(prevSteps, getStepWorkDir(.Object = .Object, filename = "PrevSteps.Rdata"))
 
+        reportmkd <- getStepWorkDir(.Object = .Object, filename = "Report.Rmd")
+
+        file.copy(from = system.file(package = "enrichTF", "extdata","Report.Rmd"),
+                  to = reportmkd)
+
+        render(reportmkd)
 
 
         .Object
@@ -47,9 +52,7 @@ setMethod(
     f = "checkRequireParam",
     signature = "SingleSampleReport",
     definition = function(.Object,...){
-        if(is.null(input(.Object)[["bedInput"]])){
-            stop("bedInput is required.")
-        }
+
     }
 )
 
@@ -59,7 +62,7 @@ setMethod(
     f = "checkAllPath",
     signature = "SingleSampleReport",
     definition = function(.Object,...){
-        checkFileExist(input(.Object)[["bedInput"]]);
+
 
     }
 )

@@ -123,6 +123,8 @@ setMethod(
         # find overlapped region
         pairs <- findOverlapPairs(openRanges, region, ignore.strand = TRUE)
         openRegion <- first(pairs)
+        openValue <- mcols(openRegion)
+        colnames(openValue) <- seq_len(ncol(openValue))
         openRegion <- as.data.frame(openRegion)
         write.table(openRegion[,c(1:3,6:ncol(openRegion))],file = bedOutput,
                     sep="\t", col.names = FALSE, row.names = FALSE)
@@ -137,7 +139,7 @@ setMethod(
         showspname<-cbind(showspname,unlist(rs))
         colnames(showspname)<-c("Tissue / Cell Type", "ENCODE", "Median")
         showspname <- showspname[allidx,]
-        write.table(sampleTxtOutput,col.names = TRUE, row.names = TRUE, sep = '\t')
+        write.table(showspname, file = sampleTxtOutput,col.names = TRUE, row.names = TRUE, sep = '\t')
 
         # draw distribution
 
