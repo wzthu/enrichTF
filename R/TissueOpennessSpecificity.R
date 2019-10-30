@@ -166,7 +166,7 @@ setMethod(
 
         openheat <- openValue
         rownames(openheat) <- as.character(seq_len(nrow(openValue)))
-        colnames(openheat) <- spname[,3]
+        colnames(openheat) <- as.character(spname[,3])
 
         heatmapData <- as.matrix(openheat)
 
