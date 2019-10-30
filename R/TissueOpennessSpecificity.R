@@ -116,7 +116,7 @@ setMethod(
         openBed <- openTable[,1:3]
         colnames(openBed) <- c("chrom", "start", "end")
         openValue <- openTable[,4:ncol(openTable)]
-        colnames(openValue) <- seq_len(ncol(openValue))
+        colnames(openValue) <- as.character(seq_len(ncol(openValue)))
         openRanges <- as(openBed,"GRanges")
         mcols(openRanges) <- openValue
 
@@ -124,7 +124,7 @@ setMethod(
         pairs <- findOverlapPairs(openRanges, region, ignore.strand = TRUE)
         openRegion <- first(pairs)
         openValue <- mcols(openRegion)
-        colnames(openValue) <- seq_len(ncol(openValue))
+        colnames(openValue) <- as.character(seq_len(ncol(openValue)))
         openRegion <- as.data.frame(openRegion)
         write.table(openRegion[,c(1:3,6:ncol(openRegion))],file = bedOutput,
                     sep="\t", col.names = FALSE, row.names = FALSE)
