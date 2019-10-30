@@ -139,7 +139,7 @@ setMethod(
         showspname<-cbind(showspname,unlist(rs))
         colnames(showspname)<-c("Tissue / Cell Type", "ENCODE", "Median")
         showspname <- showspname[allidx,]
-        write.table(showspname, file = sampleTxtOutput,col.names = TRUE, row.names = TRUE, sep = '\t')
+        write.table(showspname, file = sampleTxtOutput,col.names = TRUE, row.names = TRUE,quote = FALSE, sep = '\t')
 
          message("draw distribution")
 
@@ -165,7 +165,7 @@ setMethod(
         message("draw heatmap")
 
         openheat <- openValue
-        rownames(openheat) <- seq_len(nrow(openValue))
+        rownames(openheat) <- as.character(seq_len(nrow(openValue)))
         colnames(openheat) <- spname[,3]
 
         heatmapData <- as.matrix(openheat)
