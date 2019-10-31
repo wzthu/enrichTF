@@ -136,9 +136,7 @@ setMethod(
         rs<-lapply(as.list(openValue), median)
         allidx<-order(unlist(rs),decreasing = TRUE)
         showspname<-spname[,3:4]
-        showspname<-cbind(showspname,unlist(rs))
-
-        showspname <- cbind(row.names(showspname),showspname)
+        showspname<-cbind(seq_len(nrow(showspname)),showspname,unlist(rs))
         showspname <- showspname[allidx,]
         colnames(showspname)<-c("Index","Tissue / Cell Type", "ENCODE", "Median")
 
