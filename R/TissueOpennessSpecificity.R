@@ -137,9 +137,12 @@ setMethod(
         allidx<-order(unlist(rs),decreasing = TRUE)
         showspname<-spname[,3:4]
         showspname<-cbind(showspname,unlist(rs))
-        colnames(showspname)<-c("Tissue / Cell Type", "ENCODE", "Median")
+
+        showspname <- cbind(row.names(showspname),showspname)
         showspname <- showspname[allidx,]
-        write.table(showspname, file = sampleTxtOutput,col.names = TRUE, row.names = TRUE,quote = FALSE, sep = '\t')
+        colnames(showspname)<-c("Index","Tissue / Cell Type", "ENCODE", "Median")
+
+        write.table(showspname, file = sampleTxtOutput,col.names = TRUE, row.names = FALSE,quote = FALSE, sep = '\t')
 
          message("draw distribution")
 
