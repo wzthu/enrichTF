@@ -109,7 +109,7 @@ setMethod(
     signature = "Step",
     definition = function(prevStep, htmlOutput = NULL, ...){
         allpara <- c(list(Class = "SingleSampleReport",
-                          prevSteps = list(prevStep)),
+                          prevSteps = list(prevStep), isReportStep = TRUE),
                      as.list(environment()),list(...))
         step <- do.call(new,allpara)
         invisible(step)
