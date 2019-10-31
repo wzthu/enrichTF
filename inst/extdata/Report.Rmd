@@ -16,6 +16,10 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ```{r}
+library(enrichTF)
+library(rtracklayer)
+library(ggplot2)
+library(ggpubr)
 objname <- load("PrevSteps.Rdata")
 ```
 
@@ -28,8 +32,8 @@ objname <- load("PrevSteps.Rdata")
 stepUnzipAndMergeBed <-prevSteps[["UnzipAndMergeBed"]]
 bedInput <- input(stepUnzipAndMergeBed)$bedInput
 bedOutput <- output(stepUnzipAndMergeBed)$bedOutput
-genome <- property(stepUnzipAndMergeBed)[["genome"]]
-library(rtracklayer)
+genome <- "hg19" #property(stepUnzipAndMergeBed)[["genome"]]
+
 outputGrange <- import.bed(bedOutput)
 ```
 
@@ -42,8 +46,12 @@ knitr::kable(data.frame(Directory=bedInput,Regions=sapply(bedInput, function(x){
 Region sizes distribution
 
 ```{r}
-library(ggplot2)
-ggplot(data.frame(RegionSize = width(ouputRaange)),aes(x=RegionSize)) + geom_histogram(binwidth = 1) + geom_vline(xintercept = median(width(ouputRaange))) + annotate("text", x = median(v), y = 50, color="black",size=2 ,label = paste("median:",median(width(ouputRaange)))) + xlab("Region Size") + ylab("Counts")
+
+ggplot(data.frame(RegionSize = width(outputGrange)),aes(x=RegionSize)) + 
+    geom_histogram(binwidth = 1) + geom_vline(xintercept = median(width(outputGrange))) + 
+    annotate("text", x = median(width(outputGrange)), y = 50, 
+             color="black",size=2 ,label = paste("median:",median(width(outputGrange)))) + 
+    xlab("Region Size") + ylab("Counts")
 ```
 
 
@@ -51,10 +59,10 @@ Region chromesome distribution
 
 ```{r}
 
-outputdf <- as(outputGrange,"GRanges")
+outputdf <- as.data.frame(outputGrange)
 
 library(ggplot2)
-ggplot(outputdf ,aes(chrom)) + geom_bar() + xlab("Chromosome") + ylab("Counts")
+ggplot(outputdf ,aes(seqnames)) + geom_bar() + xlab("Chromosome") + ylab("Counts")
 ```
 ## Open Specificity and Tissues
 
@@ -76,6 +84,7 @@ Complete table can be accessed from the directory of TissueOpennessSpecificity: 
 ```{r}
 showSampleTxt <- sampleTxt[1:20,]
 rownames(showSampleTxt) <- NULL
+colnames(showSampleTxt) <- c("Index", "Tissue/Cell Type", "ENCODE", "Median")
 
 knitr::kable(showSampleTxt)
 ```
@@ -91,25 +100,25 @@ bedOutput <- read.table(output(stepTissueOpennessSpecificity)$bedOutput,sep = "\
 
 openValue <- bedOutput[,4:ncol(bedOutput)]
 
-idx <- allidx
+idx <- sampleTxt[1:8,1]
+spname <- as.character(sampleTxt[1:8,2])
+names(spname) <- idx
 
-        plt<-lapply(idx, function(x){
-            v <- openValue[[x]]
-            ggplot(data.frame(v=v),aes(x=v)) +
-                geom_histogram(binwidth = 0.1) +
-                geom_vline(xintercept = median(v)) +
-                annotate("text", x = median(v),
-                         y = 50, color="white",
-                         size=2 ,label = paste("median:", median(v))) + xlab(spname[x,2])
-        })
+plt<-lapply(idx, function(x){
+    v <- openValue[[x]]
+    ggplot(data.frame(v=v),aes(x=v)) +
+        geom_histogram(binwidth = 0.1) +
+        geom_vline(xintercept = median(v)) +
+        annotate("text", x = median(v),
+                 y = 50, color="white",
+                 size=2 ,label = paste("median:", median(v))) + xlab(spname[as.character(x)])
+})        
 
-        plt[["nrow"]] <- ceiling(length(idx)/2)
-        plt[["ncol"]] <- 2
+plt[["nrow"]] <- ceiling(length(idx)/2)
+plt[["ncol"]] <- 2
 
-        pdf(distPdfOutput)
-        do.call(what = ggarrange,args = plt)
-        dev.off()
 
+do.call(what = ggarrange,args = plt)
 
 ```
 
@@ -117,16 +126,11 @@ idx <- allidx
 Heatmap of region and tissue
 
 ```{r echo=FALSE,eval=F}
-library("RColorBrewer")
-col <- colorRampPalette(brewer.pal(10, "RdYlBu"))(256)
-
-openheat <- open[,4:204]
-rownames(openheat) <- 1:nrow(openheat)
-colnames(openheat) <- spname[,3]
+load(output(stepTissueOpennessSpecificity)$heatmapDataOutput)
 
 library(heatmap3)
 p<-png("heatmap.png")
-heatmap3(as.matrix(openheat), useRaster = TRUE)
+heatmap3(heatmapData, useRaster = TRUE)
 dev.off()
 ```
 
@@ -135,9 +139,16 @@ dev.off()
 
 ## Conservation
 
+```{r}
+
+stepTissueOpennessConserve <-prevSteps[["TissueOpennessConserve"]]
+
+conserve <- read.table(output(stepTissueOpennessConserve)[["bedOutput"]],header = FALSE,sep = "\t")
+
+```
+
 ```{r echo=FALSE}
-conserve<-read.table("../../../../enrich/open/region.conserve.bed",header=F,sep = "\t")
-ggplot(conserve, aes(V5)) + geom_histogram(binwidth = 0.01) + xlab("conserve") + ylab("count")
+ggplot(conserve, aes(V5)) + geom_histogram(binwidth = 0.01) + xlab("Conserve") + ylab("Counts")
 
 ```
 
@@ -150,7 +161,9 @@ The original region - target gene BED file can be downloaded [here](regionli.bed
 
 ```{r echo=FALSE}
 
-tg<-read.table("../../../../enrich/open/regionList.gene.foreground.bed",header=F,sep = "\t")
+stepRegionConnectTargetGene <-prevSteps[["RegionConnectTargetGene"]]
+
+tg<-read.table(output(stepRegionConnectTargetGene)$outputForegroundBed,header=F,sep = "\t")
 
 genecounts <- table(tg$V6)
 
@@ -160,21 +173,30 @@ avg<-lapply(names(genecounts), function(x){
 
 df <- data.frame(score = unlist(avg), count = as.numeric(genecounts), gene = names(genecounts))
 
-ggplot(df) + geom_text(aes(x=count,y=score,label=gene)) + xlab("target gene count") + ylab("average score")
+ggplot(df) + geom_text(aes(x=count,y=score,label=gene)) + xlab("Target gene count") + ylab("Average score")
 ```
-
-
 
 
 
 # Motif and Transcription Factor Enrichment
 
 
-## HOMER Motif Enrichment Result
+## HOMER/motifmatchr Motif Enrichment Result
 
-+ [reference motif](motif.html)
-+ [novel motif](motif.html)
-+ [download motif calling result](motif.html)
+```{r}
+stepFindMotifsInRegions <- prevSteps[["FindMotifsInRegions"]]
+
+motifcallingresult <- output(stepFindMotifsInRegions)[["outputRegionMotifBed"]]
+
+```
+
+
+
+
++ motif calling result for regions can be access via: `motifcallingresult`
+
++ [reference motif(if HOMER available)](motif.html)
++ [novel motif(if HOMER available)](motif.html)
 
 
 ## Transcription Factor Enrichment Based on PECA model
@@ -184,7 +206,9 @@ Top 20 TF is shown in table below.
 Click [here](link.txt) to download full txt table.
 
 ```{r echo=FALSE}
-peca<-read.table("../../../../enrich/open/regionList.PECA_TF_enrich.txt",header=T,sep = "\t")
+
+stepTFsEnrichInRegions <- prevSteps[["TFsEnrichInRegions"]]
+peca<-read.table(output(stepTFsEnrichInRegions)$outputTFsEnrichTxt,header=TRUE,sep = "\t")
 peca[,2:5] <- format(peca[,2:5],scientific=TRUE)
 knitr::kable(peca[1:20,])
 
