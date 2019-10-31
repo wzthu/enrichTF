@@ -89,7 +89,7 @@ setMethod(
         })
 
         bed <- do.call(rbind, args = beds)
-        write.table(bed, file = bedOutput, col.names = FALSE, row.names = FALSE, sep = "\t")
+        write.table(bed, file = bedOutput, col.names = FALSE, row.names = FALSE, quote = FALSE, sep = "\t")
 
         .Object
     }
