@@ -34,7 +34,7 @@ setMethod(
         })
         names(prevSteps) <- unlist(prevStepsType)
 
-        save(prevSteps, getStepWorkDir(.Object = .Object, filename = "PrevSteps.Rdata"))
+        save(prevSteps, file = getStepWorkDir(.Object = .Object, filename = "PrevSteps.Rdata"))
 
         reportmkd <- getStepWorkDir(.Object = .Object, filename = "Report.Rmd")
 
