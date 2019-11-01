@@ -12,7 +12,7 @@ output:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE,message = FALSE,warning = FALSE)
 ```
 
 ```{r}
@@ -94,7 +94,7 @@ Top 8 open Tissues / Cell Types are list below.
 All figures can be accessed from the directory of TissueOpennessSpecificity: `output(stepTissueOpennessSpecificity)$distPdfOutput`
 
 
-```{r echo=FALSE,message=FALSE,warning=F}
+```{r}
 
 bedOutput <- read.table(output(stepTissueOpennessSpecificity)$bedOutput,sep = "\t", header = FALSE)
 
@@ -125,7 +125,7 @@ do.call(what = ggarrange,args = plt)
 
 Heatmap of region and tissue
 
-```{r echo=FALSE,eval=F}
+```{r}
 load(output(stepTissueOpennessSpecificity)$heatmapDataOutput)
 
 library(heatmap3)
@@ -147,7 +147,7 @@ conserve <- read.table(output(stepTissueOpennessConserve)[["bedOutput"]],header 
 
 ```
 
-```{r echo=FALSE}
+```{r}
 ggplot(conserve, aes(V5)) + geom_histogram(binwidth = 0.01) + xlab("Conserve") + ylab("Counts")
 
 ```
@@ -159,7 +159,7 @@ Target gene average score and count are shown in figure below.
 The original region - target gene BED file can be downloaded [here](regionli.bed)
 
 
-```{r echo=FALSE}
+```{r}
 
 stepRegionConnectTargetGene <-prevSteps[["RegionConnectTargetGene"]]
 
@@ -205,7 +205,7 @@ Top 20 TF is shown in table below.
 
 Click [here](link.txt) to download full txt table.
 
-```{r echo=FALSE}
+```{r }
 
 stepTFsEnrichInRegions <- prevSteps[["TFsEnrichInRegions"]]
 peca<-read.table(output(stepTFsEnrichInRegions)$outputTFsEnrichTxt,header=TRUE,sep = "\t")
@@ -218,10 +218,10 @@ knitr::kable(peca[1:20,])
 
 
 
-```{r echo=FALSE,message=FALSE,warning=FALSE}
+```{r }
 library(org.Hs.eg.db)
 library(clusterProfiler)
-ego<-clusterProfiler::enrichGO(gene = df$gene, OrgDb = org.Hs.eg.db,keyType       = 'SYMBOL')
+ego<-clusterProfiler::enrichGO(gene = df$gene, OrgDb = org.Hs.eg.db,keyType   = 'SYMBOL')
 knitr::kable(ego@result[1:20,2:7])
 ```
 
