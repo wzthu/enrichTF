@@ -64,6 +64,7 @@ outputdf <- as.data.frame(outputGrange)
 library(ggplot2)
 ggplot(outputdf ,aes(seqnames)) + geom_bar() + xlab("Chromosome") + ylab("Counts")
 ```
+
 ## Open Specificity and Tissues
 
 ```{r}
