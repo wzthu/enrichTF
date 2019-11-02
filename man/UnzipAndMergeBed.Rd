@@ -6,8 +6,8 @@
 \alias{enrichUnzipAndMergeBed,Step-method}
 \alias{enrichUnzipAndMergeBed}
 \alias{unzipAndMergeBed}
-\title{Generate background regions and reset the size of
-foreground regions}
+\title{Unzip all zipped BED files and
+merge them into one BED file}
 \usage{
 enrichUnzipAndMergeBed(prevStep, bedInput = NULL, bedOutput = NULL,
   ...)
@@ -20,7 +20,8 @@ unzipAndMergeBed(bedInput, bedOutput = NULL, ...)
 \arguments{
 \item{prevStep}{\code{\link{Step-class}} object scalar.
 It needs to be the return value of upstream process
-from other packages, such as esATAC.}
+from other packages, such as ATAC-seq
+peak calling result from esATAC.}
 
 \item{bedInput}{\code{Character} scalar or vector.
 The directory of region BED files for analysis.
@@ -28,19 +29,19 @@ BED, BED.gz, BED.bz2 formats are supported.}
 
 \item{bedOutput}{\code{Character} scalar.
 The BED output file directory of merged BED files.
-Default: NULL (generated base on bedInput)}
+Default: NULL (generated base on first BED file in  bedInput)}
 
 \item{...}{Additional arguments, currently unused.}
 }
 \value{
 An invisible \code{\link{EnrichStep-class}}
-object (\code{\link{Step-class}} based) scalar for downstream analysis.
+object (inherit from \code{\link{Step-class}}) scalar for downstream analysis.
 }
 \description{
-Use uniform distribution to generate background
-sequence regions from genome.
-The size of foreground regions will be unified into the
-length specified in argument.
+This function process region BED files in three step:
+First, unzip the gzip and bzip2  BED input files.
+Second, select first 3 columns of the BED files.
+Third, merge the BED files into one BED.
 }
 \details{
 All compressed files will be de-compressed.

@@ -40,7 +40,8 @@ Imports:
     stats,
     ggpubr,
     heatmap3,
-    ggplot2
+    ggplot2,
+    clusterProfiler
 Suggests:
     knitr,
     magrittr,

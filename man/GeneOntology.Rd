@@ -9,14 +9,14 @@
 \title{Connect regions with their target genes}
 \usage{
 enrichGeneOntology(prevStep, inputTxt = NULL, outputTxt = NULL,
-  outputPdf = NULL, orgDb = NULL, keyType = NULL, ...)
+  outputPdf = NULL, orgDb = NULL, keyType = "SYMBOL", ...)
 
 \S4method{enrichGeneOntology}{Step}(prevStep, inputTxt = NULL,
-  outputTxt = NULL, outputPdf = NULL, orgDb = NULL, keyType = NULL,
-  ...)
+  outputTxt = NULL, outputPdf = NULL, orgDb = NULL,
+  keyType = "SYMBOL", ...)
 
 geneOntology(inputTxt, outputTxt = NULL, outputPdf = NULL,
-  orgDb = NULL, keyType = NULL, ...)
+  orgDb = NULL, keyType = "SYMBOL", ...)
 }
 \arguments{
 \item{prevStep}{\code{\link{Step-class}} object scalar.
@@ -62,10 +62,10 @@ Connect foreground and background regions to target genes,
 which are predicted from PECA.
 }
 \examples{
-setGenome("testgenome") #Use "hg19","hg38",etc. for your application
-foregroundBedPath <- system.file(package = "enrichTF", "extdata","testregion.bed")
-gen <- genBackground(inputForegroundBed = foregroundBedPath)
-conTG <- enrichGeneOntology(gen)
+
+genelist.txt <- system.file(package = "enrichTF", "extdata","genelist.txt")
+geneOntology(inputTxt = genelist.txt, orgDb = "org.Hs.eg.db")
+
 }
 \seealso{
 \code{\link{genBackground}}

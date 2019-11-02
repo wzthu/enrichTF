@@ -57,6 +57,7 @@ setMethod(
     }
 )
 
+#' @importFrom clusterProfiler enrichGO
 
 setMethod(
     f = "processing",
@@ -143,10 +144,10 @@ setMethod(
 #' \code{\link{findMotifsInRegions}}
 #' \code{\link{tfsEnrichInRegions}}
 #' @examples
-#' setGenome("testgenome") #Use "hg19","hg38",etc. for your application
-#' foregroundBedPath <- system.file(package = "enrichTF", "extdata","testregion.bed")
-#' gen <- genBackground(inputForegroundBed = foregroundBedPath)
-#' conTG <- enrichGeneOntology(gen)
+#'
+#' genelist.txt <- system.file(package = "enrichTF", "extdata","genelist.txt")
+#' geneOntology(inputTxt = genelist.txt, orgDb = "org.Hs.eg.db")
+#'
 
 
 

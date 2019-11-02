@@ -21,8 +21,11 @@ tissueOpennessConserve(bedInput, openConserveBedInput = NULL,
 }
 \arguments{
 \item{prevStep}{\code{\link{Step-class}} object scalar.
-It needs to be the return value of upstream process
-from other packages, such as esATAC.}
+It needs to be the return value of upstream process from
+\code{\link{unzipAndMergeBed}} or \code{\link{enrichUnzipAndMergeBed}}
+when it is not used in a pipeline.  If it is used in a pipeline or
+\code{\%>\%} is applied on this function, any steps in this package
+is acceptable.}
 
 \item{bedInput}{\code{Character} scalar.
 The directory of region BED file for analysis.}
@@ -53,9 +56,9 @@ We collected 201 DNase-seq or ATAC-seq sample from ENCODE and calculate their op
 They can be download and install automatically. So users do not need to configure themselves.
 }
 \examples{
-foregroundBedPath <- system.file(package = "enrichTF", "extdata","testregion.bed.gz")
-rs <- unzipAndMergeBed(bedInput = foregroundBedPath) \%>\%
-         enrichTissueOpennessConserve
+
+foregroundBedPath <- system.file(package = "enrichTF", "extdata","testregion.bed")
+tissueOpennessConserve(bedInput = foregroundBedPath)
 }
 \seealso{
 \code{\link{unzipAndMergeBed}}

@@ -81,9 +81,9 @@ We collect 201 DNase-seq or ATAC-seq sample from ENCODE and calculate their open
 They can be download and install automatically. So users do not need to configure themselves.
 }
 \examples{
-foregroundBedPath <- system.file(package = "enrichTF", "extdata","testregion.bed.gz")
-rs <- unzipAndMergeBed(bedInput = foregroundBedPath) \%>\%
-         enrichTissueOpennessSpecificity
+foregroundBedPath <- system.file(package = "enrichTF", "extdata","testregion.bed")
+tissueOpennessSpecificity(bedInput = foregroundBedPath)
+
 }
 \seealso{
 \code{\link{unzipAndMergeBed}}

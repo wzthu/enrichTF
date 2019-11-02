@@ -97,28 +97,6 @@ setMethod(
     }
 )
 
-setMethod(
-    f = "checkRequireParam",
-    signature = "TissueOpennessConserve",
-    definition = function(.Object,...){
-        if(is.null(input(.Object)[["bedInput"]])){
-            stop("bedInput is required.")
-        }
-    }
-)
-
-
-
-setMethod(
-    f = "checkAllPath",
-    signature = "TissueOpennessConserve",
-    definition = function(.Object,...){
-        checkFileExist(input(.Object)[["bedInput"]]);
-
-    }
-)
-
-
 #' @name TissueOpennessConserve
 #' @importFrom rtracklayer import
 #' @importFrom rtracklayer import.bed
@@ -127,8 +105,11 @@ setMethod(
 #' User provide region through a BED file.
 #' This function will provide tissue's open conservation analysis for these region.
 #' @param prevStep \code{\link{Step-class}} object scalar.
-#' It needs to be the return value of upstream process
-#' from other packages, such as esATAC.
+#' It needs to be the return value of upstream process from
+#' \code{\link{unzipAndMergeBed}} or \code{\link{enrichUnzipAndMergeBed}}
+#' when it is not used in a pipeline.  If it is used in a pipeline or
+#' \code{\%>\%} is applied on this function, any steps in this package
+#' is acceptable.
 #' @param bedInput \code{Character} scalar.
 #' The directory of region BED file for analysis.
 #' @param openConserveBedInput \code{Character} scalar.
@@ -151,9 +132,9 @@ setMethod(
 
 
 #' @examples
-#' foregroundBedPath <- system.file(package = "enrichTF", "extdata","testregion.bed.gz")
-#' rs <- unzipAndMergeBed(bedInput = foregroundBedPath) %>%
-#'          enrichTissueOpennessConserve
+#'
+#' foregroundBedPath <- system.file(package = "enrichTF", "extdata","testregion.bed")
+#' tissueOpennessConserve(bedInput = foregroundBedPath)
 
 
 setGeneric("enrichTissueOpennessConserve",

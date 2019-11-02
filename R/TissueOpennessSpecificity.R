@@ -261,9 +261,10 @@ setMethod(
 
 
 #' @examples
-#' foregroundBedPath <- system.file(package = "enrichTF", "extdata","testregion.bed.gz")
-#' rs <- unzipAndMergeBed(bedInput = foregroundBedPath) %>%
-#'          enrichTissueOpennessSpecificity
+#' foregroundBedPath <- system.file(package = "enrichTF", "extdata","testregion.bed")
+#' tissueOpennessSpecificity(bedInput = foregroundBedPath)
+#'
+
 
 
 setGeneric("enrichTissueOpennessSpecificity",
