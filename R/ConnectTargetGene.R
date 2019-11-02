@@ -141,9 +141,9 @@ setMethod(
             outputForegroundBed,sep="\t",quote = FALSE,
             row.names = FALSE,col.names = FALSE)
 
-        write.table(as.data.frame(geneName = mcols(outputForegroundgr[
-            mcols(outputForegroundgr)$score>0.3])$geneName
-            ),
+        write.table(as.data.frame(outputForegroundgr[
+            mcols(outputForegroundgr)$score>0.3])
+            [,c("geneName")],
             ouputForgroundGeneTxt,sep="\t",quote = FALSE,
             row.names = FALSE,col.names = FALSE)
 
