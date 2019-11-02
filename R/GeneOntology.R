@@ -71,7 +71,7 @@ setMethod(
         keyType <- getParam(.Object,"keyType")
 
         genelist <- read.table(inputTxt, header = FALSE, sep = '\t')
-        genelist <- as.character(genelist[,1])
+        genelist <- unique(as.character(genelist[,1]))
 
         ego<-clusterProfiler::enrichGO(gene = genelist,
                                        OrgDb = orgDb,
