@@ -60,6 +60,8 @@
                        "GenBackground","RegionConnectTargetGene",
                        "GenBackground","TFsEnrichInRegions"),
              argOrder = 1)
+    addEdges(edges = c("RegionConnectTargetGene","GeneOntology"),
+             argOrder = 1)
 
 
 
