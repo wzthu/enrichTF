@@ -129,6 +129,15 @@ checkAndInstallBSgenomeTestgenome <- function(refFilePath){
     checkAndInstallBSgenome(refFilePath, genome)
 }
 
+checkAndInstallOrgDbTestgenome <- function(refFilePath){
+    genome <- getGenome()
+    if(genome == "testgenome"){
+        genome <- "hg19"
+    }
+    checkAndInstallOrgDb(refFilePath, genome)
+}
+
+
 
 get_os <- function(){
     sysinf <- Sys.info()
@@ -200,7 +209,7 @@ checkAndInstall <- function(check = TRUE, ...){
     runWithFinishCheck(func = checkAndInstallHOMER,
                        "HOMER",
                        refFilePath = "HOMER")
-    runWithFinishCheck(func = checkAndInstallOrgDb,
+    runWithFinishCheck(func = checkAndInstallOrgDbTestgenome,
                        "OrgDb",
                        refFilePath = NULL)
 }
