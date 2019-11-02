@@ -41,7 +41,8 @@ Imports:
     ggpubr,
     heatmap3,
     ggplot2,
-    clusterProfiler
+    clusterProfiler,
+    rmarkdown
 Suggests:
     knitr,
     magrittr,
