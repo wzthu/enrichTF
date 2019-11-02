@@ -28,11 +28,9 @@ setMethod(
             param(.Object)$orgDb <- getRefRc("OrgDb")
         }
 
-        if(!is.null(keyType)){
-            param(.Object)$keyType <- keyType
-        }else{
-            keyType <- "SYMBOL"
-        }
+        stopifnot(is.character(keyType))
+        param(.Object)$keyType <- keyType
+
 
         if(is.null(outputTxt)){
             output(.Object)$outputTxt <-
@@ -87,9 +85,7 @@ setMethod(
     f = "checkRequireParam",
     signature = "GeneOntology",
     definition = function(.Object,...){
-        if(is.null(.Object$inputTxt)){
-            stop("inputTxt is required.")
-        }
+
     }
 )
 
@@ -159,7 +155,7 @@ setGeneric("enrichGeneOntology",function(prevStep,
                                          outputTxt = NULL,
                                          outputPdf = NULL,
                                          orgDb = NULL,
-                                         keyType = NULL,
+                                         keyType = "SYMBOL",
                                          ...) standardGeneric("enrichGeneOntology"))
 
 
@@ -175,7 +171,7 @@ setMethod(
                           outputTxt = NULL,
                           outputPdf = NULL,
                           orgDb = NULL,
-                          keyType = NULL,
+                          keyType = "SYMBOL",
                           ...){
         allpara <- c(list(Class = "GeneOntology",
                           prevSteps = list(prevStep)),
@@ -192,7 +188,7 @@ geneOntology <- function(inputTxt,
                          outputTxt = NULL,
                          outputPdf = NULL,
                          orgDb = NULL,
-                         keyType = NULL,
+                         keyType = "SYMBOL",
                          ...){
     allpara <- c(list(Class = "GeneOntology", prevSteps = list()),
                  as.list(environment()),list(...))
