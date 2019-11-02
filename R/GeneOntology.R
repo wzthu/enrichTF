@@ -36,7 +36,7 @@ setMethod(
             output(.Object)$outputTxt <-
                 getAutoPath(.Object,originPath =
                                 .Object$inputList[["inputTxt"]],
-                            regexSuffixName = "bed",
+                            regexSuffixName = "txt",
                             suffix = "txt")
         }else{
             output(.Object)$outputTxt <- outputTxt
