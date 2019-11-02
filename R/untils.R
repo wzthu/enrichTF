@@ -200,6 +200,9 @@ checkAndInstall <- function(check = TRUE, ...){
     runWithFinishCheck(func = checkAndInstallHOMER,
                        "HOMER",
                        refFilePath = "HOMER")
+    runWithFinishCheck(func = checkAndInstallOrgDb,
+                       "OrgDb",
+                       refFilePath = NULL)
 }
 
 

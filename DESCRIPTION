@@ -58,6 +58,7 @@ Collate:
     onLoad.R
     untils.R
     Method.R
+    GeneOntology.R
 RoxygenNote: 6.1.1
 VignetteBuilder: knitr
 biocViews: Software, GeneTarget, MotifAnnotation, GraphAndNetwork, Transcription  
