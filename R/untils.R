@@ -2,6 +2,7 @@
 #' @importFrom pipeFrame getRefRc
 #' @importFrom pipeFrame checkAndInstallBSgenome
 #' @importFrom pipeFrame checkAndInstallGenomeFa
+#' @importFrom pipeFrame checkAndInstallOrgDb
 #' @importFrom pipeFrame getRefFiles
 #' @importFrom BSgenome getBSgenome
 #' @importFrom utils download.file
@@ -89,12 +90,87 @@ dowloadTFgeneRelMtxFile <- function(refFilePath){
     }
 }
 
+dowloadSampleName <- function(refFilePath){
+    if(getGenome() == "testgenome"){
+        copyAndGunzip("sampleName.txt.gz",refFilePath)
+    }else{
+        downloadAndGunzip(
+            "https://wzthu.github.io/enrich/refdata/%s/sampleName.txt.gz",
+            refFilePath)
+    }
+}
+
+dowloadOpenRegion <- function(refFilePath){
+    if(getGenome() == "testgenome"){
+        copyAndGunzip("region.open.bed.gz",refFilePath)
+    }else{
+        downloadAndGunzip(
+            "https://wzthu.github.io/enrich/refdata/%s/region.open.bed.gz",
+            refFilePath)
+    }
+}
+
+
+dowloadConserveRegion <- function(refFilePath){
+    if(getGenome() == "testgenome"){
+        copyAndGunzip("region.conserve.bed.gz",refFilePath)
+    }else{
+        downloadAndGunzip(
+            "https://wzthu.github.io/enrich/refdata/%s/region.conserve.bed.gz",
+            refFilePath)
+    }
+}
+
+
 checkAndInstallBSgenomeTestgenome <- function(refFilePath){
     genome <- getGenome()
     if(genome == "testgenome"){
         genome <- "hg19"
     }
     checkAndInstallBSgenome(refFilePath, genome)
+}
+
+checkAndInstallOrgDbTestgenome <- function(refFilePath){
+    genome <- getGenome()
+    if(genome == "testgenome"){
+        genome <- "hg19"
+    }
+    checkAndInstallOrgDb(refFilePath, genome)
+}
+
+
+
+get_os <- function(){
+    sysinf <- Sys.info()
+    if (!is.null(sysinf)){
+        os <- sysinf['sysname']
+        if (os == 'Darwin')
+            os <- "osx"
+    } else { ## mystery machine
+        os <- .Platform$OS.type
+        if (grepl("^darwin", R.version$os))
+            os <- "osx"
+        if (grepl("linux-gnu", R.version$os))
+            os <- "linux"
+    }
+    tolower(os)
+}
+
+checkAndInstallHOMER <- function(refFilePath){
+    genome <- getGenome()
+    if(genome == "testgenome"){
+        dir.create(refFilePath)
+    }else{
+        osname <- get_os()
+        if(osname == "osx" || osname == "linux"){
+            #        tpdir <- tempdir()
+            dir.create(refFilePath)
+            installFilePath <- file.path(refFilePath,"configureHomer.pl")
+            stopifnot(0==system(paste("curl http://homer.ucsd.edu/homer/configureHomer.pl > ",installFilePath)))
+            stopifnot(0==system(paste("perl ",installFilePath," -install")))
+            stopifnot(0==system(paste("perl ",installFilePath," -install", genome)))
+        }
+    }
 }
 
 checkAndInstall <- function(check = TRUE, ...){
@@ -122,6 +198,21 @@ checkAndInstall <- function(check = TRUE, ...){
     runWithFinishCheck(func = dowloadTFgeneRelMtxFile,
                        "TFgeneRelMtx",
                        refFilePath = "TFgeneRelMtx.RData")
+    runWithFinishCheck(func = dowloadSampleName,
+                       "SampleName",
+                       refFilePath = "SampleName.txt")
+    runWithFinishCheck(func = dowloadOpenRegion,
+                       "OpenRegion",
+                       refFilePath = "region.open.bed")
+    runWithFinishCheck(func = dowloadConserveRegion,
+                       "ConserveRegion",
+                       refFilePath = "region.conserve.bed")
+    runWithFinishCheck(func = checkAndInstallHOMER,
+                       "HOMER",
+                       refFilePath = "HOMER")
+    runWithFinishCheck(func = checkAndInstallOrgDbTestgenome,
+                       "OrgDb",
+                       refFilePath = NULL)
 }
 
 

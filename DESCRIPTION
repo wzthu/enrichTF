@@ -37,7 +37,13 @@ Imports:
     S4Vectors,
     utils,
     parallel,
-    stats
+    stats,
+    ggpubr,
+    heatmap3,
+    ggplot2,
+    clusterProfiler,
+    rmarkdown,
+    grDevices
 Suggests:
     knitr,
     magrittr,
@@ -47,10 +53,15 @@ Collate:
     ConnectTargetGene.R
     TFsEnrichInRegions.R
     FindMotifsInRegions.R
+    UnzipAndMergeBed.R
+    TissueOpennessSpecificity.R
+    TissueOpennessConserve.R
+    SingleSampleReport.R
     GenBackground.R
     onLoad.R
     untils.R
     Method.R
+    GeneOntology.R
 RoxygenNote: 6.1.1
 VignetteBuilder: knitr
 biocViews: Software, GeneTarget, MotifAnnotation, GraphAndNetwork, Transcription  

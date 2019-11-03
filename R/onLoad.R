@@ -32,16 +32,11 @@
 #' @importMethodsFrom pipeFrame checkRequireParam
 #' @importMethodsFrom pipeFrame clearStepCache
 #' @importMethodsFrom pipeFrame getAutoPath
-#' @importMethodsFrom pipeFrame getDefName
+#' @importMethodsFrom pipeFrame stepName
 #' @importMethodsFrom pipeFrame getParam
 #' @importMethodsFrom pipeFrame getParamItems
 #' @importMethodsFrom pipeFrame getParamMD5Path
-#' @importMethodsFrom pipeFrame getReportItems
-#' @importMethodsFrom pipeFrame getReportItemsImp
-#' @importMethodsFrom pipeFrame getReportVal
-#' @importMethodsFrom pipeFrame getReportValImp
-#' @importMethodsFrom pipeFrame getStepId
-#' @importMethodsFrom pipeFrame getStepName
+#' @importMethodsFrom pipeFrame stepID
 #' @importMethodsFrom pipeFrame getStepWorkDir
 #' @importMethodsFrom pipeFrame init
 #' @importMethodsFrom pipeFrame isReady
@@ -53,7 +48,10 @@
                   defaultCheckAndInstallFunc = checkAndInstall
     )
 
-
+    addEdges(edges = c( "UnzipAndMergeBed","GenBackground",
+                        "UnzipAndMergeBed","TissueOpennessConserve",
+                        "UnzipAndMergeBed","TissueOpennessSpecificity"),
+             argOrder = 1)
     addEdges(edges = c( "FindMotifsInRegions","TFsEnrichInRegions"),
              argOrder = 2)
     addEdges(edges = c("RegionConnectTargetGene","TFsEnrichInRegions"),
@@ -61,6 +59,8 @@
     addEdges(edges = c("GenBackground","FindMotifsInRegions",
                        "GenBackground","RegionConnectTargetGene",
                        "GenBackground","TFsEnrichInRegions"),
+             argOrder = 1)
+    addEdges(edges = c("RegionConnectTargetGene","GeneOntology"),
              argOrder = 1)
 
 

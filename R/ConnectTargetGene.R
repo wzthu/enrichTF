@@ -19,10 +19,11 @@ setMethod(
         outputBackgroundBed <- allparam[["outputBackgroundBed"]]
         regularGeneCorrBed <- allparam[["regularGeneCorrBed"]]
         enhancerRegularGeneCorrBed <- allparam[["enhancerRegularGeneCorrBed"]]
+        ouputForgroundGeneTxt <- allparam[["ouputForgroundGeneTxt"]]
         if(length(prevSteps)>0){
             prevStep <- prevSteps[[1]]
-            input(.Object)$inputForegroundBed <- prevStep$outputForegroundBed
-            input(.Object)$inputBackgroundBed <- prevStep$outputBackgroundBed
+            input(.Object)$inputForegroundBed <- output(prevStep)$outputForegroundBed
+            input(.Object)$inputBackgroundBed <- output(prevStep)$outputBackgroundBed
         }
         if(!is.null(inputForegroundBed)){
             input(.Object)$inputForegroundBed <- inputForegroundBed
@@ -41,6 +42,16 @@ setMethod(
                             suffix = "gene.foreground.bed")
         }else{
             output(.Object)$outputForegroundBed <- outputForegroundBed
+        }
+
+        if(is.null(ouputForgroundGeneTxt)){
+            output(.Object)$ouputForgroundGeneTxt <-
+                getAutoPath(.Object,originPath =
+                                .Object$inputList[["inputForegroundBed"]],
+                            regexSuffixName = "foreground.bed",
+                            suffix = "gene.foreground.txt")
+        }else{
+            output(.Object)$ouputForgroundGeneTxt <- ouputForgroundGeneTxt
         }
 
 
@@ -85,6 +96,7 @@ setMethod(
         regularGeneCorrBed <- getParam(.Object,"regularGeneCorrBed")
         enhancerRegularGeneCorrBed <- getParam(.Object,
                                                "enhancerRegularGeneCorrBed")
+        ouputForgroundGeneTxt <- getParam(.Object, "ouputForgroundGeneTxt")
 
         inputForegroundgr <- import(con=inputForegroundBed)
         inputBackgroundgr <- import(con=inputBackgroundBed)
@@ -128,12 +140,21 @@ setMethod(
                 "score","geneName","blockCount")],
             outputForegroundBed,sep="\t",quote = FALSE,
             row.names = FALSE,col.names = FALSE)
+
+        write.table(as.data.frame(outputForegroundgr[
+            mcols(outputForegroundgr)$score>0.3])
+            [,c("geneName")],
+            ouputForgroundGeneTxt,sep="\t",quote = FALSE,
+            row.names = FALSE,col.names = FALSE)
+
         write.table(as.data.frame(outputBackgroundgr[
             mcols(outputBackgroundgr)$score>0.3])
             [,c("seqnames","start","end","name",
                 "score","geneName","blockCount")],
                     outputBackgroundBed,sep="\t",quote = FALSE,
             row.names = FALSE,col.names = FALSE)
+
+
 #        export.bed(outputForegroundgr,outputForegroundBed)
 #        export.bed(outputBackgroundgr,outputBackgroundBed)
 
@@ -205,6 +226,10 @@ setMethod(
 #' The BED file directory of enhancer-targets predicted from PECA.
 #' Default: NULL (e.g. after \code{library (enrichTF)}, you can call
 #' function \code{setGenome("hg19")})
+#' @param ouputForgroundGeneTxt \code{Character} scalar.
+#' The TXT file directory of target genes list connecting with foreground regions,
+#' which are derived from PECA model.
+#' Default: NULL (generated base on inputForegroundBed)
 #' @param ... Additional arguments, currently unused.
 #' @details
 #' Connect foreground and background regions to target genes,
@@ -231,6 +256,7 @@ setGeneric("enrichRegionConnectTargetGene",function(prevStep,
                                                     outputBackgroundBed = NULL,
                                                     regularGeneCorrBed = NULL,
                                                     enhancerRegularGeneCorrBed = NULL,
+                                                    ouputForgroundGeneTxt = NULL,
                                                     ...) standardGeneric("enrichRegionConnectTargetGene"))
 
 
@@ -248,6 +274,7 @@ setMethod(
                           outputBackgroundBed = NULL,
                           regularGeneCorrBed = NULL,
                           enhancerRegularGeneCorrBed = NULL,
+                          ouputForgroundGeneTxt = NULL,
                           ...){
         allpara <- c(list(Class = "RegionConnectTargetGene",
                           prevSteps = list(prevStep)),
@@ -265,6 +292,7 @@ regionConnectTargetGene <- function(inputForegroundBed,
                                     outputBackgroundBed = NULL,
                                     regularGeneCorrBed = NULL,
                                     enhancerRegularGeneCorrBed = NULL,
+                                    ouputForgroundGeneTxt = NULL,
                                     ...){
     allpara <- c(list(Class = "RegionConnectTargetGene", prevSteps = list()),
                  as.list(environment()),list(...))

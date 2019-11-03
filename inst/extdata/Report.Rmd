@@ -1,0 +1,229 @@
+---
+title: "Gene Regulation Analysis"
+author: "Zheng Wei, Zhana Duren, Shining Ma"
+date: "`r Sys.Date()`"
+output: 
+    html_document:
+        df_print: paged
+        toc: true
+        toc_float: true
+        number_sections: true
+        fig_height: 3.5
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,message = FALSE,warning = FALSE)
+```
+
+```{r}
+library(enrichTF)
+library(rtracklayer)
+library(ggplot2)
+library(ggpubr)
+objname <- load("PrevSteps.Rdata")
+```
+
+# Regions Information
+
+## Basic Information
+
+```{r}
+
+stepUnzipAndMergeBed <-prevSteps[["UnzipAndMergeBed"]]
+bedInput <- input(stepUnzipAndMergeBed)$bedInput
+bedOutput <- output(stepUnzipAndMergeBed)$bedOutput
+genome <- "hg19" #property(stepUnzipAndMergeBed)[["genome"]]
+
+outputGrange <- import.bed(bedOutput)
+```
+
+Total `length(outputGrange)` from `length(bedInput)` BED file(s) of `genome`. 
+
+```{r}
+knitr::kable(data.frame(Directory=bedInput,Regions=sapply(bedInput, function(x){length(readLines(x))})))
+```
+
+Region sizes distribution
+
+```{r}
+
+ggplot(data.frame(RegionSize = width(outputGrange)),aes(x=RegionSize)) + 
+    geom_histogram(binwidth = 1) + geom_vline(xintercept = median(width(outputGrange))) + 
+    annotate("text", x = median(width(outputGrange)), y = 50, 
+             color="black",size=2 ,label = paste("median:",median(width(outputGrange)))) + 
+    xlab("Region Size") + ylab("Counts")
+```
+
+
+Region chromesome distribution
+
+```{r}
+
+outputdf <- as.data.frame(outputGrange)
+
+library(ggplot2)
+ggplot(outputdf ,aes(seqnames)) + geom_bar() + xlab("Chromosome") + ylab("Counts")
+```
+
+## Open Specificity and Tissues
+
+```{r}
+
+stepTissueOpennessSpecificity <-prevSteps[["TissueOpennessSpecificity"]]
+
+```
+
+Top 20 open Tissues / Cell Types are list below. 
+
+```{r}
+sampleTxtFile <- output(stepTissueOpennessSpecificity)$sampleTxtOutput
+sampleTxt <- read.table(sampleTxtFile, header = TRUE, sep = "\t")
+```
+
+Complete table can be accessed from the directory of TissueOpennessSpecificity: `sampleTxtFile`
+
+```{r}
+showSampleTxt <- sampleTxt[1:20,]
+rownames(showSampleTxt) <- NULL
+colnames(showSampleTxt) <- c("Index", "Tissue/Cell Type", "ENCODE", "Median")
+
+knitr::kable(showSampleTxt)
+```
+
+Top 8 open Tissues / Cell Types are list below. 
+
+All figures can be accessed from the directory of TissueOpennessSpecificity: `output(stepTissueOpennessSpecificity)$distPdfOutput`
+
+
+```{r}
+
+bedOutput <- read.table(output(stepTissueOpennessSpecificity)$bedOutput,sep = "\t", header = FALSE)
+
+openValue <- bedOutput[,4:ncol(bedOutput)]
+
+idx <- sampleTxt[1:8,1]
+spname <- as.character(sampleTxt[1:8,2])
+names(spname) <- idx
+
+plt<-lapply(idx, function(x){
+    v <- openValue[[x]]
+    ggplot(data.frame(v=v),aes(x=v)) +
+        geom_histogram(binwidth = 0.1) +
+        geom_vline(xintercept = median(v)) +
+        annotate("text", x = median(v),
+                 y = 50, color="white",
+                 size=2 ,label = paste("median:", median(v))) + xlab(spname[as.character(x)])
+})        
+
+plt[["nrow"]] <- ceiling(length(idx)/2)
+plt[["ncol"]] <- 2
+
+
+do.call(what = ggarrange,args = plt)
+
+```
+
+
+Heatmap of region and tissue
+
+```{r}
+load(output(stepTissueOpennessSpecificity)$heatmapDataOutput)
+
+library(heatmap3)
+p<-png("heatmap.png")
+heatmap3(heatmapData, useRaster = TRUE)
+dev.off()
+```
+
+![](heatmap.png)
+
+
+## Conservation
+
+```{r}
+
+stepTissueOpennessConserve <-prevSteps[["TissueOpennessConserve"]]
+
+conserve <- read.table(output(stepTissueOpennessConserve)[["bedOutput"]],header = FALSE,sep = "\t")
+
+```
+
+```{r}
+ggplot(conserve, aes(V5)) + geom_histogram(binwidth = 0.01) + xlab("Conserve") + ylab("Counts")
+
+```
+
+# Regulation Target Gene
+
+Target gene average score and count are shown in figure below. 
+
+The original region - target gene BED file can be downloaded [here](regionli.bed)
+
+
+```{r}
+
+stepRegionConnectTargetGene <-prevSteps[["RegionConnectTargetGene"]]
+
+tg<-read.table(output(stepRegionConnectTargetGene)$outputForegroundBed,header=FALSE,sep = "\t")
+
+genecounts <- table(tg$V6)
+
+avg<-lapply(names(genecounts), function(x){
+    return(mean(tg[tg$V6==x,5]))
+})
+
+df <- data.frame(score = unlist(avg), count = as.numeric(genecounts), gene = names(genecounts))
+
+ggplot(df) + geom_text(aes(x=count,y=score,label=gene)) + xlab("Target gene count") + ylab("Average score")
+```
+
+
+
+# Motif and Transcription Factor Enrichment
+
+
+## HOMER/motifmatchr Motif Enrichment Result
+
+```{r}
+stepFindMotifsInRegions <- prevSteps[["FindMotifsInRegions"]]
+
+motifcallingresult <- output(stepFindMotifsInRegions)[["outputRegionMotifBed"]]
+
+```
+
+
+
+
++ motif calling result for regions can be access via: `motifcallingresult`
+
++ [reference motif(if HOMER available)](motif.html)
++ [novel motif(if HOMER available)](motif.html)
+
+
+## Transcription Factor Enrichment Based on PECA model
+
+Top 20 TF is shown in table below. 
+
+Click [here](link.txt) to download full txt table.
+
+```{r }
+
+stepTFsEnrichInRegions <- prevSteps[["TFsEnrichInRegions"]]
+peca<-read.table(output(stepTFsEnrichInRegions)$outputTFsEnrichTxt,header=TRUE,sep = "\t")
+peca[,2:5] <- format(peca[,2:5],scientific=TRUE)
+knitr::kable(peca[1:20,])
+
+```
+
+# Gene Ontology Enrichment
+
+
+
+```{r }
+library(org.Hs.eg.db)
+library(clusterProfiler)
+ego<-clusterProfiler::enrichGO(gene = df$gene, OrgDb = org.Hs.eg.db,keyType   = 'SYMBOL')
+knitr::kable(ego@result[1:20,2:7])
+```
+
+

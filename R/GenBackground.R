@@ -165,6 +165,7 @@ setMethod(
             (length(foregroundgr) + 1) : (length(foregroundgr) + length(backgroundgr))
         export.bed(object = backgroundgr, con = outputBackgroundBed)
         regiongr <- c(foregroundgr,backgroundgr)
+        score(regiongr) <- 0
         export.bed(object = regiongr, con = outputRegionBed)
         .Object
     }

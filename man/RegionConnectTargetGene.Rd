@@ -11,16 +11,18 @@
 enrichRegionConnectTargetGene(prevStep, inputForegroundBed = NULL,
   inputBackgroundBed = NULL, outputForegroundBed = NULL,
   outputBackgroundBed = NULL, regularGeneCorrBed = NULL,
-  enhancerRegularGeneCorrBed = NULL, ...)
+  enhancerRegularGeneCorrBed = NULL, ouputForgroundGeneTxt = NULL, ...)
 
 \S4method{enrichRegionConnectTargetGene}{Step}(prevStep,
   inputForegroundBed = NULL, inputBackgroundBed = NULL,
   outputForegroundBed = NULL, outputBackgroundBed = NULL,
-  regularGeneCorrBed = NULL, enhancerRegularGeneCorrBed = NULL, ...)
+  regularGeneCorrBed = NULL, enhancerRegularGeneCorrBed = NULL,
+  ouputForgroundGeneTxt = NULL, ...)
 
 regionConnectTargetGene(inputForegroundBed, inputBackgroundBed,
   outputForegroundBed = NULL, outputBackgroundBed = NULL,
-  regularGeneCorrBed = NULL, enhancerRegularGeneCorrBed = NULL, ...)
+  regularGeneCorrBed = NULL, enhancerRegularGeneCorrBed = NULL,
+  ouputForgroundGeneTxt = NULL, ...)
 }
 \arguments{
 \item{prevStep}{\code{\link{Step-class}} object scalar.
@@ -55,6 +57,11 @@ function \code{setGenome("hg19")})}
 The BED file directory of enhancer-targets predicted from PECA.
 Default: NULL (e.g. after \code{library (enrichTF)}, you can call
 function \code{setGenome("hg19")})}
+
+\item{ouputForgroundGeneTxt}{\code{Character} scalar.
+The TXT file directory of target genes list connecting with foreground regions,
+which are derived from PECA model.
+Default: NULL (generated base on inputForegroundBed)}
 
 \item{...}{Additional arguments, currently unused.}
 }
