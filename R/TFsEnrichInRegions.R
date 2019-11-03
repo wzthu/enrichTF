@@ -356,14 +356,12 @@ setMethod(
 #' @title Test each TF is enriched in regions or not
 #' @description
 #' Test each TF is enriched in regions or not
-#' @param enrichStep \code{\link{Step-class}} object scalar.
-#' It has to be the return value of upstream process from
-#' \code{\link{regionConnectTargetGene}}, \code{\link{regionConnectTargetGene}},
-#' \code{\link{findMotifsInRegions}} or
-#' \code{\link{enrichFindMotifsInRegions}},
-#' If it is used in a pipeline or
-#' \code{\%>\%} is applied on this function, any steps in this
-#' package is acceptable.
+#' @param prevStep \code{\link{Step-class}} object scalar.
+#' This parameter is available when the upstream step function
+#' (printMap() to see the previous functions)
+#' have been sucessfully called.
+#' Accepted value can be the object return by any step function or be feed by
+#' \code{\%>\%} from last step function.
 #' @param inputRegionBed \code{Character} scalar.
 #' Directory of Regions BED file  including foreground and background
 #' @param inputForegroundGeneBed \code{Character} scalar.
@@ -424,7 +422,7 @@ setMethod(
 
 
 setGeneric("enrichTFsEnrichInRegions",
-           function(enrichStep,
+           function(prevStep,
                     inputRegionBed = NULL,
                     inputForegroundGeneBed = NULL,
                     inputBackgroundGeneBed = NULL,
@@ -442,7 +440,7 @@ setGeneric("enrichTFsEnrichInRegions",
 setMethod(
     f = "enrichTFsEnrichInRegions",
     signature = "Step",
-    definition = function(enrichStep,
+    definition = function(prevStep,
                           inputRegionBed = NULL,
                           inputForegroundGeneBed = NULL,
                           inputBackgroundGeneBed = NULL,
@@ -453,7 +451,7 @@ setMethod(
                           inputMotifTFTable = NULL,
                           ...){
         allpara <- c(list(Class = "TFsEnrichInRegions",
-                          prevSteps = list(enrichStep)),
+                          prevSteps = list(prevStep)),
                      as.list(environment()),list(...))
         step <- do.call(new,allpara)
         invisible(step)

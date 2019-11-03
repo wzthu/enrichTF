@@ -5,7 +5,7 @@
 \alias{SingleSampleReport}
 \alias{enrichSingleSampleReport,Step-method}
 \alias{enrichSingleSampleReport}
-\title{Tissue's open conservation of the given region}
+\title{Final report for single group of regions}
 \usage{
 enrichSingleSampleReport(prevStep, htmlOutput = NULL, ...)
 
@@ -17,7 +17,7 @@ enrichSingleSampleReport(prevStep, htmlOutput = NULL, ...)
 Any steps object in this package is acceptable when the pipeline is ready.}
 
 \item{htmlOutput}{\code{Character} scalar.
-The BED output file directory of merged BED files.
+HTML report file directory
 Default: NULL (generated base on bedInput)}
 
 \item{...}{Additional arguments, currently unused.}
@@ -27,12 +27,13 @@ An invisible \code{\link{EnrichStep-class}}
 object (\code{\link{Step-class}} based) scalar for downstream analysis.
 }
 \description{
-User provide region through a BED file.
-This function will provide tissue's open conservation analysis for these region.
+When user call all steps in the pipeline, the final report can be generated.
 }
 \details{
-We collected 201 DNase-seq or ATAC-seq sample from ENCODE and calculate their open level value.
-They can be download and install automatically. So users do not need to configure themselves.
+The report is HTML format. All link in HTML file is the relative directory
+in report step folder and other step folder
+If user want to move HTML file and keep all link access available,
+they should move the whole pipeline folder at the same time.
 }
 \seealso{
 \code{\link{unzipAndMergeBed}}

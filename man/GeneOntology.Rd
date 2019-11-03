@@ -6,7 +6,7 @@
 \alias{enrichGeneOntology,Step-method}
 \alias{enrichGeneOntology}
 \alias{geneOntology}
-\title{Connect regions with their target genes}
+\title{Gene ontology enrichment analysis for provided gene list}
 \usage{
 enrichGeneOntology(prevStep, inputTxt = NULL, outputTxt = NULL,
   outputPdf = NULL, orgDb = NULL, keyType = "SYMBOL", ...)
@@ -20,32 +20,28 @@ geneOntology(inputTxt, outputTxt = NULL, outputPdf = NULL,
 }
 \arguments{
 \item{prevStep}{\code{\link{Step-class}} object scalar.
-It needs to be the return value of upstream process from
-\code{\link{genBackground}} or \code{\link{enrichGenBackground}}
-when it is not used in a pipeline.  If it is used in a pipeline or
-\code{\%>\%} is applied on this function, any steps in this package
-is acceptable.}
+This parameter is available when the upstream step function
+(printMap() to see the previous functions)
+have been sucessfully called.
+Accepted value can be the object return by any step function or be feed by
+\code{\%>\%} from last step function.}
 
 \item{inputTxt}{\code{Character} scalar.
-The BED file directory of foreground regions.}
+Gene list text file. All gene names are in one column.}
 
 \item{outputTxt}{\code{Character} scalar.
-The BED file directory of background regions.}
+Gene ontology enrichment analysis result table.
+Each row contain one gene ontology information.}
 
 \item{outputPdf}{\code{Character} scalar.
-The BED file directory of target genes connecting with foreground regions,
-which are derived from PECA model.
-Default: NULL (generated base on inputForegroundBed)}
+Gene ontology enrichment analysis result figure.
+It contains gene ontology network.}
 
 \item{orgDb}{\code{Character} scalar.
-The BED file directory of target genes connecting with background regions,
-which are derived from PECA model.
-Default: NULL (generated base on inputBackgroundBed)}
+Bioconductor OrgDb object name for gene ontology enrichment analysis.}
 
 \item{keyType}{\code{Character} scalar.
-The BED file directory of target genes which are predicted from PECA.
-Default: NULL (e.g. after \code{library (enrichTF)}, you can call
-function \code{setGenome("hg19")})}
+Gene name type include "SYMBOL" and "ENSEMBLE"}
 
 \item{...}{Additional arguments, currently unused.}
 }
@@ -54,12 +50,11 @@ An invisible \code{\link{EnrichStep-class}} object
 (\code{\link{Step-class}} based) scalar for downstream analysis.
 }
 \description{
-Connect foreground and background regions to their target genes,
-which is predicted from PECA model.
+User provide target gene list of forground region.
+This function will call function for gene ontology enrichment analysis
 }
 \details{
-Connect foreground and background regions to target genes,
-which are predicted from PECA.
+Currently, this function call enrichGO from package clusterProfiler to implement this funtion.
 }
 \examples{
 
@@ -68,9 +63,8 @@ geneOntology(inputTxt = genelist.txt, orgDb = "org.Hs.eg.db")
 
 }
 \seealso{
-\code{\link{genBackground}}
-\code{\link{findMotifsInRegions}}
-\code{\link{tfsEnrichInRegions}}
+\code{\link{regionConnectTargetGene}}
+\code{\link{enrichRegionConnectTargetGene}}
 }
 \author{
 Zheng Wei
