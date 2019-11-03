@@ -31,11 +31,6 @@ This function will provide tissue's open conservation analysis for these region.
 We collected 201 DNase-seq or ATAC-seq sample from ENCODE and calculate their open level value.
 They can be download and install automatically. So users do not need to configure themselves.
 }
-\examples{
-foregroundBedPath <- system.file(package = "enrichTF", "extdata","testregion.bed.gz")
-rs <- unzipAndMergeBed(bedInput = foregroundBedPath) \%>\%
-         enrichTissueOpennessSpecificity
-}
 \seealso{
 \code{\link{unzipAndMergeBed}}
 }

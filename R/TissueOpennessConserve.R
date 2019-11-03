@@ -54,11 +54,14 @@ setMethod(
 
 
 #' @importFrom ggplot2 ylab
-
+#' @importFrom grDevices pdf
+#' @importFrom grDevices dev.off
+#' @importFrom stats median
+#'
 setMethod(
     f = "processing",
     signature = "TissueOpennessConserve",
-    definition = function(.Object,...){
+    definition = function(.Object, ...){
         bedInput <- getParam(.Object,"bedInput")
         bedOutput <- getParam(.Object,"bedOutput")
         openConserveBedInput <-getParam(.Object,"openConserveBedInput")

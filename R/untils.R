@@ -2,6 +2,7 @@
 #' @importFrom pipeFrame getRefRc
 #' @importFrom pipeFrame checkAndInstallBSgenome
 #' @importFrom pipeFrame checkAndInstallGenomeFa
+#' @importFrom pipeFrame checkAndInstallOrgDb
 #' @importFrom pipeFrame getRefFiles
 #' @importFrom BSgenome getBSgenome
 #' @importFrom utils download.file

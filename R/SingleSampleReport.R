@@ -22,6 +22,7 @@ setMethod(
 )
 
 #' @importFrom rmarkdown render
+#' @importFrom pipeFrame stepType
 
 setMethod(
     f = "processing",
@@ -88,11 +89,6 @@ setMethod(
 #' @seealso
 #' \code{\link{unzipAndMergeBed}}
 
-
-#' @examples
-#' foregroundBedPath <- system.file(package = "enrichTF", "extdata","testregion.bed.gz")
-#' rs <- unzipAndMergeBed(bedInput = foregroundBedPath) %>%
-#'          enrichTissueOpennessSpecificity
 
 
 setGeneric("enrichSingleSampleReport",

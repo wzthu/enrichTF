@@ -3,6 +3,9 @@
 #' @importFrom stats fisher.test p.adjust t.test
 #' @importFrom S4Vectors second<- first<-
 #' @importFrom rtracklayer export.bed
+#' @importFrom GenomeInfoDb seqnames
+#' @importFrom BiocGenerics strand<-
+#' @importFrom BiocGenerics strand
 setClass(Class = "FindMotifsInRegions",
          contains = "EnrichStep"
 )
