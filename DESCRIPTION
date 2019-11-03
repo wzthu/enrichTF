@@ -42,7 +42,8 @@ Imports:
     heatmap3,
     ggplot2,
     clusterProfiler,
-    rmarkdown
+    rmarkdown,
+    grDevices
 Suggests:
     knitr,
     magrittr,

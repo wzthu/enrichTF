@@ -164,7 +164,7 @@ The original region - target gene BED file can be downloaded [here](regionli.bed
 
 stepRegionConnectTargetGene <-prevSteps[["RegionConnectTargetGene"]]
 
-tg<-read.table(output(stepRegionConnectTargetGene)$outputForegroundBed,header=F,sep = "\t")
+tg<-read.table(output(stepRegionConnectTargetGene)$outputForegroundBed,header=FALSE,sep = "\t")
 
 genecounts <- table(tg$V6)
 
