@@ -21,11 +21,11 @@ tissueOpennessConserve(bedInput, openConserveBedInput = NULL,
 }
 \arguments{
 \item{prevStep}{\code{\link{Step-class}} object scalar.
-It needs to be the return value of upstream process from
-\code{\link{unzipAndMergeBed}} or \code{\link{enrichUnzipAndMergeBed}}
-when it is not used in a pipeline.  If it is used in a pipeline or
-\code{\%>\%} is applied on this function, any steps in this package
-is acceptable.}
+This parameter is available when the upstream step function
+(printMap() to see the previous functions)
+have been sucessfully called.
+Accepted value can be the object return by any step function or be feed by
+\code{\%>\%} from last step function.}
 
 \item{bedInput}{\code{Character} scalar.
 The directory of region BED file for analysis.}

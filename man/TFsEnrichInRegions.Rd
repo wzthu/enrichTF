@@ -8,13 +8,13 @@
 \alias{tfsEnrichInRegions}
 \title{Test each TF is enriched in regions or not}
 \usage{
-enrichTFsEnrichInRegions(enrichStep, inputRegionBed = NULL,
+enrichTFsEnrichInRegions(prevStep, inputRegionBed = NULL,
   inputForegroundGeneBed = NULL, inputBackgroundGeneBed = NULL,
   inputRegionMotifBed = NULL, outputTFsEnrichTxt = NULL,
   inputMotifWeights = NULL, inputTFgeneRelMtx = NULL,
   inputMotifTFTable = NULL, ...)
 
-\S4method{enrichTFsEnrichInRegions}{Step}(enrichStep,
+\S4method{enrichTFsEnrichInRegions}{Step}(prevStep,
   inputRegionBed = NULL, inputForegroundGeneBed = NULL,
   inputBackgroundGeneBed = NULL, inputRegionMotifBed = NULL,
   outputTFsEnrichTxt = NULL, inputMotifWeights = NULL,
@@ -26,14 +26,12 @@ tfsEnrichInRegions(inputRegionBed, inputForegroundGeneBed,
   inputMotifTFTable = NULL, ...)
 }
 \arguments{
-\item{enrichStep}{\code{\link{Step-class}} object scalar.
-It has to be the return value of upstream process from
-\code{\link{regionConnectTargetGene}}, \code{\link{regionConnectTargetGene}},
-\code{\link{findMotifsInRegions}} or
-\code{\link{enrichFindMotifsInRegions}},
-If it is used in a pipeline or
-\code{\%>\%} is applied on this function, any steps in this
-package is acceptable.}
+\item{prevStep}{\code{\link{Step-class}} object scalar.
+This parameter is available when the upstream step function
+(printMap() to see the previous functions)
+have been sucessfully called.
+Accepted value can be the object return by any step function or be feed by
+\code{\%>\%} from last step function.}
 
 \item{inputRegionBed}{\code{Character} scalar.
 Directory of Regions BED file  including foreground and background}
