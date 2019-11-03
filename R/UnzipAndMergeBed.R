@@ -39,6 +39,7 @@ setMethod(
 #' @importFrom R.utils isGzipped
 #' @importFrom R.utils bunzip2
 #' @importFrom R.utils gunzip
+#' @importFrom BiocGenerics score<-
 
 setGeneric(
     name = "decompressBed",
