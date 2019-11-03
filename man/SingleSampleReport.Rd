@@ -13,6 +13,9 @@ enrichSingleSampleReport(prevStep, htmlOutput = NULL, ...)
   ...)
 }
 \arguments{
+\item{prevStep}{\code{\link{Step-class}} object scalar.
+Any steps object in this package is acceptable when the pipeline is ready.}
+
 \item{htmlOutput}{\code{Character} scalar.
 The BED output file directory of merged BED files.
 Default: NULL (generated base on bedInput)}

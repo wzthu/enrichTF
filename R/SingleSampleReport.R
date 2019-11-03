@@ -76,6 +76,8 @@ setMethod(
 #' @description
 #' User provide region through a BED file.
 #' This function will provide tissue's open conservation analysis for these region.
+#' @param prevStep \code{\link{Step-class}} object scalar.
+#' Any steps object in this package is acceptable when the pipeline is ready.
 #' @param htmlOutput \code{Character} scalar.
 #' The BED output file directory of merged BED files.
 #' Default: NULL (generated base on bedInput)
