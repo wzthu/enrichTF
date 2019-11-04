@@ -47,7 +47,8 @@ Imports:
 Suggests:
     knitr,
     magrittr,
-    testthat
+    testthat,
+    webshot
 Collate: 
     EnrichStep.R 
     ConnectTargetGene.R
