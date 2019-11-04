@@ -51,12 +51,12 @@ setMethod(
 
         if(motifRc == "integrate"){
 
-            input(.Object)$pwmObj <- get(load(getRefFiles("motifPWMOBJ")))
+            param(.Object)$pwmObj <- get(load(getRefFiles("motifPWMOBJ")))
         }else if(motifRc == "jarspar"){
-            input(.Object)$pwmObj <- JASPAR2018::JASPAR2018
+            param(.Object)$pwmObj <- JASPAR2018::JASPAR2018
 
         }else if(motifRc == "pwmfile"){
-            input(.Object)$pwmObj <- getMotifInfo1(inputPwmFile)
+            param(.Object)$pwmObj <- getMotifInfo1(inputPwmFile)
         }
 
 
