@@ -82,24 +82,6 @@ setMethod(
     }
 )
 
-setMethod(
-    f = "checkRequireParam",
-    signature = "GeneOntology",
-    definition = function(.Object,...){
-
-    }
-)
-
-
-
-setMethod(
-    f = "checkAllPath",
-    signature = "GeneOntology",
-    definition = function(.Object,...){
-
-
-    }
-)
 
 
 #' @name GeneOntology

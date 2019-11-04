@@ -165,31 +165,7 @@ setMethod(
     }
 )
 
-setMethod(
-    f = "checkRequireParam",
-    signature = "RegionConnectTargetGene",
-    definition = function(.Object,...){
-        if(is.null(.Object$inputForegroundBed)){
-            stop("inputForegroundBed is required.")
-        }
-        if(is.null(.Object$inputBackgroundBed)){
-            stop("inputBackgroundBed is required.")
-        }
 
-    }
-)
-
-
-
-setMethod(
-    f = "checkAllPath",
-    signature = "RegionConnectTargetGene",
-    definition = function(.Object,...){
-        checkFileExist(.Object$inputForegroundBed)
-        checkFileExist(.Object$inputBackgroundBed)
-
-    }
-)
 
 
 #' @name RegionConnectTargetGene

@@ -96,27 +96,6 @@ setMethod(
     }
 )
 
-setMethod(
-    f = "checkRequireParam",
-    signature = "UnzipAndMergeBed",
-    definition = function(.Object,...){
-        if(is.null(input(.Object)[["bedInput"]])){
-            stop("bedInput is required.")
-        }
-    }
-)
-
-
-
-setMethod(
-    f = "checkAllPath",
-    signature = "UnzipAndMergeBed",
-    definition = function(.Object,...){
-        checkFileExist(input(.Object)[["bedInput"]]);
-
-    }
-)
-
 
 #' @name UnzipAndMergeBed
 #' @importFrom rtracklayer import

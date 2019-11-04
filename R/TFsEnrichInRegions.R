@@ -316,39 +316,6 @@ setMethod(
     }
 )
 
-setMethod(
-    f = "checkRequireParam",
-    signature = "TFsEnrichInRegions",
-    definition = function(.Object,...){
-        if(is.null(.Object$inputList[["inputRegionBed"]])){
-            stop("inputRegionBed is required.")
-        }
-        if(is.null(.Object$inputList[["inputForegroundGeneBed"]])){
-            stop("inputForegroundGeneBed is required.")
-        }
-        if(is.null(.Object$inputList[["inputBackgroundGeneBed"]])){
-            stop("inputBackgroundGeneBed is required.")
-        }
-        if(is.null(.Object$inputList[["inputRegionMotifBed"]])){
-            stop("inputRegionMotifBed is required.")
-        }
-
-    }
-)
-
-
-
-setMethod(
-    f = "checkAllPath",
-    signature = "TFsEnrichInRegions",
-    definition = function(.Object,...){
-        checkFileExist(.Object$inputList[["inputRegionBed"]])
-        checkFileExist(.Object$inputList[["inputForegroundGeneBed"]])
-        checkFileExist(.Object$inputList[["inputBackgroundGeneBed"]])
-        checkFileExist(.Object$inputList[["inputRegionMotifBed"]])
-
-    }
-)
 
 
 
