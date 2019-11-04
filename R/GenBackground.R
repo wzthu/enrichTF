@@ -171,26 +171,6 @@ setMethod(
     }
 )
 
-setMethod(
-    f = "checkRequireParam",
-    signature = "GenBackground",
-    definition = function(.Object,...){
-        if(is.null(input(.Object)[["inputForegroundBed"]])){
-            stop("inputForegroundBed is required.")
-        }
-    }
-)
-
-
-
-setMethod(
-    f = "checkAllPath",
-    signature = "GenBackground",
-    definition = function(.Object,...){
-        checkFileExist(input(.Object)[["inputForegroundBed"]]);
-
-    }
-)
 
 
 #' @name GenBackground

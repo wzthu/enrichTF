@@ -270,29 +270,6 @@ setMethod(
     }
 )
 
-setMethod(
-    f = "checkRequireParam",
-    signature = "FindMotifsInRegions",
-    definition = function(.Object,...){
-        if(is.null(.Object$inputList[["inputRegionBed"]])){
-            stop("inputRegionBed is required.")
-        }
-
-    }
-)
-
-
-
-setMethod(
-    f = "checkAllPath",
-    signature = "FindMotifsInRegions",
-    definition = function(.Object,...){
-        checkFileExist(.Object$inputList[["inputRegionBed"]])
-
-    }
-)
-
-
 
 #' @name MotifsInRegions
 #' @importFrom motifmatchr matchMotifs

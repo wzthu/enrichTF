@@ -49,25 +49,6 @@ setMethod(
     }
 )
 
-setMethod(
-    f = "checkRequireParam",
-    signature = "SingleSampleReport",
-    definition = function(.Object,...){
-
-    }
-)
-
-
-
-setMethod(
-    f = "checkAllPath",
-    signature = "SingleSampleReport",
-    definition = function(.Object,...){
-
-
-    }
-)
-
 
 #' @name SingleSampleReport
 #' @importFrom rtracklayer import
