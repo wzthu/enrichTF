@@ -55,6 +55,7 @@ PECA_TF_enrich <- function(inputForegroundBed, genome, threads = 2,pipeName = "p
 
 #' @importFrom magrittr '%>%'
 #' @importFrom pipeFrame getObjsInPipe
+#' @importFrom pipeFrame setPipeName
 
 
 
