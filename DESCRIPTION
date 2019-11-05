@@ -43,10 +43,10 @@ Imports:
     ggplot2,
     clusterProfiler,
     rmarkdown,
-    grDevices
+    grDevices,
+    magrittr
 Suggests:
     knitr,
-    magrittr,
     testthat,
     webshot
 Collate: 
