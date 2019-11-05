@@ -39,10 +39,17 @@ setMethod(
 
         reportmkd <- getStepWorkDir(.Object = .Object, filename = "Report.Rmd")
 
+        reportmkd1 <- getStepWorkDir(.Object = .Object, filename = "Report.code.Rmd")
+
         file.copy(from = system.file(package = "enrichTF", "extdata","Report.Rmd"),
                   to = reportmkd,overwrite = TRUE)
 
-        render(reportmkd)
+        file.copy(from = system.file(package = "enrichTF", "extdata","Report.code.Rmd"),
+                  to = reportmkd1,overwrite = TRUE)
+
+        render(reportmkd, quiet = TRUE)
+
+        render(reportmkd1, quiet = TRUE)
 
 
         .Object
