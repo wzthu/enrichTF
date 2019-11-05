@@ -12,7 +12,7 @@ output:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE,message = FALSE,warning = FALSE)
+knitr::opts_chunk$set(echo = TRUE,message = FALSE,warning = FALSE)
 ```
 
 ```{r}
@@ -22,8 +22,6 @@ library(ggplot2)
 library(ggpubr)
 objname <- load("PrevSteps.Rdata")
 ```
-
-Click [here]("Report.code.html") to see all original code for generating this report.
 
 # Regions Information
 
