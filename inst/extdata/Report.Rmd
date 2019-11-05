@@ -126,16 +126,21 @@ do.call(what = ggarrange,args = plt)
 
 Heatmap of region and tissue
 
-```{r}
+```{r echo=FALSE, eval=FALSE}
 load(output(stepTissueOpennessSpecificity)$heatmapDataOutput)
 
 library(heatmap3)
-p<-png("heatmap.png")
+p<-pdf("heatmap.png")
 heatmap3(heatmapData, useRaster = TRUE)
 dev.off()
 ```
 
-![](heatmap.png)
+```{r}
+file.copy(from = output(stepTissueOpennessSpecificity)$distPdfOutput, to = "heatmap.pdf")
+
+```
+
+[Click to Show Large Heatmap]("heatmap.pdf")
 
 
 ## Conservation
