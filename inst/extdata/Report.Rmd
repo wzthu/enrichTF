@@ -23,7 +23,7 @@ library(ggpubr)
 objname <- load("PrevSteps.Rdata")
 ```
 
-Click [here]("Report.code.html") to see all original code for generating this report.
+Click [here](Report.code.html) to see all original code for generating this report.
 
 # Regions Information
 
@@ -142,7 +142,7 @@ file.copy(from = output(stepTissueOpennessSpecificity)$distPdfOutput, to = "heat
 
 ```
 
-[Click to Show Large Heatmap]("heatmap.pdf")
+[Click to Show Large Heatmap](heatmap.pdf)
 
 
 ## Conservation
