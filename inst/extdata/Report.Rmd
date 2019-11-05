@@ -39,7 +39,7 @@ genome <- "hg19" #property(stepUnzipAndMergeBed)[["genome"]]
 outputGrange <- import.bed(bedOutput)
 ```
 
-Total `r length(outputGrange)` from `r length(bedInput)` BED file(s) of `r genome`. 
+Total `r length(outputGrange)` regions from `r length(bedInput)` BED file(s) of `r genome`. 
 
 ```{r}
 knitr::kable(data.frame(Directory=bedInput,Regions=sapply(bedInput, function(x){length(readLines(x))})))
