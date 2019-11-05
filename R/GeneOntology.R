@@ -76,7 +76,7 @@ setMethod(
                                        OrgDb = orgDb,
                                        keyType   = keyType)
 
-        write.table(ego@result, file = outputTxt, sep='\t', col.names = FALSE, row.names = FALSE, quote = FALSE)
+        write.table(ego@result, file = outputTxt, sep='\t', col.names = TRUE, row.names = FALSE, quote = FALSE)
         file.create(outputPdf)
         .Object
     }
