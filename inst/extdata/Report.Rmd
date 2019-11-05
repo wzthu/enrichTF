@@ -227,10 +227,10 @@ knitr::kable(peca[1:20,])
 
 
 ```{r }
-library(org.Hs.eg.db)
-library(clusterProfiler)
-ego<-clusterProfiler::enrichGO(gene = df$gene, OrgDb = org.Hs.eg.db,keyType   = 'SYMBOL')
-knitr::kable(ego@result[1:20,2:7])
+
+stepGeneOntology <- prevSteps[["GeneOntology"]]
+df <- read.table(output(stepGeneOntology)$outputTxt,sep="\t",header = TRUE)
+knitr::kable(df)
 ```
 
 
