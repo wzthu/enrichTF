@@ -12,7 +12,7 @@ setMethod(
 
 
         if(is.null(htmlOutput)){
-            output(.Object)$htmlOutput <- getStepWorkDir(.Object, filename = "report.html")
+            output(.Object)$htmlOutput <- getStepWorkDir(.Object, filename = "Report.html")
         }else{
             output(.Object)$htmlOutput <- htmlOutput
         }
