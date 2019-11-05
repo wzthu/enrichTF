@@ -73,7 +73,8 @@ GeneReguPipe <- function(inputForegroundBed, genome, threads = 2, pipeName = "pi
         enrichRegionConnectTargetGene(...) %>%
         enrichFindMotifsInRegions(motifRc="integrate",...) %>%
         enrichTFsEnrichInRegions(...) %>%
-        enrichGenBackground(...)
+        enrichGeneOntology(...)%>%
+        enrichSingleSampleReport(...)
     invisible(getObjsInPipe(pipeName))
 }
 
