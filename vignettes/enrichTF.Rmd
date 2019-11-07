@@ -58,7 +58,7 @@ All required data and software will be installed automatically.
 # Provide your region list in BED format with 3 columns.
 foregroundBedPath <- system.file(package = "enrichTF", "extdata","testregion.bed")
 # Call the whole pipeline
-PECA_TF_enrich(inputForegroundBed = foregroundBedPath, genome = "testgenome") # change"testgenome" to one of "hg19", "hg38", "mm9", 'mm10' ! "testgenome" is only a test example.
+PECA_TF_enrich(inputForegroundBed = foregroundBedPath, genome = "testgenome",threads=1) # change"testgenome" to one of "hg19", "hg38", "mm9", 'mm10' ! "testgenome" is only a test example.
 ```
 
 
