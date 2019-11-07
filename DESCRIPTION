@@ -1,7 +1,7 @@
 Package: enrichTF
 Type: Package
 Title: Transcription Factors Enrichment Analysis
-Version: 1.2.1
+Version: 1.2.2
 Author: Zheng Wei, Zhana Duren, Shining Ma
 Maintainer: Zheng Wei <wzwz@stanford.edu>
 Description: As transcription factors (TFs) 
