@@ -12,16 +12,18 @@
 enrichFindMotifsInRegions(prevStep, inputRegionBed = NULL,
   outputRegionMotifBed = NULL, motifRc = c("integrate", "jaspar",
   "pwmfile"), inputPwmFile = getRefFiles("motifpwm"),
-  genome = getGenome(), ...)
+  genome = getGenome(), threads = getThreads(), ...)
 
 \S4method{enrichFindMotifsInRegions}{Step}(prevStep,
   inputRegionBed = NULL, outputRegionMotifBed = NULL,
   motifRc = c("integrate", "jaspar", "pwmfile"),
-  inputPwmFile = getRefFiles("motifpwm"), genome = getGenome(), ...)
+  inputPwmFile = getRefFiles("motifpwm"), genome = getGenome(),
+  threads = getThreads(), ...)
 
 findMotifsInRegions(inputRegionBed, outputRegionMotifBed = NULL,
   motifRc = c("integrate", "jaspar", "pwmfile"),
-  inputPwmFile = getRefFiles("motifpwm"), genome = getGenome(), ...)
+  inputPwmFile = getRefFiles("motifpwm"), genome = getGenome(),
+  threads = getThreads(), ...)
 }
 \arguments{
 \item{prevStep}{\code{\link{Step-class}} object scalar.
@@ -53,6 +55,10 @@ when "pwmfile" is set for motifRc, use this argument to provide
 Bioconductor supported genome, such as "hg19", "mm10", etc.
 Default: NULL (e.g. after \code{library (enrichTF)},
 you can call function \code{setGenome("hg19")})}
+
+\item{threads}{\code{Integer} scalar.
+The maximum threads that will be used in this step.
+Default: getThreads()}
 
 \item{...}{Additional arguments, currently unused.}
 }
