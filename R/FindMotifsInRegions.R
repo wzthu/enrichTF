@@ -71,7 +71,7 @@ setMethod(
             param(.Object)$genome <- "hg19"
         }
         if(is.null(threads)){
-            param(.Object)$threads <- getThread
+            param(.Object)$threads <- getThreads()
         }else{
             param(.Object)$threads <- threads
         }
