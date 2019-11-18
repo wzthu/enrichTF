@@ -203,6 +203,7 @@ setMethod(
 
         }else{
             motif_ix <- NULL
+            osname <- get_os()
             if(osname == "osx" || osname == "linux"){
                 motif_ix <-
                     parallel::mclapply(pwmObj,
