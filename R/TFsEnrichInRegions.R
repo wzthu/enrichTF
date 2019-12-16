@@ -317,6 +317,15 @@ setMethod(
 )
 
 
+setMethod(
+    f = "genReport",
+    signature = "TFsEnrichInRegions",
+    definition = function(.Object, ...){
+        .Object
+    }
+)
+
+
 
 
 #' @name TFsEnrichInRegions

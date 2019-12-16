@@ -291,6 +291,15 @@ setMethod(
 )
 
 
+setMethod(
+    f = "genReport",
+    signature = "MotifsInRegions",
+    definition = function(.Object, ...){
+        .Object
+    }
+)
+
+
 #' @name MotifsInRegions
 #' @importFrom motifmatchr matchMotifs
 #' @importFrom JASPAR2018 JASPAR2018

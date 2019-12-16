@@ -187,6 +187,16 @@ setMethod(
 )
 
 
+
+setMethod(
+    f = "genReport",
+    signature = "TissueOpennessSpecificity",
+    definition = function(.Object, ...){
+        .Object
+    }
+)
+
+
 #' @name TissueOpennessSpecificity
 #' @importFrom rtracklayer import
 #' @importFrom rtracklayer import.bed

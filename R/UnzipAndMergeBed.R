@@ -97,6 +97,15 @@ setMethod(
 )
 
 
+
+setMethod(
+    f = "genReport",
+    signature = "UnzipAndMergeBed",
+    definition = function(.Object, ...){
+        .Object
+    }
+)
+
 #' @name UnzipAndMergeBed
 #' @importFrom rtracklayer import
 #' @importFrom rtracklayer import.bed

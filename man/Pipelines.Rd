@@ -6,11 +6,9 @@
 \alias{GeneReguPipe}
 \title{ready-to-use pipelines}
 \usage{
-PECA_TF_enrich(inputForegroundBed, genome, threads = 2,
-  pipeName = "pipe", ...)
+PECA_TF_enrich(inputForegroundBed, genome, threads = 2, pipeName = "pipe", ...)
 
-GeneReguPipe(inputForegroundBed, genome, threads = 2,
-  pipeName = "pipe", ...)
+GeneReguPipe(inputForegroundBed, genome, threads = 2, pipeName = "pipe", ...)
 }
 \arguments{
 \item{inputForegroundBed}{\code{Character} scalar.

@@ -84,6 +84,15 @@ setMethod(
 
 
 
+setMethod(
+    f = "genReport",
+    signature = "GeneOntology",
+    definition = function(.Object, ...){
+        .Object
+    }
+)
+
+
 #' @name GeneOntology
 #' @importFrom TFBSTools getMatrixSet
 #' @importFrom TFBSTools PFMatrixList

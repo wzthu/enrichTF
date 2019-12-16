@@ -169,6 +169,8 @@ checkAndInstallHOMER <- function(refFilePath){
             stopifnot(0==system(paste("curl http://homer.ucsd.edu/homer/configureHomer.pl > ",installFilePath)))
             stopifnot(0==system(paste("perl ",installFilePath," -install")))
             stopifnot(0==system(paste("perl ",installFilePath," -install", genome)))
+        }else{
+            dir.create(refFilePath)
         }
     }
 }

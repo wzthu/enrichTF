@@ -172,6 +172,15 @@ setMethod(
 )
 
 
+setMethod(
+    f = "genReport",
+    signature = "GenBackground",
+    definition = function(.Object, ...){
+        .Object
+    }
+)
+
+
 
 #' @name GenBackground
 #' @importFrom rtracklayer import

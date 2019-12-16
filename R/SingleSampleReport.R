@@ -57,6 +57,15 @@ setMethod(
 )
 
 
+
+setMethod(
+    f = "genReport",
+    signature = "SingleSampleReport",
+    definition = function(.Object, ...){
+        .Object
+    }
+)
+
 #' @name SingleSampleReport
 #' @importFrom rtracklayer import
 #' @importFrom rtracklayer import.bed

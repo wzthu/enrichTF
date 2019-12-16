@@ -166,6 +166,15 @@ setMethod(
 )
 
 
+setMethod(
+    f = "genReport",
+    signature = "RegionConnectTargetGene",
+    definition = function(.Object, ...){
+        .Object
+    }
+)
+
+
 
 
 #' @name RegionConnectTargetGene
