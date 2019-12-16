@@ -293,7 +293,7 @@ setMethod(
 
 setMethod(
     f = "genReport",
-    signature = "MotifsInRegions",
+    signature = "FindMotifsInRegions",
     definition = function(.Object, ...){
         .Object
     }
