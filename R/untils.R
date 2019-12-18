@@ -8,6 +8,7 @@
 #' @importFrom utils download.file
 #' @importFrom R.utils gunzip
 #' @importFrom pipeFrame input "input<-" output "output<-" "param" "param<-"
+#' @importFrom pipeFrame "property" "property<-" "report" "report<-"
 
 
 downloadAndGunzip <- function(urlplaceholder,refFilePath){
