@@ -277,9 +277,11 @@ setMethod(
 
             pValue[i,3] <- min(pvalueOfFisher1)
             },error = function(e){
-                writeLog(.Object,as.character(e))
+#                writeLog(.Object,as.character(e))
+#                writeLog(.Object,paste0("error",i))
+                print(paste0("error",i))
             })
-            writeLog(.Object,as.character(i))
+#            writeLog(.Object,as.character(i))
             return(pValue[i,])
 
         }
