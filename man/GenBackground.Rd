@@ -11,6 +11,7 @@ foreground regions}
 enrichGenBackground(
   prevStep,
   inputForegroundBed = NULL,
+  inputBackgroundBed = NULL,
   genome = NULL,
   outputForegroundBed = NULL,
   outputBackgroundBed = NULL,
@@ -23,6 +24,7 @@ enrichGenBackground(
 \S4method{enrichGenBackground}{Step}(
   prevStep,
   inputForegroundBed = NULL,
+  inputBackgroundBed = NULL,
   genome = NULL,
   outputForegroundBed = NULL,
   outputBackgroundBed = NULL,
@@ -34,6 +36,7 @@ enrichGenBackground(
 
 genBackground(
   inputForegroundBed,
+  inputBackgroundBed = NULL,
   genome = NULL,
   outputForegroundBed = NULL,
   outputBackgroundBed = NULL,
@@ -50,6 +53,10 @@ from other packages, such as esATAC.}
 
 \item{inputForegroundBed}{\code{Character} scalar.
 The directory of foreground BED file.}
+
+\item{inputBackgroundBed}{\code{Character} scalar.
+The directory of backgroud BED file.
+Default: NULL to generate random region from genome.}
 
 \item{genome}{\code{Character} scalar.
 Bioconductor supported genome such as "hg19", "mm10", etc.

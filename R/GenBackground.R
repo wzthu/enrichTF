@@ -12,6 +12,7 @@ setMethod(
     definition = function(.Object,prevSteps = list(),...){
         allparam <- list(...)
         inputForegroundBed <- allparam[["inputForegroundBed"]]
+        param(.Object)$inputBackgroundBed <- allparam[["inputBackgroundBed"]]
         genome <- allparam[["genome"]]
         outputForegroundBed <- allparam[["outputForegroundBed"]]
         outputBackgroundBed <- allparam[["outputBackgroundBed"]]
@@ -101,41 +102,72 @@ setMethod(
 #     return(sort(gr,ignore.strand=TRUE))
 # }
 
-randomSampleOnGenome<-function(regionLen, sampleNumber,bsgenome){
-    chrlens <-seqlengths(bsgenome)
-    if(getGenome() == "testgenome"){
-        chrlens<-chrlens['chr1']
-    }
-    selchr <- grep("_|M",names(chrlens),invert=TRUE)
-    chrlens <- chrlens[selchr]
-    startchrlens <- chrlens - regionLen
-    spchrs <- sample(x = names(startchrlens),size =  sampleNumber,
-                     replace = TRUE, prob = startchrlens / sum(startchrlens))
-    #gr <- GRanges()
-    # for(chr in names(startchrlens)){
-    #     if(sum(spchrs == chr) == 0){
-    #         next
-    #     }
-    #     startpt <- sample(x = 1:startchrlens[chr],size = sum(spchrs == chr),replace = FALSE)
-    #     #non overlapped method:
-    #     #startpt <- sample(x = 1:(startchrlens[chr] - sum(spchrs == chr) * regionLen),size = sum(spchrs == chr),replace = FALSE)
-    #     #startpt <- startpt + 0:(sum(spchrs == chr)-1) * regionLen
-    #     gr <- c(gr,GRanges(seqnames = chr, ranges = IRanges(start = startpt, width = 1000)))
-    # }
-    gr <- lapply(names(startchrlens), function(chr){
-        if(sum(spchrs == chr) == 0){
-            return(NULL)
+randomSampleOnGenome<-function(regionLen, sampleNumber,bsgenome,bgbed = NULL){
+    if(is.null(bgbed)){
+        chrlens <-seqlengths(bsgenome)
+        if(getGenome() == "testgenome"){
+            chrlens<-chrlens['chr1']
         }
-        startpt <- sample(x = seq_len(startchrlens[chr]),
-                          size = sum(spchrs == chr),replace = FALSE)
-        #non overlapped method:
-        #startpt <- sample(x = 1:(startchrlens[chr] - sum(spchrs == chr) * regionLen),size = sum(spchrs == chr),replace = FALSE)
-        #startpt <- startpt + 0:(sum(spchrs == chr)-1) * regionLen
-        return(GRanges(seqnames = chr,
-                       ranges = IRanges(start = startpt, width = 1000)))
-    })
-    gr <- do.call("c",gr)
-    return(sort(gr,ignore.strand=TRUE))
+        selchr <- grep("_|M",names(chrlens),invert=TRUE)
+        chrlens <- chrlens[selchr]
+        startchrlens <- chrlens - regionLen
+        spchrs <- sample(x = names(startchrlens),size =  sampleNumber,
+                         replace = TRUE, prob = startchrlens / sum(startchrlens))
+        #gr <- GRanges()
+        # for(chr in names(startchrlens)){
+        #     if(sum(spchrs == chr) == 0){
+        #         next
+        #     }
+        #     startpt <- sample(x = 1:startchrlens[chr],size = sum(spchrs == chr),replace = FALSE)
+        #     #non overlapped method:
+        #     #startpt <- sample(x = 1:(startchrlens[chr] - sum(spchrs == chr) * regionLen),size = sum(spchrs == chr),replace = FALSE)
+        #     #startpt <- startpt + 0:(sum(spchrs == chr)-1) * regionLen
+        #     gr <- c(gr,GRanges(seqnames = chr, ranges = IRanges(start = startpt, width = 1000)))
+        # }
+        gr <- lapply(names(startchrlens), function(chr){
+            if(sum(spchrs == chr) == 0){
+                return(NULL)
+            }
+            startpt <- sample(x = seq_len(startchrlens[chr]),
+                              size = sum(spchrs == chr),replace = FALSE)
+            #non overlapped method:
+            #startpt <- sample(x = 1:(startchrlens[chr] - sum(spchrs == chr) * regionLen),size = sum(spchrs == chr),replace = FALSE)
+            #startpt <- startpt + 0:(sum(spchrs == chr)-1) * regionLen
+            return(GRanges(seqnames = chr,
+                           ranges = IRanges(start = startpt, width = regionLen)))
+        })
+        gr <- do.call("c",gr)
+        return(sort(gr,ignore.strand=TRUE))
+    }else{
+        bgbed <- import.bed(bgbed)
+        w <- width(bgbed)
+        w <- w/sum(w)
+        idx <- sample(1:length(bgbed), size = sampleNumber, prob = w, replace = TRUE)
+        tb<-as.data.frame(table(idx))
+
+        moresel <- tb[tb[,2]>1,]
+        lesssel <- as.integer(as.character(tb[tb[,2]==1,1]))
+
+        lst <- lapply(1:nrow(moresel), function(x){
+            i <- as.integer(as.character(moresel[x,1]))
+            nb <- as.integer(moresel[x,2])
+            print(nb)
+            chr <- as.character(seqnames(bgbed[i]))
+            st <- start(bgbed[i]) - regionLen
+            ed <- end(bgbed[i])
+            sts <-sample(st:ed, size = nb, replace = TRUE)
+            return(GRanges(seqnames=Rle(chr, nb), IRanges(sts, width=regionLen)))
+        })
+        moregr <- do.call(c,lst)
+        lessgr <- bgbed[lesssel]
+        middle <- round((start(lessgr) + end(lessgr))/2)
+        start(lessgr) <- middle - round(regionLen/2)
+        end(lessgr) <- middle + round(regionLen/2)-1
+        gr <-  c(moregr, lessgr)
+        score(gr) <- NULL
+        mcols(gr)$name <-NULL
+        return(sort(gr,ignore.strand=TRUE))
+    }
 }
 
 setMethod(
@@ -143,6 +175,7 @@ setMethod(
     signature = "GenBackground",
     definition = function(.Object,...){
         inputForegroundBed <- getParam(.Object,"inputForegroundBed")
+        inputBackgroundBed <- getParam(.Object,"inputBackgroundBed")
         bsgenome <- getParam(.Object,"bsgenome")
         outputForegroundBed <- getParam(.Object,"outputForegroundBed")
         outputBackgroundBed <- getParam(.Object,"outputBackgroundBed")
@@ -160,7 +193,7 @@ setMethod(
         if(sampleNumb == 0){
             sampleNumb = length(foregroundgr)
         }
-        backgroundgr <- randomSampleOnGenome(regionLen, sampleNumb, bsgenome)
+        backgroundgr <- randomSampleOnGenome(regionLen, sampleNumb, bsgenome, inputBackgroundBed)
         mcols(backgroundgr)$name <-
             (length(foregroundgr) + 1) : (length(foregroundgr) + length(backgroundgr))
         export.bed(object = backgroundgr, con = outputBackgroundBed)
@@ -197,6 +230,9 @@ setMethod(
 #' from other packages, such as esATAC.
 #' @param inputForegroundBed \code{Character} scalar.
 #' The directory of foreground BED file.
+#' @param inputBackgroundBed \code{Character} scalar.
+#' The directory of backgroud BED file.
+#' Default: NULL to generate random region from genome.
 #' @param genome \code{Character} scalar.
 #' Bioconductor supported genome such as "hg19", "mm10", etc.
 #' Default: NULL (e.g. after library (enrichTF),
@@ -239,6 +275,7 @@ setMethod(
 setGeneric("enrichGenBackground",
            function(prevStep,
                     inputForegroundBed = NULL,
+                    inputBackgroundBed = NULL,
                     genome = NULL,
                     outputForegroundBed = NULL,
                     outputBackgroundBed = NULL,
@@ -257,6 +294,7 @@ setMethod(
     signature = "Step",
     definition = function(prevStep,
                           inputForegroundBed = NULL,
+                          inputBackgroundBed = NULL,
                           genome = NULL,
                           outputForegroundBed = NULL,
                           outputBackgroundBed = NULL,
@@ -275,6 +313,7 @@ setMethod(
 #' @aliases genBackground
 #' @export
 genBackground <- function(inputForegroundBed,
+                          inputBackgroundBed = NULL,
                           genome = NULL,
                           outputForegroundBed = NULL,
                           outputBackgroundBed = NULL,
