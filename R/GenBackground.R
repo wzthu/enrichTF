@@ -156,13 +156,13 @@ randomSampleOnGenome<-function(regionLen, sampleNumber,bsgenome,bgbed = NULL){
             st <- start(bgbed[i]) - regionLen
             ed <- end(bgbed[i])
             sts <-sample(st:ed, size = nb, replace = TRUE)
-            return(GRanges(seqnames=Rle(chr, nb), IRanges(sts, width=regionLen)))
+            return(GRanges(seqnames=Rle(chr, nb), IRanges(sts, width=(regionLen+1))))
         })
         moregr <- do.call(c,lst)
         lessgr <- bgbed[lesssel]
         middle <- round((start(lessgr) + end(lessgr))/2)
         start(lessgr) <- middle - round(regionLen/2)
-        end(lessgr) <- middle + round(regionLen/2)-1
+        end(lessgr) <- middle + round(regionLen/2)
         gr <-  c(moregr, lessgr)
         score(gr) <- NULL
         mcols(gr)$name <-NULL
