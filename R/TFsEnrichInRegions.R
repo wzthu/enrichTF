@@ -190,114 +190,199 @@ setMethod(
 
         pValue <- matrix(1,nrow = length(tfName),ncol = 4)
 
-
-        cl <- makeCluster(getThreads())
-
         tfsseq = seq_len(length(tfName))
-        # if(getGenome() =="testgenome"){
-        #     tfsseq= tfsseq[tfsseq%%10==0]
-        # }
+        osname <- get_os()
+        if(osname == "osx" || osname == "linux"){
+            allpValue<-mclapply(X = tfsseq, FUN = function(i){
 
-        #for(i in 1:length(tfName)){
-        allpValue<-parLapply(X = tfsseq, fun = function(i, geneName,
-                                                        tfName,
-                                                        pValue,
-                                                        inputTFgeneRelMtx,
-                                                        foregroundGeneBed,
-                                                        backgroundGeneBed,
-                                                        inputMotifTFTable,
-                                                        regionMotifBed){
+                tryCatch({
+                    pValue[i,2] <- t.test(x = inputTFgeneRelMtx[i,match(
+                        backgroundGeneBed$geneName,geneName)],
+                        y = inputTFgeneRelMtx[i,match(
+                            foregroundGeneBed$geneName,geneName)],
+                        alternative = "greater")$p.value
 
-            tryCatch({
-            pValue[i,2] <- t.test(x = inputTFgeneRelMtx[i,match(
-                backgroundGeneBed$geneName,geneName)],
-                                  y = inputTFgeneRelMtx[i,match(
-                                      foregroundGeneBed$geneName,geneName)],
-                                  alternative = "greater")$p.value
+                    motifsOfTF <- inputMotifTFTable[
+                        inputMotifTFTable$tfName == tfName[i],1]
 
-            motifsOfTF <- inputMotifTFTable[
-                inputMotifTFTable$tfName == tfName[i],1]
+                    if(length(motifsOfTF)==0){
+                        return(pValue[i,]) #next
+                    }
+                    print(Sys.time())
+                    pvalueOfFisher<- lapply(seq_len(length(motifsOfTF)),
+                                            function(motifsOfTFi) {
+                                                motif <- as.character(motifsOfTF[motifsOfTFi])
 
-            if(length(motifsOfTF)==0){
-                return(pValue[i,]) #next
+                                                regionsName <- regionMotifBed[
+                                                    regionMotifBed$motifName == motif, c("name")]
+                                                foregroundGeneFalledInMotifReiong<-
+                                                    match(foregroundGeneBed$name, regionsName)
+                                                backgroundGeneFalledInMotifReiong<-
+                                                    match(backgroundGeneBed$name, regionsName)
+
+
+                                                fisherMtx <- matrix(0,nrow = 2,ncol = 2)
+                                                fisherMtx[1,1] <- sum(!is.na(foregroundGeneFalledInMotifReiong))
+                                                fisherMtx[1,2] <- sum(is.na(foregroundGeneFalledInMotifReiong))
+                                                fisherMtx[2,1] <- sum(!is.na(backgroundGeneFalledInMotifReiong))
+                                                fisherMtx[2,2] <- sum(is.na(backgroundGeneFalledInMotifReiong))
+
+                                                fisher.test(fisherMtx)$p.value
+                                            })
+                    pvalueOfFisher <- do.call("c",pvalueOfFisher)
+                    pValue[i,1] <- min(pvalueOfFisher)
+                    motif <- as.character(motifsOfTF[which.min(pvalueOfFisher)])
+                    regionsName <- regionMotifBed[
+                        regionMotifBed$motifName == motif, c("name")]
+                    foregroundGeneFalledInMotifReiong<-
+                        match(foregroundGeneBed$name , regionsName)
+                    backgroundGeneFalledInMotifReiong<-
+                        match(backgroundGeneBed$name , regionsName)
+                    pvalueOfFisher1 <- lapply(-9:9, function(cut_off){
+                        cut_off <- cut_off /10
+                        genesName <- geneName[inputTFgeneRelMtx[i,] > cut_off]
+                        foregroundGeneAboveCutOff<-
+                            match(foregroundGeneBed$geneName , genesName)
+                        backgroundGeneAboveCutOff<-
+                            match(backgroundGeneBed$geneName , genesName)
+
+                        forePos <- is.na(foregroundGeneFalledInMotifReiong) &
+                            is.na(foregroundGeneAboveCutOff)
+                        backPos <- is.na(backgroundGeneFalledInMotifReiong) &
+                            is.na(backgroundGeneAboveCutOff)
+
+                        fisherMtx <- matrix(0,nrow = 2,ncol = 2)
+                        fisherMtx[1,1] <- sum(!forePos)
+                        fisherMtx[1,2] <- sum(forePos)
+                        fisherMtx[2,1] <- sum(!backPos)
+                        fisherMtx[2,2] <- sum(backPos)
+
+                        fisher.test(fisherMtx)$p.value
+                    })
+
+                    pvalueOfFisher1 <- do.call("c", pvalueOfFisher1)
+
+                    pValue[i,3] <- min(pvalueOfFisher1)
+                },error = function(e){
+                    #                writeLog(.Object,as.character(e))
+                    #                writeLog(.Object,paste0("error",i))
+                    print(paste0("error",i))
+                })
+                #            writeLog(.Object,as.character(i))
+                return(pValue[i,])
+
+            },mc.cores = getThreads())
+        }else{
+            cl <- makeCluster(getThreads())
+
+
+            # if(getGenome() =="testgenome"){
+            #     tfsseq= tfsseq[tfsseq%%10==0]
+            # }
+
+            #for(i in 1:length(tfName)){
+            allpValue<-parLapply(X = tfsseq, fun = function(i, geneName,
+                                                            tfName,
+                                                            pValue,
+                                                            inputTFgeneRelMtx,
+                                                            foregroundGeneBed,
+                                                            backgroundGeneBed,
+                                                            inputMotifTFTable,
+                                                            regionMotifBed){
+
+                tryCatch({
+                    pValue[i,2] <- t.test(x = inputTFgeneRelMtx[i,match(
+                        backgroundGeneBed$geneName,geneName)],
+                        y = inputTFgeneRelMtx[i,match(
+                            foregroundGeneBed$geneName,geneName)],
+                        alternative = "greater")$p.value
+
+                    motifsOfTF <- inputMotifTFTable[
+                        inputMotifTFTable$tfName == tfName[i],1]
+
+                    if(length(motifsOfTF)==0){
+                        return(pValue[i,]) #next
+                    }
+                    print(Sys.time())
+                    pvalueOfFisher<- lapply(seq_len(length(motifsOfTF)),
+                                            function(motifsOfTFi) {
+                                                motif <- as.character(motifsOfTF[motifsOfTFi])
+
+                                                regionsName <- regionMotifBed[
+                                                    regionMotifBed$motifName == motif, c("name")]
+                                                foregroundGeneFalledInMotifReiong<-
+                                                    match(foregroundGeneBed$name, regionsName)
+                                                backgroundGeneFalledInMotifReiong<-
+                                                    match(backgroundGeneBed$name, regionsName)
+
+
+                                                fisherMtx <- matrix(0,nrow = 2,ncol = 2)
+                                                fisherMtx[1,1] <- sum(!is.na(foregroundGeneFalledInMotifReiong))
+                                                fisherMtx[1,2] <- sum(is.na(foregroundGeneFalledInMotifReiong))
+                                                fisherMtx[2,1] <- sum(!is.na(backgroundGeneFalledInMotifReiong))
+                                                fisherMtx[2,2] <- sum(is.na(backgroundGeneFalledInMotifReiong))
+
+                                                fisher.test(fisherMtx)$p.value
+                                            })
+                    pvalueOfFisher <- do.call("c",pvalueOfFisher)
+                    pValue[i,1] <- min(pvalueOfFisher)
+                    motif <- as.character(motifsOfTF[which.min(pvalueOfFisher)])
+                    regionsName <- regionMotifBed[
+                        regionMotifBed$motifName == motif, c("name")]
+                    foregroundGeneFalledInMotifReiong<-
+                        match(foregroundGeneBed$name , regionsName)
+                    backgroundGeneFalledInMotifReiong<-
+                        match(backgroundGeneBed$name , regionsName)
+                    pvalueOfFisher1 <- lapply(-9:9, function(cut_off){
+                        cut_off <- cut_off /10
+                        genesName <- geneName[inputTFgeneRelMtx[i,] > cut_off]
+                        foregroundGeneAboveCutOff<-
+                            match(foregroundGeneBed$geneName , genesName)
+                        backgroundGeneAboveCutOff<-
+                            match(backgroundGeneBed$geneName , genesName)
+
+                        forePos <- is.na(foregroundGeneFalledInMotifReiong) &
+                            is.na(foregroundGeneAboveCutOff)
+                        backPos <- is.na(backgroundGeneFalledInMotifReiong) &
+                            is.na(backgroundGeneAboveCutOff)
+
+                        fisherMtx <- matrix(0,nrow = 2,ncol = 2)
+                        fisherMtx[1,1] <- sum(!forePos)
+                        fisherMtx[1,2] <- sum(forePos)
+                        fisherMtx[2,1] <- sum(!backPos)
+                        fisherMtx[2,2] <- sum(backPos)
+
+                        fisher.test(fisherMtx)$p.value
+                    })
+
+                    pvalueOfFisher1 <- do.call("c", pvalueOfFisher1)
+
+                    pValue[i,3] <- min(pvalueOfFisher1)
+                },error = function(e){
+                    #                writeLog(.Object,as.character(e))
+                    #                writeLog(.Object,paste0("error",i))
+                    print(paste0("error",i))
+                })
+                #            writeLog(.Object,as.character(i))
+                return(pValue[i,])
+
             }
-            print(Sys.time())
-            pvalueOfFisher<- lapply(seq_len(length(motifsOfTF)),
-                                    function(motifsOfTFi) {
-                motif <- as.character(motifsOfTF[motifsOfTFi])
-
-                regionsName <- regionMotifBed[
-                    regionMotifBed$motifName == motif, c("name")]
-                foregroundGeneFalledInMotifReiong<-
-                    match(foregroundGeneBed$name, regionsName)
-                backgroundGeneFalledInMotifReiong<-
-                    match(backgroundGeneBed$name, regionsName)
-
-
-                fisherMtx <- matrix(0,nrow = 2,ncol = 2)
-                fisherMtx[1,1] <- sum(!is.na(foregroundGeneFalledInMotifReiong))
-                fisherMtx[1,2] <- sum(is.na(foregroundGeneFalledInMotifReiong))
-                fisherMtx[2,1] <- sum(!is.na(backgroundGeneFalledInMotifReiong))
-                fisherMtx[2,2] <- sum(is.na(backgroundGeneFalledInMotifReiong))
-
-                fisher.test(fisherMtx)$p.value
-            })
-            pvalueOfFisher <- do.call("c",pvalueOfFisher)
-            pValue[i,1] <- min(pvalueOfFisher)
-            motif <- as.character(motifsOfTF[which.min(pvalueOfFisher)])
-            regionsName <- regionMotifBed[
-                regionMotifBed$motifName == motif, c("name")]
-            foregroundGeneFalledInMotifReiong<-
-                match(foregroundGeneBed$name , regionsName)
-            backgroundGeneFalledInMotifReiong<-
-                match(backgroundGeneBed$name , regionsName)
-            pvalueOfFisher1 <- lapply(-9:9, function(cut_off){
-                cut_off <- cut_off /10
-                genesName <- geneName[inputTFgeneRelMtx[i,] > cut_off]
-                foregroundGeneAboveCutOff<-
-                    match(foregroundGeneBed$geneName , genesName)
-                backgroundGeneAboveCutOff<-
-                    match(backgroundGeneBed$geneName , genesName)
-
-                forePos <- is.na(foregroundGeneFalledInMotifReiong) &
-                    is.na(foregroundGeneAboveCutOff)
-                backPos <- is.na(backgroundGeneFalledInMotifReiong) &
-                    is.na(backgroundGeneAboveCutOff)
-
-                fisherMtx <- matrix(0,nrow = 2,ncol = 2)
-                fisherMtx[1,1] <- sum(!forePos)
-                fisherMtx[1,2] <- sum(forePos)
-                fisherMtx[2,1] <- sum(!backPos)
-                fisherMtx[2,2] <- sum(backPos)
-
-                fisher.test(fisherMtx)$p.value
-            })
-
-            pvalueOfFisher1 <- do.call("c", pvalueOfFisher1)
-
-            pValue[i,3] <- min(pvalueOfFisher1)
-            },error = function(e){
-#                writeLog(.Object,as.character(e))
-#                writeLog(.Object,paste0("error",i))
-                print(paste0("error",i))
-            })
-#            writeLog(.Object,as.character(i))
-            return(pValue[i,])
-
+            ,geneName
+            ,tfName
+            ,pValue
+            ,inputTFgeneRelMtx =inputTFgeneRelMtx,
+            foregroundGeneBed = foregroundGeneBed,
+            backgroundGeneBed =backgroundGeneBed,
+            inputMotifTFTable =inputMotifTFTable,
+            regionMotifBed = regionMotifBed,
+            cl = cl)
+            stopCluster(cl)
         }
-        ,geneName
-        ,tfName
-        ,pValue
-        ,inputTFgeneRelMtx =inputTFgeneRelMtx,
-        foregroundGeneBed = foregroundGeneBed,
-        backgroundGeneBed =backgroundGeneBed,
-        inputMotifTFTable =inputMotifTFTable,
-        regionMotifBed = regionMotifBed,
-        cl = cl)
+
         pValue <- matrix(unlist(allpValue),nrow = length(tfName),
                          ncol = 4,byrow = TRUE)
 
-        stopCluster(cl)
+
 
         pValue[is.na(pValue)] <- 1
         pValue[pValue>1] <- 1
